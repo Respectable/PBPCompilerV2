@@ -7,6 +7,7 @@ import java.util.Collection;
 import nbaDownloader.NBADownloader;
 
 import jsonObjects.PlayerJson;
+import jsonObjects.TeamJson;
 
 public class Compiler {
 
@@ -19,6 +20,13 @@ public class Compiler {
 		ArrayList<PlayerJson> players;
 		BufferedReader br = NBADownloader.downloadPlayerData(currentSeason);
 		players = PlayerJson.getPlayers(br);
+		
+		ArrayList<TeamJson> teams;
+		br = NBADownloader.downloadTeamData();
+		teams = TeamJson.getTeams(br);
+		
+		String test = "finished";
+		System.out.println(test);
 		
 		for(String s : args)
 		{
