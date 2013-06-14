@@ -2,12 +2,10 @@ package compiler;
 
 import java.io.BufferedReader;
 import java.util.ArrayList;
-import java.util.Collection;
 
 import nbaDownloader.NBADownloader;
 
-import jsonObjects.PlayerJson;
-import jsonObjects.TeamJson;
+import jsonObjects.*;
 
 public class Compiler {
 
@@ -25,13 +23,16 @@ public class Compiler {
 		br = NBADownloader.downloadTeamData();
 		teams = TeamJson.getTeams(br);
 		
-		String test = "finished";
-		System.out.println(test);
-		
 		for(String s : args)
 		{
 			try
 			{
+				ArrayList<PBPJson> pbp;
+				br = NBADownloader.downloadPBP(s);
+				pbp = PBPJson.getPBP(br);
+				
+				String test = "finished";
+				System.out.println(test);
 				
 				//parser p = new parser(new Yylex(new BufferedReader(new FileReader(s))));
 				//Symbol parse_tree = p.parse();
