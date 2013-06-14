@@ -76,7 +76,8 @@ public class PlayerJson extends NBAJsonObject
 	
 	public static ArrayList<PlayerJson> getPlayers(BufferedReader reader)
 	{
-		String json = cleanJson(reader);
+		String json = readJson(reader);
+		json = cleanJson(json);
 		return parsePlayerJson(json);
 	}
 	
@@ -84,7 +85,7 @@ public class PlayerJson extends NBAJsonObject
     public String toString() 
 	{
       return String.format("(PERSON_ID=%s, DISPLAY_LAST_COMMA_FIRST=%s, "+
-    		  "ROSTERSTATUS=%s, FROM_YEAR=%s, TO_YEAR=%s,)", this.id, this.name,
+    		  "ROSTERSTATUS=%s, FROM_YEAR=%s, TO_YEAR=%s)", this.id, this.name,
     		  this.active, this.startYear, this.endYear);
     }
 

@@ -71,7 +71,8 @@ public class TeamJson extends NBAJsonObject
 	
 	public static ArrayList<TeamJson> getTeams(BufferedReader reader)
 	{
-		String json = cleanJson(reader);
+		String json = readJson(reader);
+		json = cleanJson(json);
 		return parseTeamJson(json);
 	}
 	
@@ -79,7 +80,7 @@ public class TeamJson extends NBAJsonObject
     public String toString() 
 	{
       return String.format("(LEAGUE_ID=%s, TEAM_ID=%s, MIN_YEAR=%s, MAX_YEAR=%s,"
-    		  + "ABBREVIATION=%s,)", this.leagueID, this.teamID, this.startYear, 
+    		  + "ABBREVIATION=%s)", this.leagueID, this.teamID, this.startYear, 
     		  this.endYear, this.abbr);
     }
 

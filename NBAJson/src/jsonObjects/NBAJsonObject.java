@@ -9,14 +9,20 @@ import com.google.gson.JsonParser;
 
 public abstract class NBAJsonObject 
 {
-	public static String cleanJson(BufferedReader reader)
+	public static String cleanJson(String json)
+	{
+		json = json.substring(json.indexOf('(') + 1);
+		json = json.substring(0, json.length()-1);
+		
+		return json;
+	}
+	
+	public static String readJson(BufferedReader reader)
 	{
 		String json = "";
 		try {
 			 json = reader.readLine();
 			 reader.close();
-			 json = json.substring(json.indexOf('(') + 1);
-			 json = json.substring(0, json.length()-1);
 			 
 		} catch (IOException e) {
 			e.printStackTrace();
