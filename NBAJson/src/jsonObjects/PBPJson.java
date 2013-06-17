@@ -78,37 +78,37 @@ public class PBPJson extends NBAJsonObject
 		
 		for(JsonElement element : array)
 		{
-			JsonArray teamArray = element.getAsJsonArray();
-			gameID = gson.fromJson(teamArray.get(0), String.class);
-			eventNum = gson.fromJson(teamArray.get(1), int.class);
-			eventMsgType = gson.fromJson(teamArray.get(2), int.class);
-			eventMsgActionType = gson.fromJson(teamArray.get(3), int.class);
-			period = gson.fromJson(teamArray.get(4), int.class);
-			actualTime = gson.fromJson(teamArray.get(5), String.class);
-			gameTime = gson.fromJson(teamArray.get(6), String.class);
+			JsonArray pbpArray = element.getAsJsonArray();
+			gameID = gson.fromJson(pbpArray.get(0), String.class);
+			eventNum = gson.fromJson(pbpArray.get(1), int.class);
+			eventMsgType = gson.fromJson(pbpArray.get(2), int.class);
+			eventMsgActionType = gson.fromJson(pbpArray.get(3), int.class);
+			period = gson.fromJson(pbpArray.get(4), int.class);
+			actualTime = gson.fromJson(pbpArray.get(5), String.class);
+			gameTime = gson.fromJson(pbpArray.get(6), String.class);
 			
-			if (teamArray.get(7) != JsonNull.INSTANCE)
-				homeDesc = gson.fromJson(teamArray.get(7), String.class);
+			if (pbpArray.get(7) != JsonNull.INSTANCE)
+				homeDesc = gson.fromJson(pbpArray.get(7), String.class);
 			else
 				homeDesc = "";
 			
-			if (teamArray.get(8) != JsonNull.INSTANCE)
-				neutralDesc = gson.fromJson(teamArray.get(8), String.class);
+			if (pbpArray.get(8) != JsonNull.INSTANCE)
+				neutralDesc = gson.fromJson(pbpArray.get(8), String.class);
 			else
 				neutralDesc = "";
 			
-			if (teamArray.get(9) != JsonNull.INSTANCE)
-				awayDesc = gson.fromJson(teamArray.get(9), String.class);
+			if (pbpArray.get(9) != JsonNull.INSTANCE)
+				awayDesc = gson.fromJson(pbpArray.get(9), String.class);
 			else
 				awayDesc = "";
 			
-			if (teamArray.get(10) != JsonNull.INSTANCE)
-				score = gson.fromJson(teamArray.get(10), String.class);
+			if (pbpArray.get(10) != JsonNull.INSTANCE)
+				score = gson.fromJson(pbpArray.get(10), String.class);
 			else
 				score = "";
 			
-			if (teamArray.get(11) != JsonNull.INSTANCE)
-				margin = gson.fromJson(teamArray.get(11), String.class);
+			if (pbpArray.get(11) != JsonNull.INSTANCE)
+				margin = gson.fromJson(pbpArray.get(11), String.class);
 			else
 				margin = "";
 			

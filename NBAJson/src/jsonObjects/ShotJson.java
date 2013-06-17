@@ -99,26 +99,26 @@ public class ShotJson extends NBAJsonObject
 		
 		for(JsonElement element : array)
 		{
-			JsonArray teamArray = element.getAsJsonArray();
-			gameID = gson.fromJson(teamArray.get(1), String.class);
-			gameEventID = gson.fromJson(teamArray.get(2), int.class);
-			playerID = gson.fromJson(teamArray.get(3), int.class);
-			playerName = gson.fromJson(teamArray.get(4), String.class);
-			teamID = gson.fromJson(teamArray.get(5), int.class);
-			teamName = gson.fromJson(teamArray.get(6), String.class);
-			period = gson.fromJson(teamArray.get(7), int.class);
-			minutesRemaining = gson.fromJson(teamArray.get(8), int.class);
-			secondsRemaining = gson.fromJson(teamArray.get(9), int.class);
-			actionType = gson.fromJson(teamArray.get(11), String.class);
-			shotType = gson.fromJson(teamArray.get(12), String.class);
-			shotZoneBasic = gson.fromJson(teamArray.get(13), String.class);
-			shotZoneArea = gson.fromJson(teamArray.get(14), String.class);
-			shotZoneRange = gson.fromJson(teamArray.get(15),String.class);
-			shotDistance = gson.fromJson(teamArray.get(16), int.class);
-			x = gson.fromJson(teamArray.get(17), int.class);
-			y = gson.fromJson(teamArray.get(18), int.class);
-			shotAttempted = gson.fromJson(teamArray.get(19), int.class);
-			shotMade = gson.fromJson(teamArray.get(20), int.class);
+			JsonArray shotArray = element.getAsJsonArray();
+			gameID = gson.fromJson(shotArray.get(1), String.class);
+			gameEventID = gson.fromJson(shotArray.get(2), int.class);
+			playerID = gson.fromJson(shotArray.get(3), int.class);
+			playerName = gson.fromJson(shotArray.get(4), String.class);
+			teamID = gson.fromJson(shotArray.get(5), int.class);
+			teamName = gson.fromJson(shotArray.get(6), String.class);
+			period = gson.fromJson(shotArray.get(7), int.class);
+			minutesRemaining = gson.fromJson(shotArray.get(8), int.class);
+			secondsRemaining = gson.fromJson(shotArray.get(9), int.class);
+			actionType = gson.fromJson(shotArray.get(11), String.class);
+			shotType = gson.fromJson(shotArray.get(12), String.class);
+			shotZoneBasic = gson.fromJson(shotArray.get(13), String.class);
+			shotZoneArea = gson.fromJson(shotArray.get(14), String.class);
+			shotZoneRange = gson.fromJson(shotArray.get(15),String.class);
+			shotDistance = gson.fromJson(shotArray.get(16), int.class);
+			x = gson.fromJson(shotArray.get(17), int.class);
+			y = gson.fromJson(shotArray.get(18), int.class);
+			shotAttempted = gson.fromJson(shotArray.get(19), int.class);
+			shotMade = gson.fromJson(shotArray.get(20), int.class);
 			
 			shots.add(new ShotJson(gameID, playerName, teamName, actionType,
 					shotType, shotZoneBasic, shotZoneArea, shotZoneRange,
