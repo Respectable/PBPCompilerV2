@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class InactiveJson 
 {
@@ -59,6 +61,17 @@ public class InactiveJson
 		return inactives;
 	}
 	
-	
+	protected static JsonArray preProcessJson(String json)
+	{
+
+		JsonParser parser = new JsonParser();
+		
+		JsonObject jsonObject = parser.parse(json).getAsJsonObject();
+		JsonArray array = jsonObject.get("resultSets").getAsJsonArray();
+		jsonObject = array.get(9).getAsJsonObject();
+		array = jsonObject.get("rowSet").getAsJsonArray();
+		
+		return array;
+	}
 	
 }

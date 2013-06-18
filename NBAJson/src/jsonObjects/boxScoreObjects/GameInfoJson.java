@@ -2,9 +2,10 @@ package jsonObjects.boxScoreObjects;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
-public class GameInfoJson 
+public class GameInfoJson extends jsonObjects.NBAJsonObject
 {
 	private int attendance;
 	private String gameTime;
@@ -24,21 +25,33 @@ public class GameInfoJson
 	public int getAttendance() { return attendance; }
 	public String getGameTime() { return gameTime; }
 	
-	public static GameInfoJson parseGameInfo(JsonArray array)
+	public static GameInfoJson parseGameInfo(String json)
 	{
 		Gson gson = new Gson();
 		int attendance;
 		String gameTime;
-		JsonElement element;
-		JsonArray tempArray;
+		JsonArray array;
 		
-		element = array.get(0);
-		tempArray = element.getAsJsonArray();
+		array = preProcessJson(json);
+		array = array.get(0).getAsJsonArray();
 		
-		attendance =  gson.fromJson(tempArray.get(1), int.class);
-		gameTime =  gson.fromJson(tempArray.get(2), String.class);
+		attendance =  gson.fromJson(array.get(1), int.class);
+		gameTime =  gson.fromJson(array.get(2), String.class);
 		
 		return new GameInfoJson(attendance, gameTime);
+	}
+	
+	protected static JsonArray preProcessJson(String json)
+	{
+
+		JsonParser parser = new JsonParser();
+		
+		JsonObject jsonObject = parser.parse(json).getAsJsonObject();
+		JsonArray array = jsonObject.get("resultSets").getAsJsonArray();
+		jsonObject = array.get(8).getAsJsonObject();
+		array = jsonObject.get("rowSet").getAsJsonArray();
+		
+		return array;
 	}
 	
 	

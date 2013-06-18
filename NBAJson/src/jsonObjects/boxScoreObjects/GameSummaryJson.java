@@ -2,9 +2,8 @@ package jsonObjects.boxScoreObjects;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 
-public class GameSummaryJson 
+public class GameSummaryJson extends jsonObjects.NBAJsonObject
 {
 	private int homeID, awayID;
 	private String gameDate, gameID, season, broadcaster;
@@ -32,25 +31,25 @@ public class GameSummaryJson
 	public String getSeason() { return season; }
 	public String getBroadcaster() { return broadcaster; }
 
-	public static GameSummaryJson parseGameSummary(JsonArray array)
+	public static GameSummaryJson parseGameSummary(String json)
 	{
 		Gson gson = new Gson();
 		int homeID, awayID;
 		String gameDate, gameID, season, broadcaster;
-		JsonElement element;
-		JsonArray tempArray;
+		JsonArray array;
 		
-		element = array.get(0);
-		tempArray = element.getAsJsonArray();
+		array = preProcessJson(json);
+		array = array.get(0).getAsJsonArray();
 		
-		homeID =  gson.fromJson(tempArray.get(6), int.class);
-		awayID =  gson.fromJson(tempArray.get(7), int.class);
-		gameDate = gson.fromJson(tempArray.get(0), String.class);
-		gameID = gson.fromJson(tempArray.get(2), String.class);
-		season = gson.fromJson(tempArray.get(8), String.class);
-		broadcaster = gson.fromJson(tempArray.get(10), String.class);
+		homeID =  gson.fromJson(array.get(6), int.class);
+		awayID =  gson.fromJson(array.get(7), int.class);
+		gameDate = gson.fromJson(array.get(0), String.class);
+		gameID = gson.fromJson(array.get(2), String.class);
+		season = gson.fromJson(array.get(8), String.class);
+		broadcaster = gson.fromJson(array.get(10), String.class);
 		
 		return new GameSummaryJson(homeID, awayID, gameDate, gameID, 
 				season, broadcaster);
 	}
+	
 }

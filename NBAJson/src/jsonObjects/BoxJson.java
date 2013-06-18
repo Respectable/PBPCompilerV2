@@ -49,10 +49,8 @@ public class BoxJson extends NBAJsonObject
 		
 		JsonArray array = preProcessJson(json);
 		
-		gameSummary = GameSummaryJson.parseGameSummary(
-				array.get(0).getAsJsonArray());
-		gameInfo = GameInfoJson.parseGameInfo(
-				array.get(8).getAsJsonArray());
+		gameSummary = GameSummaryJson.parseGameSummary(json);
+		gameInfo = GameInfoJson.parseGameInfo(json);
 		inactive = InactiveJson.parseInactive(
 				array.get(9).getAsJsonArray());
 		officals = OfficalJson.parseOfficals(
