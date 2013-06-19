@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class PlayerStatsJson 
 {
@@ -32,13 +34,15 @@ public class PlayerStatsJson
 	public String getPlayerName() { return playerName; }
 	public String getStartPosition() { return startPosition; }
 	
-	public static ArrayList<PlayerStatsJson> parsePlayerStats(JsonArray array)
+	public static ArrayList<PlayerStatsJson> parsePlayerStats(String json)
 	{
 		Gson gson = new Gson();
 		int teamID, playerID;
 		String teamAbbr, playerName, startPosition;
-		JsonArray tempArray;
+		JsonArray array, tempArray;
 		ArrayList<PlayerStatsJson> players = new ArrayList<PlayerStatsJson>();
+		
+		array = preProcessJson(json);
 		
 		for (JsonElement element : array)
 		{
@@ -53,6 +57,19 @@ public class PlayerStatsJson
 		}
 		
 		return players;
+	}
+	
+	protected static JsonArray preProcessJson(String json)
+	{
+
+		JsonParser parser = new JsonParser();
+		
+		JsonObject jsonObject = parser.parse(json).getAsJsonObject();
+		JsonArray array = jsonObject.get("resultSets").getAsJsonArray();
+		jsonObject = array.get(4).getAsJsonObject();
+		array = jsonObject.get("rowSet").getAsJsonArray();
+		
+		return array;
 	}
 	
 	

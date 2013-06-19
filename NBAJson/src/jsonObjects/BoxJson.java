@@ -47,16 +47,11 @@ public class BoxJson extends NBAJsonObject
 		ArrayList<OfficalJson> officals;
 		ArrayList<PlayerStatsJson> playerStats;
 		
-		JsonArray array = preProcessJson(json);
-		
 		gameSummary = GameSummaryJson.parseGameSummary(json);
 		gameInfo = GameInfoJson.parseGameInfo(json);
-		inactive = InactiveJson.parseInactive(
-				array.get(9).getAsJsonArray());
-		officals = OfficalJson.parseOfficals(
-				array.get(7).getAsJsonArray());
-		playerStats = PlayerStatsJson.parsePlayerStats(
-				array.get(4).getAsJsonArray());
+		inactive = InactiveJson.parseInactive(json);
+		officals = OfficalJson.parseOfficals(json);
+		playerStats = PlayerStatsJson.parsePlayerStats(json);
 		
 		return new BoxJson(gameInfo, gameSummary, inactive, officals,
 				playerStats);
@@ -76,6 +71,13 @@ public class BoxJson extends NBAJsonObject
 		JsonArray array = jsonObject.get("resultSets").getAsJsonArray();
 		
 		return array;
+	}
+	
+	public String getGameSeason()
+	{
+		String season = this.gameSummary.getSeason();
+		int year = Integer.parseInt(season.substring(2, 4));
+		return season + "-" + (year + 1);
 	}
 	
 	

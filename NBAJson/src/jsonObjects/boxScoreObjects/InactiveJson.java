@@ -38,13 +38,15 @@ public class InactiveJson
 	public String getLastName() { return lastName; }
 	public String getTeamAbbr() { return teamAbbr; }
 	
-	public static ArrayList<InactiveJson> parseInactive(JsonArray array)
+	public static ArrayList<InactiveJson> parseInactive(String json)
 	{
 		Gson gson = new Gson();
 		int playerID, teamID;
 		String firstName, lastName, teamAbbr;
-		JsonArray tempArray;
+		JsonArray array, tempArray;
 		ArrayList<InactiveJson> inactives = new ArrayList<InactiveJson>();
+		
+		array = preProcessJson(json);
 		
 		for (JsonElement element : array)
 		{

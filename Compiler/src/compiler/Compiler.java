@@ -31,13 +31,15 @@ public class Compiler {
 				br = NBADownloader.downloadPBP(s);
 				pbp = PBPJson.getPBP(br);
 				
-				ArrayList<ShotJson> shots;
-				br = NBADownloader.downloadShotData("2012-13", s);
-				shots = ShotJson.getShots(br);
-				
 				BoxJson boxScore;
 				br = NBADownloader.downloadBoxScore(s);
 				boxScore = BoxJson.getBoxScore(br);
+				
+				ArrayList<ShotJson> shots;
+				br = NBADownloader.downloadShotData(boxScore.getGameSeason(), s);
+				shots = ShotJson.getShots(br);
+				
+				
 				
 				String test = "finished";
 				System.out.println(test);
