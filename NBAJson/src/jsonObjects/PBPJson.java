@@ -138,6 +138,26 @@ public class PBPJson extends NBAJsonObject
     			this.gameTime, this.homeDesc, this.neutralDesc,
     			this.awayDesc, this.score, this.margin); 
     }
+	
+	public String printPBP()
+	{
+		if (this.homeDesc != "")
+		{
+			return this.homeDesc + " {" + this.eventNum + ",H}";
+		}
+		else if (this.awayDesc != "")
+		{
+			return this.awayDesc + " {" + this.eventNum + ",A}";
+		}
+		else if (this.neutralDesc != "")
+		{
+			return this.neutralDesc + " {" + this.eventNum + ",N}";
+		}
+		else
+		{
+			return "";
+		}
+	}
 
 	
 }

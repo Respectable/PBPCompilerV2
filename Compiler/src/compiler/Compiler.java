@@ -25,6 +25,7 @@ public class Compiler {
 		
 		for(String s : args)
 		{
+			String playText = "";
 			try
 			{
 				ArrayList<PBPJson> pbp;
@@ -39,6 +40,10 @@ public class Compiler {
 				br = NBADownloader.downloadShotData(boxScore.getGameSeason(), s);
 				shots = ShotJson.getShots(br);
 				
+				for (PBPJson play : pbp)
+				{
+					playText += play.printPBP() + "\n";
+				}
 				
 				
 				String test = "finished";
