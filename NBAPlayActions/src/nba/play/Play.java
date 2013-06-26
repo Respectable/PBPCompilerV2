@@ -3,7 +3,7 @@ package nba.play;
 import nba.ContextInfo;
 import nba.playType.PlayType;
 
-public abstract class Play 
+public class Play 
 {
 	protected PlayType playType;
 	protected ContextInfo contextInfo;

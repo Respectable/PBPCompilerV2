@@ -1,6 +1,8 @@
 package nba.playType.violation;
 
-public class Violation 
+import nba.playType.PlayType;
+
+public class Violation extends PlayType
 {
 	private ViolationType violationType;
 	

@@ -1,8 +1,9 @@
 package nba.playType.substitution;
 
 import nba.Player;
+import nba.playType.PlayType;
 
-public class Substitution 
+public class Substitution extends PlayType
 {
 	private Player out, in;
 	

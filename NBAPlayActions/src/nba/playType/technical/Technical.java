@@ -1,6 +1,8 @@
 package nba.playType.technical;
 
-public class Technical 
+import nba.playType.PlayType;
+
+public class Technical extends PlayType
 {
 	protected TechnicalPredicate predicate;
 

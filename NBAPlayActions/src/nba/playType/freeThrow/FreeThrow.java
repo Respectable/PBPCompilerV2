@@ -1,6 +1,8 @@
 package nba.playType.freeThrow;
 
-public class FreeThrow 
+import nba.playType.PlayType;
+
+public class FreeThrow extends PlayType
 {
 	private String freeThrowType;
 	private FreeThrowPredicate predicate;

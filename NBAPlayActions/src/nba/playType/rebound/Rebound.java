@@ -1,6 +1,8 @@
 package nba.playType.rebound;
 
-public class Rebound 
+import nba.playType.PlayType;
+
+public class Rebound extends PlayType
 {
 	public Rebound()
 	{

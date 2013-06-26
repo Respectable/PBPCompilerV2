@@ -1,6 +1,8 @@
 package nba.playType.timeout;
 
-public class Timeout 
+import nba.playType.PlayType;
+
+public class Timeout extends PlayType
 {
 	private String timeoutType;
 

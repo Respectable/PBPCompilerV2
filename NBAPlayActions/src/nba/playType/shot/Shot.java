@@ -1,6 +1,8 @@
 package nba.playType.shot;
 
-public class Shot 
+import nba.playType.PlayType;
+
+public class Shot extends PlayType
 {
 	private ShotType shotType;
 	private ShotEnding shotEnding;

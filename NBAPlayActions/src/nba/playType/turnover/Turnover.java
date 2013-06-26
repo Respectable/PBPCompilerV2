@@ -1,6 +1,8 @@
 package nba.playType.turnover;
 
-public class Turnover 
+import nba.playType.PlayType;
+
+public class Turnover extends PlayType
 {
 	private TurnoverType turnoverType;
 	private TurnoverEnding ending;

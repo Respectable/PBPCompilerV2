@@ -1,6 +1,8 @@
 package nba.playType.foul;
 
-public class Foul 
+import nba.playType.PlayType;
+
+public class Foul extends PlayType
 {
 	private FoulType foulType;
 	

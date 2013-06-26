@@ -1,6 +1,8 @@
 package nba.playType.steal;
 
-public class Steal 
+import nba.playType.PlayType;
+
+public class Steal extends PlayType
 {
 	public Steal()
 	{

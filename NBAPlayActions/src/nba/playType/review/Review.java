@@ -1,6 +1,8 @@
 package nba.playType.review;
 
-public class Review 
+import nba.playType.PlayType;
+
+public class Review extends PlayType
 {
 	public Review()
 	{

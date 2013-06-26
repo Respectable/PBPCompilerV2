@@ -1,8 +1,9 @@
 package nba.playType.jumpBall;
 
 import nba.Player;
+import nba.playType.PlayType;
 
-public class JumpBall 
+public class JumpBall extends PlayType
 {
 	private Player player1, player2;
 	private JumpBallEnding ending;
