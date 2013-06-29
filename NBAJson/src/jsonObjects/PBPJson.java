@@ -141,22 +141,34 @@ public class PBPJson extends NBAJsonObject
 	
 	public String printPBP()
 	{
-		if (this.homeDesc != "")
+		if (this.eventNum == 254)
 		{
-			return this.homeDesc + " {" + this.eventNum + ",H}";
+			int x = 1;
+			System.out.print(x);
 		}
-		else if (this.awayDesc != "")
+		String pbpString = "";
+		if (!this.homeDesc.trim().equals(""))
 		{
-			return this.awayDesc + " {" + this.eventNum + ",A}";
+			pbpString += this.homeDesc + " {" + this.eventNum + ",H}";
 		}
-		else if (this.neutralDesc != "")
+		
+		if (!this.awayDesc.trim().equals(""))
 		{
-			return this.neutralDesc + " {" + this.eventNum + ",N}";
+			if (pbpString != "")
+				pbpString += "\n" + this.awayDesc + " {" + this.eventNum + ",A}";
+			else
+				pbpString += this.awayDesc + " {" + this.eventNum + ",A}";
 		}
-		else
+		
+		if (!this.neutralDesc.trim().equals(""))
 		{
-			return "";
+			if (pbpString != "")
+				pbpString += "\n" + this.neutralDesc + " {" + this.eventNum + ",N}";
+			else
+				pbpString += this.neutralDesc + " {" + this.eventNum + ",N}";
 		}
+		
+		return pbpString;
 	}
 
 	

@@ -4,5 +4,9 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/NBADownloader"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/NBAJson"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/NBAPlayActions"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/PBPParser"/>
+	<classpathentry kind="lib" path="lib/java-cup-11a-runtime.jar"/>
+	<classpathentry kind="lib" path="lib/java-cup-11a.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

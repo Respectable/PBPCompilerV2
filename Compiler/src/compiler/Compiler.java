@@ -1,8 +1,19 @@
 package compiler;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 
+import java_cup.runtime.Symbol;
+
+import parser.parser;
+import scanner.Yylex;
+
+import nba.Game;
 import nbaDownloader.NBADownloader;
 
 import jsonObjects.*;
@@ -28,6 +39,15 @@ public class Compiler {
 			String playText = "";
 			try
 			{
+				try 
+				{
+				    Thread.sleep(3000);
+				} 
+				catch(InterruptedException ex) 
+				{
+				    Thread.currentThread().interrupt();
+				}
+				
 				ArrayList<PBPJson> pbp;
 				br = NBADownloader.downloadPBP(s);
 				pbp = PBPJson.getPBP(br);
@@ -42,9 +62,17 @@ public class Compiler {
 				
 				for (PBPJson play : pbp)
 				{
-					playText += play.printPBP() + "\n";
+					if (play.printPBP() != "")
+					{
+						playText += play.printPBP() + "\n";
+					}
 				}
 				
+				writePBPData(playText);
+				
+				parser p = new parser(new Yylex(new BufferedReader(new StringReader(playText))));
+				Symbol parse_tree = p.debug_parse();
+				Game game = (Game)parse_tree.value;
 				
 				String test = "finished";
 				System.out.println(test);
@@ -62,8 +90,33 @@ public class Compiler {
 			catch(Exception e)
 			{
 				System.out.println(e.getLocalizedMessage());
+				System.out.println("Current Game:" + s);
+				e.printStackTrace();
 			}
 			
+		}
+	}
+	
+	private static void writePBPData(String data)
+	{
+		try {
+ 
+			File file = new File("/home/anthony/Desktop/Link to Dropbox/NBA 3.0/Scanner & Parser/PBP.txt");
+ 
+			// if file doesn't exists, then create it
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+ 
+			FileWriter fw = new FileWriter(file.getAbsoluteFile());
+			BufferedWriter bw = new BufferedWriter(fw);
+			bw.write(data);
+			bw.close();
+ 
+			System.out.println("Done");
+ 
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 

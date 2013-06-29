@@ -2,7 +2,7 @@ package nba.playType.foul;
 
 import nba.Player;
 
-public class DoublePersonalFoul extends FoulType {
+public class DoublePersonalFoul extends Foul {
 
 	private Player player1, player2;
 	
