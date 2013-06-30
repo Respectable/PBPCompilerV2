@@ -2,6 +2,7 @@ package jsonObjects;
 
 import java.io.BufferedReader;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -75,6 +76,13 @@ public class TeamJson extends NBAJsonObject
 		json = cleanJson(json);
 		return parseTeamJson(json);
 	}
+	
+	//Sort by id
+    public static Comparator<TeamJson> COMPARE_BY_ID = new Comparator<TeamJson>() {
+        public int compare(TeamJson one, TeamJson other) {
+            return Integer.compare(one.teamID , other.teamID);
+        }
+    };
 	
 	@Override
     public String toString() 
