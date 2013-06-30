@@ -4,8 +4,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-import nba.Player;
 import jsonObjects.boxScoreObjects.GameInfoJson;
 import jsonObjects.boxScoreObjects.GameSummaryJson;
 
@@ -40,22 +42,46 @@ public class GameSQLGenerator
 	{
 		Connection conn;
 		PreparedStatement stmt;
+		Date convertedDate = new Date();
+		
+		try 
+		{
+			convertedDate = new SimpleDateFormat("yyyyMMdd").parse(gameDate.substring(0, 11));
+		} 
+		catch (ParseException e) 
+		{
+			e.printStackTrace();
+		}
 		
 		try 
 		{
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection(path,userName,password);
-			stmt = conn.prepareStatement("INSERT INTO `nba2`.`game_players` (`game_id`,`team_id`,`player_id`," +
-					"`active`) VALUES (?,?,?,?);");
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`game` (`game_id`,`date_played`,`game_time`," +
+					"`attendance`, `broadcaster`) VALUES (?,?,?,?,?);");
 			
-			for (Player player : players)
-			{
-				stmt.setInt(1, this.gameId);
-				stmt.setInt(2, this.teamId);
-				stmt.setInt(3, player.getPlayerID());
-				stmt.setBoolean(4, player.isActive());
-				stmt.executeUpdate();
-			}
+			stmt.setString(1, this.gameID);
+			stmt.setDate(2, convertDate(convertedDate));
+			stmt.setInt(3, convertTime(this.gameTime));
+			stmt.setInt(4, this.attendance);
+			stmt.setString(5, this.broadcaster);
+			stmt.executeUpdate();
+			
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`game_teams` (`game_id`,`home_team_id`,`away_team_id`)" +
+					"VALUES (?,?,?);");
+			
+			stmt.setString(1, this.gameID);
+			stmt.setInt(2, this.homeTeamID);
+			stmt.setInt(3, this.awayTeamID);
+			stmt.executeUpdate();
+			
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`game_season` (`game_id`,`season_id`)" +
+					"VALUES (?,?);");
+			
+			stmt.setString(1, this.gameID);
+			stmt.setInt(2, getSeasonID(this.season));
+			stmt.executeUpdate();
+			
 			
 			stmt.close();
 			conn.close();
@@ -69,6 +95,26 @@ public class GameSQLGenerator
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	private java.sql.Date convertDate(Date date)
+	{
+		return new java.sql.Date(date.getTime());
+	}
+	
+	private int convertTime(String time)
+	{
+		int total;
+		
+		total = Integer.parseInt(time.substring(0, 1)) * 60;
+		total += Integer.parseInt(time.substring(2, 5));
+		return total;
+	}
+	
+	private int getSeasonID(String season)
+	{
+		//TODO
+		return -1;
 	}
 	
 }
