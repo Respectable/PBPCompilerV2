@@ -1,5 +1,6 @@
 package nba.playType.substitution;
 
+import visitor.Visitor;
 import nba.Player;
 import nba.playType.PlayType;
 
@@ -15,5 +16,11 @@ public class Substitution extends PlayType
 
 	public Player getOut() { return out; }
 	public Player getIn() { return in; }
+
+	@Override
+	public void accept(Visitor visitor) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

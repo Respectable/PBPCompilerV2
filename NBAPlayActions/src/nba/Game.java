@@ -2,7 +2,10 @@ package nba;
 
 import java.util.ArrayList;
 
-public class Game 
+import visitor.Visitable;
+import visitor.Visitor;
+
+public class Game implements Visitable
 {
 	private ArrayList<Period> periods;
 
@@ -11,6 +14,12 @@ public class Game
 	}
 
 	public ArrayList<Period> getPeriods() { return periods; }
+
+	@Override
+	public void accept(Visitor visitor) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	
 	

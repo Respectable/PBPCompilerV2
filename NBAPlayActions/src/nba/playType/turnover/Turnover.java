@@ -1,5 +1,6 @@
 package nba.playType.turnover;
 
+import visitor.Visitor;
 import nba.playType.PlayType;
 
 public class Turnover extends PlayType
@@ -15,5 +16,11 @@ public class Turnover extends PlayType
 	
 	public TurnoverType getTurnoverType() {return turnoverType;}
 	public TurnoverEnding getEnding() {return ending;}
+
+	@Override
+	public void accept(Visitor visitor) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

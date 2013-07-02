@@ -1,6 +1,8 @@
 package nba.playType;
 
-public abstract class PlayType 
+import visitor.Visitable;
+
+public abstract class PlayType implements Visitable
 {
 
 }

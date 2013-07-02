@@ -1,6 +1,9 @@
 package nba;
 
-public class Player 
+import visitor.Visitable;
+import visitor.Visitor;
+
+public class Player implements Visitable
 {
 	private String playerName;
 	private int playerID;
@@ -19,6 +22,12 @@ public class Player
 
 	public String getPlayerName() { return playerName; }
 	public int getPlayerID() { return playerID; }
+
+	@Override
+	public void accept(Visitor visitor) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	
 	

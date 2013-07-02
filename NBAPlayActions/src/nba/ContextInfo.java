@@ -1,6 +1,9 @@
 package nba;
 
-public class ContextInfo 
+import visitor.Visitable;
+import visitor.Visitor;
+
+public class ContextInfo implements Visitable
 {
 	private int playID;
 	private PlayRole playRole;
@@ -13,6 +16,12 @@ public class ContextInfo
 
 	public int getPlayID() { return playID; }
 	public PlayRole getPlayRole() { return playRole; }
+
+	@Override
+	public void accept(Visitor visitor) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	
 	

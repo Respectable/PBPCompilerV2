@@ -10,4 +10,5 @@ public class ThreePointShot extends ShotType
 
 	@Override
 	public boolean isThreePoints() { return true; }
+	
 }

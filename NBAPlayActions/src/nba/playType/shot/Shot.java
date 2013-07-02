@@ -1,5 +1,6 @@
 package nba.playType.shot;
 
+import visitor.Visitor;
 import nba.playType.PlayType;
 
 public class Shot extends PlayType
@@ -15,6 +16,12 @@ public class Shot extends PlayType
 
 	public ShotType getShotType() { return shotType; }
 	public ShotEnding getShotEnding() { return shotEnding; }
+
+	@Override
+	public void accept(Visitor visitor) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	
 }

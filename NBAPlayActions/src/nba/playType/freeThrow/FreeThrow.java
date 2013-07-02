@@ -1,5 +1,6 @@
 package nba.playType.freeThrow;
 
+import visitor.Visitor;
 import nba.playType.PlayType;
 
 public class FreeThrow extends PlayType
@@ -14,6 +15,12 @@ public class FreeThrow extends PlayType
 
 	public String getFreeThrowType() { return freeThrowType; }
 	public FreeThrowPredicate getPredicate() { return predicate; }
+
+	@Override
+	public void accept(Visitor visitor) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	
 }

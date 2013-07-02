@@ -1,5 +1,6 @@
 package nba.playType.technical;
 
+import visitor.Visitor;
 import nba.Player;
 
 public class DoubleTechnical extends Technical
@@ -17,6 +18,10 @@ public class DoubleTechnical extends Technical
 
 	public Player getPlayer2() {return player2;}
 	
-	
+	@Override
+	public void accept(Visitor visitor)
+	{
+		
+	}
 	
 }

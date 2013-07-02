@@ -1,5 +1,6 @@
 package nba.playType.technical;
 
+import visitor.Visitor;
 import nba.playType.PlayType;
 
 public class Technical extends PlayType
@@ -17,5 +18,11 @@ public class Technical extends PlayType
 	}
 
 	public TechnicalPredicate getPredicate() { return predicate; }
+
+	@Override
+	public void accept(Visitor visitor) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

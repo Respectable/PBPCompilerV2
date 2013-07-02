@@ -1,5 +1,6 @@
 package nba.play;
 
+import visitor.Visitor;
 import nba.ContextInfo;
 import nba.Player;
 import nba.playType.PlayType;
@@ -14,5 +15,11 @@ public class MissedPlay extends PlayerPlay
 	
 	@Override
 	public boolean missed() { return true; }
+
+	@Override
+	public void accept(Visitor visitor) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

@@ -1,5 +1,6 @@
 package nba.playType.foul;
 
+import visitor.Visitor;
 import nba.playType.PlayType;
 
 public class Foul extends PlayType
@@ -17,6 +18,12 @@ public class Foul extends PlayType
 	}
 
 	public FoulType getFoulType() { return foulType; }
+
+	@Override
+	public void accept(Visitor visitor) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	
 }

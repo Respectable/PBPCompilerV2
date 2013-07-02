@@ -1,5 +1,6 @@
 package nba.playType.ejection;
 
+import visitor.Visitor;
 import nba.playType.PlayType;
 
 public class Ejection extends PlayType 
@@ -12,5 +13,11 @@ public class Ejection extends PlayType
 	}
 
 	public EjectionEnding getEnding() { return ending; }
+
+	@Override
+	public void accept(Visitor visitor) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

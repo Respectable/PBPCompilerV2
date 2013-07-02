@@ -1,8 +1,10 @@
 package nba.playType.shot;
 
+import visitor.Visitable;
+import visitor.Visitor;
 import nba.Player;
 
-public class Assist 
+public class Assist implements Visitable
 {
 	private Player player;
 	
@@ -17,5 +19,11 @@ public class Assist
 	}
 
 	public Player getPlayer() { return player; }
+
+	@Override
+	public void accept(Visitor visitor) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }
