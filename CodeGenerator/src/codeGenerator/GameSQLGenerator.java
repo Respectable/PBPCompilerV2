@@ -3,6 +3,7 @@ package codeGenerator;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -79,7 +80,7 @@ public class GameSQLGenerator
 					"VALUES (?,?);");
 			
 			stmt.setString(1, this.gameID);
-			stmt.setInt(2, getSeasonID(this.season));
+			stmt.setInt(2, getSeasonID(this.season, path, userName, password));
 			stmt.executeUpdate();
 			
 			
@@ -111,10 +112,50 @@ public class GameSQLGenerator
 		return total;
 	}
 	
-	private int getSeasonID(String season)
+	@SuppressWarnings("deprecation")
+	private int getSeasonID(String season, String path, String userName, String password)
 	{
-		//TODO
-		return -1;
+		Connection conn;
+		PreparedStatement stmt;
+		ResultSet rs;
+		int seasonID = -1;
+		java.sql.Date seasonStart, seasonEnd, startDate;
+		
+		try 
+		{
+			int startYear = Integer.parseInt(season.substring(0,4));
+			startDate = new java.sql.Date(startYear, 12, 31);
+			Class.forName("com.mysql.jdbc.Driver");
+			conn = DriverManager.getConnection(path,userName,password);
+			stmt = conn.prepareStatement("SELECT * FROM `nba`.`season`");
+			rs = stmt.executeQuery();
+			
+			while(rs.next())
+		    {
+		    	seasonStart = rs.getDate("start_date");
+		    	seasonEnd = rs.getDate("end_date");
+		    	
+		    	if (startDate.after(seasonStart) && startDate.before(seasonEnd))
+		    	{
+		    		seasonID = rs.getInt("season_id");
+		    		break;
+		    	}
+		    }
+			
+			stmt.close();
+			conn.close();
+			return seasonID;
+		} 
+		catch (ClassNotFoundException e) 
+		{
+			e.printStackTrace();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return seasonID;
 	}
 	
 }

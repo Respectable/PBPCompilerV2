@@ -1,6 +1,8 @@
 package jsonObjects.boxScoreObjects;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -68,4 +70,11 @@ public class OfficalJson
 		
 		return array;
 	}
+	
+	//Sort by id
+    public static Comparator<OfficalJson> COMPARE_BY_ID = new Comparator<OfficalJson>() {
+        public int compare(OfficalJson one, OfficalJson other) {
+            return Integer.compare(one.officalID , other.officalID);
+        }
+    };
 }

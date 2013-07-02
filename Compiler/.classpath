@@ -8,5 +8,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/PBPParser"/>
 	<classpathentry kind="lib" path="lib/java-cup-11a-runtime.jar"/>
 	<classpathentry kind="lib" path="lib/java-cup-11a.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/CodeGenerator"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

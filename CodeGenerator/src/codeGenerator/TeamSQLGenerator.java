@@ -8,74 +8,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import nba.Player;
-
 import jsonObjects.TeamJson;
 
 public class TeamSQLGenerator 
 {
-	
-	private int teamId, gameId;
-	private ArrayList<Player> players;
-	
-	public TeamSQLGenerator(int teamId, int gameId, ArrayList<Player> players)
-	{
-		this.teamId = teamId;
-		this.gameId = gameId;
-		this.players = players;
-	}
-	
-	public int getTeamId() { return teamId; }
-	public int getGameId() { return gameId; }
-	public ArrayList<Player> getPlayers() { return players; }
-	
-	public boolean hasPlayer(String playerName)
-	{
-		//TODO
-		return true;
-	}
-	
-	public boolean hasPlayer(int playerID)
-	{
-		//TODO
-		return true;
-	}
-	
-	public void compile(String path,
-			String userName, String password)
-	{
-		Connection conn;
-		PreparedStatement stmt;
-		
-		try 
-		{
-			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection(path,userName,password);
-			stmt = conn.prepareStatement("INSERT INTO `nba2`.`game_players` (`game_id`,`team_id`,`player_id`," +
-					"`active`) VALUES (?,?,?,?);");
-			
-			for (Player player : players)
-			{
-				stmt.setInt(1, this.gameId);
-				stmt.setInt(2, this.teamId);
-				stmt.setInt(3, player.getPlayerID());
-				stmt.setBoolean(4, player.isActive());
-				stmt.executeUpdate();
-			}
-			
-			stmt.close();
-			conn.close();
-			
-		} 
-		catch (ClassNotFoundException e) 
-		{
-			e.printStackTrace();
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-	}
 
 	public static void updateTeams(ArrayList<TeamJson> teams, String path,
 			String userName, String password)

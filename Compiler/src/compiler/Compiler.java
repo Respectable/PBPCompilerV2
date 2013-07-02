@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 
+import codeGenerator.PlayerSQLGenerator;
+import codeGenerator.TeamSQLGenerator;
+
 import java_cup.runtime.Symbol;
 
 import parser.parser;
@@ -21,6 +24,9 @@ import jsonObjects.*;
 public class Compiler {
 
 	private final static String currentSeason = "2012-13";
+	private final static String dbPath = "jdbc:mysql://localhost/nba2";
+	private final static String userName = "root";
+	private final static String password = "******";
 	/**
 	 * @param args
 	 */
@@ -29,10 +35,12 @@ public class Compiler {
 		ArrayList<PlayerJson> players;
 		BufferedReader br = NBADownloader.downloadPlayerData(currentSeason);
 		players = PlayerJson.getPlayers(br);
+		//PlayerSQLGenerator.updatePlayers(players, dbPath, userName, password);
 		
 		ArrayList<TeamJson> teams;
 		br = NBADownloader.downloadTeamData();
 		teams = TeamJson.getTeams(br);
+		//TeamSQLGenerator.updateTeams(teams, dbPath, userName, password);
 		
 		for(String s : args)
 		{
@@ -77,15 +85,6 @@ public class Compiler {
 				String test = "finished";
 				System.out.println(test);
 				
-				//parser p = new parser(new Yylex(new BufferedReader(new FileReader(s))));
-				//Symbol parse_tree = p.parse();
-				//game = (Game)parse_tree.value;
-				//ShotCompiler shotCompiler = new ShotCompiler();
-				//shotCompiler.main("/home/anthony/Desktop/Data/2010-2011/Shots");
-				//CodeGenerator generator = new CodeGenerator("jdbc:mysql://localhost/nba", "root",
-				//												"ao4132", game, s, shotCompiler);
-				//generator.generateCode();
-		        //game.CompileGame(s);
 			}
 			catch(Exception e)
 			{
