@@ -141,11 +141,7 @@ public class PBPJson extends NBAJsonObject
 	
 	public String printPBP()
 	{
-		if (this.eventNum == 254)
-		{
-			int x = 1;
-			System.out.print(x);
-		}
+		
 		String pbpString = "";
 		if (!this.homeDesc.trim().equals(""))
 		{

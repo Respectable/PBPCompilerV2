@@ -8,8 +8,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 
-import codeGenerator.PlayerSQLGenerator;
-import codeGenerator.TeamSQLGenerator;
+import codeGenerator.*;
+import visitors.*;
 
 import java_cup.runtime.Symbol;
 
@@ -79,12 +79,24 @@ public class Compiler {
 				writePBPData(playText);
 				
 				parser p = new parser(new Yylex(new BufferedReader(new StringReader(playText))));
-				Symbol parse_tree = p.debug_parse();
+				Symbol parse_tree = p.parse();
 				Game game = (Game)parse_tree.value;
 				
-				String test = "finished";
-				System.out.println(test);
+				String gameID = pbp.get(0).getGameID();
+				int homeID = boxScore.getGameSummary().getHomeID();
+				int awayID = boxScore.getGameSummary().getAwayID();
 				
+				RosterSQLGenerator rosters = new RosterSQLGenerator(homeID, awayID,
+						gameID, boxScore.getInactives(), boxScore.getPlayerStats());
+				
+				OfficalSQLGenerator officals = new OfficalSQLGenerator(gameID, 
+						boxScore.getOfficals());
+				
+				GameSQLGenerator gameGen = new GameSQLGenerator(boxScore.getGameInfo(),
+						boxScore.getGameSummary());
+				
+				PlayerVisitor playerVisitor = new PlayerVisitor(rosters);
+				game.accept(playerVisitor);
 			}
 			catch(Exception e)
 			{

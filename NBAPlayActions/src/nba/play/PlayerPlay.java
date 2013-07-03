@@ -17,6 +17,11 @@ public class PlayerPlay extends Play
 
 	public Player getPlayer() { return player; }
 	
+	public void setPlayer(Player player)
+	{
+		this.player = player;
+	}
+	
 	@Override
 	public void accept(Visitor visitor) {
 		// TODO Auto-generated method stub

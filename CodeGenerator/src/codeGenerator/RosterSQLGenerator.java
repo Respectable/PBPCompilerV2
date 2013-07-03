@@ -70,16 +70,109 @@ public class RosterSQLGenerator
 		return teamPlayers;
 	}
 	
-	public boolean hasPlayer(String playerName)
+	public ArrayList<Player> getActive()
 	{
-		//TODO
-		return true;
+		ArrayList<Player> teamPlayers = new ArrayList<Player>(awayStarters);
+		teamPlayers.addAll(awayBench);
+		teamPlayers.addAll(homeStarters);
+		teamPlayers.addAll(homeBench);
+		return teamPlayers;
 	}
 	
-	public boolean hasPlayer(int playerID)
+	public boolean findHomePlayer(Player player)
 	{
-		//TODO
-		return true;
+		String[] playerNameArray;
+		Player tempPlayer;
+		
+		playerNameArray = cleanPlayerName(player.getPlayerName());
+		
+		tempPlayer = searchPlayers(getHomeActive(), playerNameArray);
+		
+		if(!tempPlayer.equals(null))
+		{
+			player = tempPlayer;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	public boolean findAwayPlayer(Player player)
+	{
+		String[] playerNameArray;
+		Player tempPlayer;
+		
+		playerNameArray = cleanPlayerName(player.getPlayerName());
+		
+		tempPlayer = searchPlayers(getAwayActive(), playerNameArray);
+		
+		if(!tempPlayer.equals(null))
+		{
+			player = tempPlayer;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	public boolean findPlayer(Player player)
+	{
+		String[] playerNameArray;
+		Player tempPlayer;
+		
+		playerNameArray = cleanPlayerName(player.getPlayerName());
+		
+		tempPlayer = searchPlayers(getActive(), playerNameArray);
+		
+		if(!tempPlayer.equals(null))
+		{
+			player = tempPlayer;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	private String[] cleanPlayerName(String playerName)
+	{
+		String tempPlayerName;
+		
+		tempPlayerName = playerName.replace('.', ' ');
+		tempPlayerName = playerName.replace('-', ' ');
+		tempPlayerName = tempPlayerName.trim();
+		return tempPlayerName.split(" ");
+	}
+	
+	private Player searchPlayers(ArrayList<Player> players, String[] playerName)
+	{
+		boolean found = false;
+		for(Player player : players)
+		{
+			for(String namePart : playerName)
+			{
+				if (player.getPlayerName().contains(namePart))
+				{
+					found = true;
+				}
+				else
+				{
+					found = false;
+					break;
+				}
+			}
+			if (found)
+			{
+				return player;
+			}
+		}
+		
+		return null;
 	}
 	
 	private ArrayList<Player> parseStarters(int teamID, ArrayList<PlayerStatsJson> players)

@@ -31,6 +31,7 @@ public interface Visitor
 	public void visit(Block block);
 	public void visit(Ejection ejection);
 	public void visit(Foul foul);
+	public void visit(DoublePersonalFoul foul);
 	public void visit(FreeThrow freeThrow);
 	public void visit(JumpBall jumpBall);
 	public void visit(Rebound rebound);
