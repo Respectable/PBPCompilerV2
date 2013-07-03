@@ -20,9 +20,9 @@ public class Technical extends PlayType
 	public TechnicalPredicate getPredicate() { return predicate; }
 
 	@Override
-	public void accept(Visitor visitor) {
-		// TODO Auto-generated method stub
-		
+	public void accept(Visitor visitor) 
+	{
+		visitor.visit(this);
 	}
 	
 }

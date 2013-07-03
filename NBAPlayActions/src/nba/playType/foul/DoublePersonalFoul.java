@@ -1,5 +1,6 @@
 package nba.playType.foul;
 
+import visitor.Visitor;
 import nba.Player;
 
 public class DoublePersonalFoul extends Foul {
@@ -14,4 +15,10 @@ public class DoublePersonalFoul extends Foul {
 
 	public Player getPlayer1() { return player1; }
 	public Player getPlayer2() { return player2; }
+	
+	@Override
+	public void accept(Visitor visitor) 
+	{
+		visitor.visit(this);
+	}
 }

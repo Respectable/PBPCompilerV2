@@ -17,9 +17,9 @@ public class MissedPlay extends PlayerPlay
 	public boolean missed() { return true; }
 
 	@Override
-	public void accept(Visitor visitor) {
-		// TODO Auto-generated method stub
-		
+	public void accept(Visitor visitor) 
+	{
+		visitor.visit(this);
 	}
 
 }

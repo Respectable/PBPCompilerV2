@@ -22,11 +22,21 @@ public class Player implements Visitable
 
 	public String getPlayerName() { return playerName; }
 	public int getPlayerID() { return playerID; }
+	
+	public void setPlayerName(String name)
+	{
+		this.playerName = name;
+	}
+	
+	public void setPlayerID(int id)
+	{
+		this.playerID = id;
+	}
 
 	@Override
-	public void accept(Visitor visitor) {
-		// TODO Auto-generated method stub
-		
+	public void accept(Visitor visitor) 
+	{
+		visitor.visit(this);
 	}
 	
 	

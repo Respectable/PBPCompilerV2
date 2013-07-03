@@ -3,6 +3,7 @@ package nba.play;
 import visitor.Visitable;
 import visitor.Visitor;
 import nba.ContextInfo;
+import nba.Player;
 import nba.playType.PlayType;
 
 public class Play implements Visitable
@@ -19,10 +20,15 @@ public class Play implements Visitable
 	public PlayType getPlayType() { return playType; }
 	public ContextInfo getContextInfo() { return contextInfo; }
 	public boolean missed() { return false; }
+	
+	public void setPlayer(Player player)
+	{
+		
+	}
 
 	@Override
-	public void accept(Visitor visitor) {
-		// TODO Auto-generated method stub
-		
+	public void accept(Visitor visitor) 
+	{
+		visitor.visit(this);
 	}
 }

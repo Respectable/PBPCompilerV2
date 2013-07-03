@@ -15,9 +15,9 @@ public class Ejection extends PlayType
 	public EjectionEnding getEnding() { return ending; }
 
 	@Override
-	public void accept(Visitor visitor) {
-		// TODO Auto-generated method stub
-		
+	public void accept(Visitor visitor) 
+	{
+		visitor.visit(this);
 	}
 	
 }

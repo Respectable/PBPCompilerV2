@@ -24,11 +24,74 @@ public class PlayerVisitor implements Visitor
 {
 
 	private RosterSQLGenerator rosters;
-	private ContextInfo currentContext;
+	private PlayerVisitorState state;
+	private PlayRole currentTeam;
 	
 	public PlayerVisitor(RosterSQLGenerator rosters)
 	{
 		this.rosters = rosters;
+	}
+	
+	private void changeState(Play play)
+	{
+		if (play.getPlayType() instanceof JumpBall)
+		{
+			this.state = PlayerVisitorState.JUMPBALL;
+		}
+		else if (play.getPlayType() instanceof Rebound)
+		{
+			if (((Rebound)play.getPlayType()).isPlayerRebound())
+				this.state = PlayerVisitorState.PLAYERREBOUND;
+			else
+				this.state = PlayerVisitorState.TEAMREBOUND;
+		}
+		else if (play.getPlayType() instanceof Turnover)
+		{
+			//TODO
+			this.state = PlayerVisitorState.PLAYERTURNOVER;
+		}
+		else if (play.getPlayType() instanceof Violation)
+		{
+			//TODO
+			this.state = PlayerVisitorState.PLAYERVIOLATION;
+		}
+		else if (play.getPlayType() instanceof Shot)
+		{
+			this.state = PlayerVisitorState.SHOT;
+		}
+		else if (play.getPlayType() instanceof Timeout)
+		{
+			this.state = PlayerVisitorState.TIMEOUT;
+		}
+		else if (play.getPlayType() instanceof Substitution)
+		{
+			this.state = PlayerVisitorState.SUB;
+		}
+		else if (play.getPlayType() instanceof Foul)
+		{
+			//TODO
+			if (play.getPlayType() instanceof DoublePersonalFoul)
+				this.state = PlayerVisitorState.DOUBLEFOUL;
+			else
+				this.state = PlayerVisitorState.PLAYERFOUL;
+				
+		}
+		else if (play.getPlayType() instanceof FreeThrow)
+		{
+			this.state = PlayerVisitorState.FREETHROW;
+		}
+		else if (play.getPlayType() instanceof Technical)
+		{
+			//TODO
+			if (play.getPlayType() instanceof DoubleTechnical)
+				this.state = PlayerVisitorState.DOUBLETECH;
+			else
+				this.state = PlayerVisitorState.PLAYERTECH;
+		}
+		else if (play.getPlayType() instanceof Ejection)
+		{
+			this.state = PlayerVisitorState.EJECTION;
+		}
 	}
 	
 	@Override
@@ -41,6 +104,7 @@ public class PlayerVisitor implements Visitor
 		{
 			p.accept(this);
 		}
+		System.out.println("Finished assigning Players");
 	}
 
 	@Override
@@ -48,31 +112,47 @@ public class PlayerVisitor implements Visitor
 	{
 		for(Play p : period.getPlays())
 		{
+			changeState(p);
+			this.currentTeam = p.getContextInfo().getPlayRole();
 			p.accept(this);
-			this.currentContext = p.getContextInfo();
 		}
 	}
 
 	@Override
 	public void visit(Player player) 
 	{
-		if (currentContext.equals(PlayRole.HOME))
+		switch (state)
 		{
-			if(!rosters.findHomePlayer(player))
-				System.out.println("Could not find player: " + player.getPlayerName() +
-						" play: " + currentContext.getPlayID());
-		}
-		else if (currentContext.equals(PlayRole.AWAY))
-		{
-			if(!rosters.findAwayPlayer(player))
-				System.out.println("Could not find player: " + player.getPlayerName() +
-						" play: " + currentContext.getPlayID());
-		}
-		else
-		{
+		case JUMPBALL: case DOUBLEFOUL: case DOUBLETECH: 
 			if(!rosters.findPlayer(player))
-				System.out.println("Could not find player: " + player.getPlayerName() +
-						" play: " + currentContext.getPlayID());
+			{
+				System.out.println("Could not find player: " + player.getPlayerName());
+			}
+			break;
+		case PLAYERREBOUND: case PLAYERTURNOVER: case PLAYERVIOLATION:
+		case SHOT: case PLAYERFOUL: case FREETHROW: case PLAYERTECH:
+		case EJECTION: case SUB:
+			if(currentTeam.equals(PlayRole.HOME))
+			{
+				if(!rosters.findHomePlayer(player))
+					System.out.println("Could not find player: " + player.getPlayerName());
+			}
+			else if(currentTeam.equals(PlayRole.AWAY))
+			{
+				if(!rosters.findAwayPlayer(player))
+					System.out.println("Could not find player: " + player.getPlayerName());
+			}
+			else
+			{
+				if(!rosters.findPlayer(player))
+					System.out.println("Could not find player: " + player.getPlayerName());
+			}
+			break;
+		case TEAMREBOUND: case TEAMTURNOVER: case TEAMVIOLATION:
+		case TIMEOUT: case TEAMFOUL: case TEAMTECH:
+			player.setPlayerID(-1);
+			player.setPlayerName("#TEAM");
+			break;
 		}
 	}
 
@@ -123,7 +203,7 @@ public class PlayerVisitor implements Visitor
 	{
 		jumpBall.getPlayer1().accept(this);
 		jumpBall.getPlayer2().accept(this);
-		if (!jumpBall.getEnding().getTippedTo().equals(null))
+		if (jumpBall.getEnding().getTippedTo() != null)
 			jumpBall.getEnding().getTippedTo().accept(this);
 	}
 
@@ -136,14 +216,14 @@ public class PlayerVisitor implements Visitor
 	@Override
 	public void visit(Shot shot) 
 	{
-		if (!shot.getShotEnding().getAssist().equals(null))
+		if (shot.getShotEnding().getAssist() != null)
 			shot.getShotEnding().getAssist().accept(this);
 	}
 
 	@Override
 	public void visit(Assist assist) 
 	{
-		if (!assist.getPlayer().equals(null))
+		if (assist.getPlayer() != null)
 			assist.getPlayer().accept(this);
 	}
 
@@ -161,9 +241,9 @@ public class PlayerVisitor implements Visitor
 	public void visit(Technical technical) 
 	{
 		ThreeSecTechnical threeSecTec;
-		if (!technical.getPredicate().equals(null))
+		if (technical.getPredicate() != null)
 		{
-			if (!technical.getPredicate().getTechType().equals(null))
+			if (technical.getPredicate().getTechType() != null)
 			{
 				if (technical.getPredicate().getTechType() instanceof ThreeSecTechnical)
 				{

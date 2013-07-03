@@ -15,9 +15,9 @@ public class Timeout extends PlayType
 	public String getTimeoutType() { return timeoutType; }
 
 	@Override
-	public void accept(Visitor visitor) {
-		// TODO Auto-generated method stub
-		
+	public void accept(Visitor visitor) 
+	{
+		visitor.visit(this);
 	}
 	
 }

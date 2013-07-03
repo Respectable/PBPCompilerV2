@@ -18,9 +18,9 @@ public class Substitution extends PlayType
 	public Player getIn() { return in; }
 
 	@Override
-	public void accept(Visitor visitor) {
-		// TODO Auto-generated method stub
-		
+	public void accept(Visitor visitor) 
+	{
+		visitor.visit(this);
 	}
 	
 }

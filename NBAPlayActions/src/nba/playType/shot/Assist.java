@@ -21,9 +21,9 @@ public class Assist implements Visitable
 	public Player getPlayer() { return player; }
 
 	@Override
-	public void accept(Visitor visitor) {
-		// TODO Auto-generated method stub
-		
+	public void accept(Visitor visitor) 
+	{
+		visitor.visit(this);
 	}
 	
 }

@@ -15,8 +15,8 @@ public class Violation extends PlayType
 	public ViolationType getViolationType() { return violationType; }
 
 	@Override
-	public void accept(Visitor visitor) {
-		// TODO Auto-generated method stub
-		
+	public void accept(Visitor visitor) 
+	{
+		visitor.visit(this);
 	}
 }

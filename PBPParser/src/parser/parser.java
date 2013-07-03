@@ -1633,7 +1633,7 @@ class CUP$parser$actions {
           case 167: // rebound ::= REBOUND_LITERAL 
             {
               Rebound RESULT =null;
-		 RESULT = new Rebound(); 
+		 RESULT = new Rebound(false); 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("rebound",27, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
@@ -1648,7 +1648,7 @@ class CUP$parser$actions {
 		int n2left = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
 		int n2right = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		String n2 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
-		 RESULT = new Rebound(); 
+		 RESULT = new Rebound(true); 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("rebound",27, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-8)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;

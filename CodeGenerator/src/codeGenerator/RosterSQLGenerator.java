@@ -88,13 +88,16 @@ public class RosterSQLGenerator
 		
 		tempPlayer = searchPlayers(getHomeActive(), playerNameArray);
 		
-		if(!tempPlayer.equals(null))
+		if(tempPlayer != null)
 		{
-			player = tempPlayer;
+			player.setPlayerID(tempPlayer.getPlayerID());
+			player.setPlayerName(tempPlayer.getPlayerName());
 			return true;
 		}
 		else
 		{
+			player.setPlayerID(-1);
+			player.setPlayerName("#NOT_FOUND");
 			return false;
 		}
 	}
@@ -108,13 +111,16 @@ public class RosterSQLGenerator
 		
 		tempPlayer = searchPlayers(getAwayActive(), playerNameArray);
 		
-		if(!tempPlayer.equals(null))
+		if(tempPlayer != null)
 		{
-			player = tempPlayer;
+			player.setPlayerID(tempPlayer.getPlayerID());
+			player.setPlayerName(tempPlayer.getPlayerName());
 			return true;
 		}
 		else
 		{
+			player.setPlayerID(-1);
+			player.setPlayerName("#NOT_FOUND");
 			return false;
 		}
 	}
@@ -128,13 +134,16 @@ public class RosterSQLGenerator
 		
 		tempPlayer = searchPlayers(getActive(), playerNameArray);
 		
-		if(!tempPlayer.equals(null))
+		if(tempPlayer != null)
 		{
-			player = tempPlayer;
+			player.setPlayerID(tempPlayer.getPlayerID());
+			player.setPlayerName(tempPlayer.getPlayerName());
 			return true;
 		}
 		else
 		{
+			player.setPlayerID(-1);
+			player.setPlayerName("#NOT_FOUND");
 			return false;
 		}
 	}

@@ -23,8 +23,8 @@ public class PlayerPlay extends Play
 	}
 	
 	@Override
-	public void accept(Visitor visitor) {
-		// TODO Auto-generated method stub
-		
+	public void accept(Visitor visitor) 
+	{
+		visitor.visit(this);
 	}
 }

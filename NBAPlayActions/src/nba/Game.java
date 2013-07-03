@@ -16,9 +16,9 @@ public class Game implements Visitable
 	public ArrayList<Period> getPeriods() { return periods; }
 
 	@Override
-	public void accept(Visitor visitor) {
-		// TODO Auto-generated method stub
-		
+	public void accept(Visitor visitor) 
+	{
+		visitor.visit(this);
 	}
 	
 	

@@ -18,9 +18,9 @@ public class Turnover extends PlayType
 	public TurnoverEnding getEnding() {return ending;}
 
 	@Override
-	public void accept(Visitor visitor) {
-		// TODO Auto-generated method stub
-		
+	public void accept(Visitor visitor) 
+	{
+		visitor.visit(this);
 	}
 	
 }

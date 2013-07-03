@@ -17,9 +17,9 @@ public class FreeThrow extends PlayType
 	public FreeThrowPredicate getPredicate() { return predicate; }
 
 	@Override
-	public void accept(Visitor visitor) {
-		// TODO Auto-generated method stub
-		
+	public void accept(Visitor visitor) 
+	{
+		visitor.visit(this);
 	}
 	
 	

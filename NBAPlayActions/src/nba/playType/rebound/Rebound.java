@@ -5,14 +5,18 @@ import nba.playType.PlayType;
 
 public class Rebound extends PlayType
 {
-	public Rebound()
+	private boolean playerRebound;
+	
+	public Rebound(boolean playerRebound)
 	{
-		
+		this.playerRebound = playerRebound;
 	}
+	
+	public boolean isPlayerRebound() { return playerRebound; }
 
 	@Override
-	public void accept(Visitor visitor) {
-		// TODO Auto-generated method stub
-		
+	public void accept(Visitor visitor) 
+	{
+		visitor.visit(this);
 	}
 }

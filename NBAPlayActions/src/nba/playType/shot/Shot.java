@@ -18,9 +18,9 @@ public class Shot extends PlayType
 	public ShotEnding getShotEnding() { return shotEnding; }
 
 	@Override
-	public void accept(Visitor visitor) {
-		// TODO Auto-generated method stub
-		
+	public void accept(Visitor visitor) 
+	{
+		visitor.visit(this);
 	}
 	
 	
