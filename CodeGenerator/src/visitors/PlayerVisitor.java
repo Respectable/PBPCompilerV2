@@ -104,7 +104,6 @@ public class PlayerVisitor implements Visitor
 		{
 			p.accept(this);
 		}
-		System.out.println("Finished assigning Players");
 	}
 
 	@Override
@@ -124,28 +123,23 @@ public class PlayerVisitor implements Visitor
 		switch (state)
 		{
 		case JUMPBALL: case DOUBLEFOUL: case DOUBLETECH: 
-			if(!rosters.findPlayer(player))
-			{
-				System.out.println("Could not find player: " + player.getPlayerName());
-			}
+			rosters.findPlayer(player);
 			break;
 		case PLAYERREBOUND: case PLAYERTURNOVER: case PLAYERVIOLATION:
 		case SHOT: case PLAYERFOUL: case FREETHROW: case PLAYERTECH:
 		case EJECTION: case SUB:
 			if(currentTeam.equals(PlayRole.HOME))
 			{
-				if(!rosters.findHomePlayer(player))
-					System.out.println("Could not find player: " + player.getPlayerName());
+				rosters.findHomePlayer(player);
+					
 			}
 			else if(currentTeam.equals(PlayRole.AWAY))
 			{
-				if(!rosters.findAwayPlayer(player))
-					System.out.println("Could not find player: " + player.getPlayerName());
+				rosters.findAwayPlayer(player);
 			}
 			else
 			{
-				if(!rosters.findPlayer(player))
-					System.out.println("Could not find player: " + player.getPlayerName());
+				rosters.findPlayer(player);
 			}
 			break;
 		case TEAMREBOUND: case TEAMTURNOVER: case TEAMVIOLATION:

@@ -96,6 +96,7 @@ public class RosterSQLGenerator
 		}
 		else
 		{
+			System.out.println("Could not find player: " + player.getPlayerName());
 			player.setPlayerID(-1);
 			player.setPlayerName("#NOT_FOUND");
 			return false;
@@ -119,6 +120,7 @@ public class RosterSQLGenerator
 		}
 		else
 		{
+			System.out.println("Could not find player: " + player.getPlayerName());
 			player.setPlayerID(-1);
 			player.setPlayerName("#NOT_FOUND");
 			return false;
@@ -142,6 +144,7 @@ public class RosterSQLGenerator
 		}
 		else
 		{
+			System.out.println("Could not find player: " + player.getPlayerName());
 			player.setPlayerID(-1);
 			player.setPlayerName("#NOT_FOUND");
 			return false;
@@ -153,7 +156,7 @@ public class RosterSQLGenerator
 		String tempPlayerName;
 		
 		tempPlayerName = playerName.replace('.', ' ');
-		tempPlayerName = playerName.replace('-', ' ');
+		tempPlayerName = tempPlayerName.replace('-', ' ');
 		tempPlayerName = tempPlayerName.trim();
 		return tempPlayerName.split(" ");
 	}

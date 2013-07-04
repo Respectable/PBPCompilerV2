@@ -1,5 +1,10 @@
 package visitors;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
+import jsonObjects.PBPJson;
+import jsonObjects.ShotJson;
 import nba.*;
 import nba.play.*;
 import nba.playType.*;
@@ -21,71 +26,67 @@ import visitor.Visitor;
 
 public class ShotLocationVisitor implements Visitor {
 
+	private ArrayList<ShotJson> shots;
+	private ArrayList<PBPJson> pbp;
+	private Play currentPlay;
+	
+	public ShotLocationVisitor(ArrayList<ShotJson> shots, ArrayList<PBPJson> pbp)
+	{
+		this.shots = shots;
+		this.pbp = pbp;
+	}
+	
 	@Override
-	public void visit(ContextInfo contextInfo) {
-		// TODO Auto-generated method stub
-		
+	public void visit(ContextInfo contextInfo) {}
+
+	@Override
+	public void visit(Game game) 
+	{
+		for(Period p : game.getPeriods())
+		{
+			p.accept(this);
+		}
 	}
 
 	@Override
-	public void visit(Game game) {
-		// TODO Auto-generated method stub
-		
+	public void visit(Period period) 
+	{
+		for(Play p : period.getPlays())
+		{
+			this.currentPlay = p;
+			p.accept(this);
+		}
 	}
 
 	@Override
-	public void visit(Period period) {
-		// TODO Auto-generated method stub
-		
+	public void visit(Player player) {}
+
+	@Override
+	public void visit(Play play) {}
+
+	@Override
+	public void visit(PlayerPlay play) 
+	{
+		play.getPlayType().accept(this);
 	}
 
 	@Override
-	public void visit(Player player) {
-		// TODO Auto-generated method stub
-		
+	public void visit(MissedPlay play) 
+	{
+		play.getPlayType().accept(this);
 	}
 
 	@Override
-	public void visit(Play play) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(PlayType playType) {}
 
 	@Override
-	public void visit(PlayerPlay play) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(Block block) {}
 
 	@Override
-	public void visit(MissedPlay play) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(Ejection ejection) {}
 
 	@Override
-	public void visit(PlayType playType) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visit(Block block) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visit(Ejection ejection) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visit(Foul foul) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(Foul foul) {}
 
 	@Override
 	public void visit(FreeThrow freeThrow) {
@@ -94,87 +95,68 @@ public class ShotLocationVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(JumpBall jumpBall) {
-		// TODO Auto-generated method stub
+	public void visit(JumpBall jumpBall) {}
+
+	@Override
+	public void visit(Rebound rebound) {}
+
+	@Override
+	public void visit(Review review) {}
+
+	@Override
+	public void visit(Shot shot) 
+	{
+		ArrayList<ShotJson> possibleShots = new ArrayList<ShotJson>(shots);
+		ShotJson foundShot;
 		
+		Collections.sort(possibleShots, ShotJson.COMPARE_BY_PLAY_ID);
+		
+		ShotJson dummy = new ShotJson();
+		dummy.setPlayID(currentPlay.getPlayID());
+		int index = Collections.binarySearch(possibleShots, dummy, 
+				ShotJson.COMPARE_BY_PLAY_ID);
+		if (index == -1)
+		{
+			System.out.println("Game: " + pbp.get(0).getGameID() + " " +
+					"Play: " + currentPlay.getPlayID() + 
+					" Shot location not found.");
+		}
+		else
+		{
+			foundShot = possibleShots.get(index);
+			shot.setX(foundShot.getX());
+			shot.setY(foundShot.getY());
+		}
 	}
 
 	@Override
-	public void visit(Rebound rebound) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(Assist assist) {}
 
 	@Override
-	public void visit(Review review) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(Steal steal) {}
 
 	@Override
-	public void visit(Shot shot) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(Substitution sub) {}
 
 	@Override
-	public void visit(Assist assist) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(Technical technical) {}
 
 	@Override
-	public void visit(Steal steal) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(DoubleTechnical technical) {}
 
 	@Override
-	public void visit(Substitution sub) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(TauntingTechnical technical) {}
 
 	@Override
-	public void visit(Technical technical) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(Timeout timeout) {}
 
 	@Override
-	public void visit(DoubleTechnical technical) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(Turnover turnover) {}
 
 	@Override
-	public void visit(TauntingTechnical technical) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(Violation violation) {}
 
 	@Override
-	public void visit(Timeout timeout) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visit(Turnover turnover) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visit(Violation violation) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visit(DoublePersonalFoul foul) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(DoublePersonalFoul foul) {}
 
 }

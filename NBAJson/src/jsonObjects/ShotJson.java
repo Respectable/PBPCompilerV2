@@ -2,6 +2,7 @@ package jsonObjects;
 
 import java.io.BufferedReader;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -86,6 +87,11 @@ public class ShotJson extends NBAJsonObject
 	public boolean isShotAttempted() { return shotAttempted; }
 	public boolean isShotMade() { return shotMade; }
 	
+	public void setPlayID(int playID)
+	{
+		this.gameEventID = playID;
+	}
+	
 	public static ArrayList<ShotJson> parseShotJson(String json)
 	{
 		Gson gson = new Gson();
@@ -135,4 +141,11 @@ public class ShotJson extends NBAJsonObject
 		String json = readJson(reader);
 		return parseShotJson(json);
 	}
+    
+  //Sort by player_id
+    public static Comparator<ShotJson> COMPARE_BY_PLAY_ID = new Comparator<ShotJson>() {
+        public int compare(ShotJson one, ShotJson other) {
+            return Integer.compare(one.getGameEventID(), other.getGameEventID());
+        }
+    };
 }

@@ -27,6 +27,7 @@ public class Compiler {
 	private final static String dbPath = "jdbc:mysql://localhost/nba2";
 	private final static String userName = "root";
 	private final static String password = "******";
+	
 	/**
 	 * @param args
 	 */
@@ -97,6 +98,9 @@ public class Compiler {
 				
 				PlayerVisitor playerVisitor = new PlayerVisitor(rosters);
 				game.accept(playerVisitor);
+				
+				ShotLocationVisitor shotVisitor = new ShotLocationVisitor(shots, pbp);
+				game.accept(shotVisitor);
 			}
 			catch(Exception e)
 			{
@@ -123,8 +127,6 @@ public class Compiler {
 			BufferedWriter bw = new BufferedWriter(fw);
 			bw.write(data);
 			bw.close();
- 
-			System.out.println("Done");
  
 		} catch (IOException e) {
 			e.printStackTrace();

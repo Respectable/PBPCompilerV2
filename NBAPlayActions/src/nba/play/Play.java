@@ -31,4 +31,9 @@ public class Play implements Visitable
 	{
 		visitor.visit(this);
 	}
+	
+	public int getPlayID()
+	{
+		return contextInfo.getPlayID();
+	}
 }
