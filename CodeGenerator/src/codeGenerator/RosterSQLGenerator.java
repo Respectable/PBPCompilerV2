@@ -39,6 +39,8 @@ public class RosterSQLGenerator
 	public ArrayList<Player> getAwayBench() { return awayBench; }
 	public ArrayList<Player> getHomeInactive() { return homeInactive; }
 	public ArrayList<Player> getAwayInactive() { return awayInactive; }
+	public int getHomeID() { return this.homeID; }
+	public int getAwayID() { return this.awayID; }
 	
 	public ArrayList<Player> getHomeTeam()
 	{
@@ -85,9 +87,9 @@ public class RosterSQLGenerator
 		Player tempPlayer;
 		
 		playerNameArray = cleanPlayerName(player.getPlayerName());
-		
+			
 		tempPlayer = searchPlayers(getHomeActive(), playerNameArray);
-		
+			
 		if(tempPlayer != null)
 		{
 			player.setPlayerID(tempPlayer.getPlayerID());
@@ -103,10 +105,16 @@ public class RosterSQLGenerator
 		}
 	}
 	
+	public boolean searchHomePlayers(Player player)
+	{
+		return getHomeActive().contains(player);
+	}
+	
 	public boolean findAwayPlayer(Player player)
 	{
 		String[] playerNameArray;
 		Player tempPlayer;
+		
 		
 		playerNameArray = cleanPlayerName(player.getPlayerName());
 		
@@ -125,6 +133,11 @@ public class RosterSQLGenerator
 			player.setPlayerName("#NOT_FOUND");
 			return false;
 		}
+	}
+	
+	public boolean searchAwayPlayers(Player player)
+	{
+		return getAwayActive().contains(player);
 	}
 	
 	public boolean findPlayer(Player player)
@@ -149,6 +162,11 @@ public class RosterSQLGenerator
 			player.setPlayerName("#NOT_FOUND");
 			return false;
 		}
+	}
+	
+	public boolean searchPlayers(Player player)
+	{
+		return getActive().contains(player);
 	}
 	
 	private String[] cleanPlayerName(String playerName)

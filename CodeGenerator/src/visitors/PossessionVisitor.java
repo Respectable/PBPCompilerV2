@@ -1,5 +1,6 @@
 package visitors;
 
+import codeGenerator.RosterSQLGenerator;
 import nba.*;
 import nba.play.*;
 import nba.playType.*;
@@ -21,160 +22,275 @@ import visitor.Visitor;
 
 public class PossessionVisitor implements Visitor {
 
-	@Override
-	public void visit(ContextInfo contextInfo) {
-		// TODO Auto-generated method stub
+	
+	private RosterSQLGenerator rosters;
+	private Possession currentPossession;
+	private Play currentPlay;
+	
+	public PossessionVisitor(RosterSQLGenerator rosters)
+	{
+		this.rosters = rosters;
+	}
+	
+	private int getCurrentPlayTeam()
+	{
+		if (currentPlay.getContextInfo().getPlayRole().equals(PlayRole.HOME))
+			return rosters.getHomeID();
+		else if (currentPlay.getContextInfo().getPlayRole().equals(PlayRole.AWAY))
+			return rosters.getAwayID();
+		else
+			return -1;
+	}
+	
+	private boolean PossessionContinuation()
+	{
+		boolean defensiveFoul, timeout, sub, freeThrow, defTech;
 		
+		defensiveFoul =  ((currentPlay.getPlayType() instanceof Foul) 
+				&& (currentPossession.getDefenseID() == getCurrentPlayTeam() || getCurrentPlayTeam() == -1));
+		if (defensiveFoul)
+		{
+			Foul foul = (Foul)currentPlay.getPlayType();
+			if (foul.getFoulType() instanceof OffensiveFoulType || foul.getFoulType() instanceof OffensiveChargeFoulType)
+			{
+				defensiveFoul = false;
+			}
+		}
+		
+		timeout = currentPlay.getPlayType() instanceof Timeout;
+		sub = currentPlay.getPlayType() instanceof Substitution;
+		freeThrow = ((currentPlay.getPlayType() instanceof FreeThrow) &&
+				currentPossession.getOffenseID() == getCurrentPlayTeam());
+		defTech = ((currentPlay.getPlayType() instanceof Technical) 
+				&& (currentPossession.getDefenseID() == getCurrentPlayTeam() || getCurrentPlayTeam() == -1));
+		
+		return defensiveFoul || timeout || sub || freeThrow || defTech;
+	}
+	
+	private void assignTeamRoles()
+	{
+		if (currentPlay.getPlayType() instanceof JumpBall)
+		{
+			JumpBall jBall = (JumpBall)currentPlay.getPlayType();
+			Player player = jBall.getPossessionPlayer();
+			
+			if(player == null)
+			{
+				return;
+			}
+			
+			if (rosters.searchHomePlayers(player))
+			{
+				currentPossession.setTeamRoles(rosters.getHomeID(), 
+						rosters.getAwayID());
+			}
+			else if (rosters.searchAwayPlayers(player))
+			{
+				currentPossession.setTeamRoles(rosters.getAwayID(), 
+						rosters.getHomeID());
+			}
+		}
+		else
+		{
+			if (getCurrentPlayTeam() == rosters.getHomeID())
+			{
+				currentPossession.setTeamRoles(rosters.getHomeID(), 
+						rosters.getAwayID());
+			}
+			else if (getCurrentPlayTeam() == rosters.getAwayID())
+			{
+				currentPossession.setTeamRoles(rosters.getAwayID(), 
+						rosters.getHomeID());
+			}
+		}
+	}
+	
+	@Override
+	public void visit(ContextInfo contextInfo) {}
+
+	@Override
+	public void visit(Game game) 
+	{
+		for (Period p : game.getPeriods())
+		{
+			p.accept(this);
+		}
 	}
 
 	@Override
-	public void visit(Game game) {
-		// TODO Auto-generated method stub
+	public void visit(Period period) 
+	{
+		currentPossession = new Possession();
+		boolean madeShot = false;
+		boolean missedFirstFT = false;
 		
+		for (Play p : period.getPlays())
+		{
+			currentPlay = p;
+			
+			if (!currentPossession.teamsSet() && p.identifiesOffense())
+			{
+				assignTeamRoles();
+			}
+			
+			if (!madeShot)
+			{
+				if (p.getPlayType().terminatesPossession())
+				{
+					if ((p.getPlayType() instanceof Rebound) && missedFirstFT)
+					{
+						currentPossession.addPlay(p);
+						missedFirstFT = false;
+					}
+					else
+					{
+						currentPossession.addPlay(p);
+						period.addPossession(currentPossession);
+						madeShot = false;
+						missedFirstFT = false;
+						currentPossession = new Possession();
+					}
+				}
+				else
+				{
+					if((p.getPlayType() instanceof Shot))
+					{
+						madeShot = !(p instanceof MissedPlay);
+					}
+					if((p.getPlayType() instanceof FreeThrow))
+					{
+						FreeThrow ft = (FreeThrow)p.getPlayType();
+						if (!ft.lastFreeThrow())
+						{
+							missedFirstFT = (p instanceof MissedPlay);
+						}
+					}
+					currentPossession.addPlay(p);
+				}
+			}
+			else
+			{
+				if (PossessionContinuation())
+				{
+					if((p.getPlayType() instanceof FreeThrow))
+					{
+						FreeThrow ft = (FreeThrow)p.getPlayType();
+						if (!ft.lastFreeThrow())
+						{
+							missedFirstFT = (p instanceof MissedPlay);
+						}
+					}
+					currentPossession.addPlay(p);
+				}
+				else
+				{
+					if ((p.getPlayType() instanceof Rebound) && missedFirstFT)
+					{
+						currentPossession.addPlay(p);
+						missedFirstFT = false;
+					}
+					else if (p.getPlayType().terminatesPossession())
+					{
+						period.addPossession(currentPossession);
+						currentPossession = new Possession();
+						madeShot = false;
+						missedFirstFT = false;
+						currentPossession.addPlay(p);
+						assignTeamRoles();
+						period.addPossession(currentPossession);
+						currentPossession = new Possession();
+					}
+					else
+					{
+						period.addPossession(currentPossession);
+						currentPossession = new Possession();
+						madeShot = false;
+						missedFirstFT = false;
+						currentPossession.addPlay(p);
+						if((p.getPlayType() instanceof Shot))
+						{
+							madeShot = !(p instanceof MissedPlay);
+						}
+						if (p.identifiesOffense())
+						{
+							assignTeamRoles();
+						}
+					}
+				}
+			}
+		}
 	}
 
 	@Override
-	public void visit(Period period) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(Player player) {}
 
 	@Override
-	public void visit(Player player) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(Play play) {}
 
 	@Override
-	public void visit(Play play) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(PlayerPlay play) {}
 
 	@Override
-	public void visit(PlayerPlay play) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(MissedPlay play) {}
 
 	@Override
-	public void visit(MissedPlay play) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(PlayType playType) {}
 
 	@Override
-	public void visit(PlayType playType) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(Block block) {}
 
 	@Override
-	public void visit(Block block) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(Ejection ejection) {}
 
 	@Override
-	public void visit(Ejection ejection) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(Foul foul) {}
 
 	@Override
-	public void visit(Foul foul) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(FreeThrow freeThrow) {}
 
 	@Override
-	public void visit(FreeThrow freeThrow) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(JumpBall jumpBall) {}
 
 	@Override
-	public void visit(JumpBall jumpBall) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(Rebound rebound) {}
 
 	@Override
-	public void visit(Rebound rebound) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(Review review) {}
 
 	@Override
-	public void visit(Review review) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(Shot shot) {}
 
 	@Override
-	public void visit(Shot shot) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(Assist assist) {}
 
 	@Override
-	public void visit(Assist assist) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(Steal steal) {}
 
 	@Override
-	public void visit(Steal steal) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(Substitution sub) {}
 
 	@Override
-	public void visit(Substitution sub) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(Technical technical) {}
 
 	@Override
-	public void visit(Technical technical) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(DoubleTechnical technical) {}
 
 	@Override
-	public void visit(DoubleTechnical technical) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(TauntingTechnical technical) {}
 
 	@Override
-	public void visit(TauntingTechnical technical) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(Timeout timeout) {}
 
 	@Override
-	public void visit(Timeout timeout) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(Turnover turnover) {}
 
 	@Override
-	public void visit(Turnover turnover) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(Violation violation) {}
 
 	@Override
-	public void visit(Violation violation) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(DoublePersonalFoul foul) {}
 
 	@Override
-	public void visit(DoublePersonalFoul foul) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(Possession possession) {}
 
 }

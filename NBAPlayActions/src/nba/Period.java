@@ -11,11 +11,13 @@ public class Period implements Visitable
 {
 	private PeriodIdentification identification;
 	private ArrayList<Play> plays;
+	private ArrayList<Possession> possessions;
 	
 	public Period(PeriodIdentification identification, ArrayList<Play> plays) 
 	{
 		this.identification = identification;
 		this.plays = plays;
+		possessions = new ArrayList<Possession>();
 	}
 
 	public PeriodIdentification getIdentification() 
@@ -26,6 +28,16 @@ public class Period implements Visitable
 	public ArrayList<Play> getPlays() 
 	{
 		return plays;
+	}
+	
+	public ArrayList<Possession> getPossessions()
+	{
+		return possessions;
+	}
+	
+	public void addPossession(Possession possession)
+	{
+		possessions.add(possession);
 	}
 
 	@Override

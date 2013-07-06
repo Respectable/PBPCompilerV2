@@ -22,5 +22,33 @@ public class FreeThrow extends PlayType
 		visitor.visit(this);
 	}
 	
+	public boolean TerminatingFreeThrowType()
+	{
+		return !this.freeThrowType.equals("Technical") && 
+				!this.freeThrowType.equals("Clear Path");
+	}
+	
+	@Override
+	public boolean terminatesPossession()
+	{
+		return predicate.lastFreeThrow() && 
+				this.TerminatingFreeThrowType() &&
+				this.madeFT();
+	}
+
+	@Override
+	public boolean identifiesOffense() 
+	{
+		return this.freeThrowType.equals("") || 
+				this.freeThrowType.equals("Clear Path");
+	}
+	
+	public boolean lastFreeThrow()
+	{
+		return predicate.lastFreeThrow();
+	}
+	
+	public boolean madeFT() { return predicate.madeFT(); }
+	
 	
 }

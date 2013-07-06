@@ -19,5 +19,11 @@ public class Ejection extends PlayType
 	{
 		visitor.visit(this);
 	}
+
+	@Override
+	public boolean identifiesOffense() { return false; }
+
+	@Override
+	public boolean terminatesPossession() { return false; }
 	
 }

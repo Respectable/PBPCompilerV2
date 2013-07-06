@@ -25,6 +25,11 @@ public class Play implements Visitable
 	{
 		
 	}
+	
+	public boolean identifiesOffense()
+	{
+		return playType.identifiesOffense();
+	}
 
 	@Override
 	public void accept(Visitor visitor) 

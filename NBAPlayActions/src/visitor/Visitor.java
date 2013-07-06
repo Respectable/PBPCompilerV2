@@ -46,4 +46,5 @@ public interface Visitor
 	public void visit(Timeout timeout);
 	public void visit(Turnover turnover);
 	public void visit(Violation violation);
+	public void visit(Possession possession);
 }

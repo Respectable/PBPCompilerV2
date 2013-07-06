@@ -159,4 +159,7 @@ public class ShotLocationVisitor implements Visitor {
 	@Override
 	public void visit(DoublePersonalFoul foul) {}
 
+	@Override
+	public void visit(Possession possession) {}
+
 }

@@ -177,4 +177,10 @@ public class UnitVisitor implements Visitor {
 		
 	}
 
+	@Override
+	public void visit(Possession possession) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

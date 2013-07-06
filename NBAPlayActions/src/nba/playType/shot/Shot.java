@@ -38,6 +38,13 @@ public class Shot extends PlayType
 	{
 		visitor.visit(this);
 	}
+
+
+	@Override
+	public boolean identifiesOffense() { return true; }
+
+	@Override
+	public boolean terminatesPossession() { return false; }
 	
 	
 }

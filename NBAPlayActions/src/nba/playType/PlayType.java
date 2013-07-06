@@ -19,4 +19,7 @@ public abstract class PlayType implements Visitable
 	{
 		
 	}
+	
+	public abstract boolean identifiesOffense();
+	public abstract boolean terminatesPossession();
 }

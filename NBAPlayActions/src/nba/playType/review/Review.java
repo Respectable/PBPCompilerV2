@@ -15,4 +15,16 @@ public class Review extends PlayType
 	{
 		visitor.visit(this);
 	}
+
+	@Override
+	public boolean identifiesOffense() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean terminatesPossession() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

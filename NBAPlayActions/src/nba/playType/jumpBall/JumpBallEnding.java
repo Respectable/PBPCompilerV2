@@ -18,4 +18,16 @@ public class JumpBallEnding
 
 	public Player getTippedTo() { return tippedTo; }
 	
+	public boolean IdentifiesOffense()
+	{
+		if (tippedTo != null)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
 }

@@ -11,7 +11,7 @@ public class Player implements Visitable
 	public Player(String playerName) 
 	{
 		this.playerName = playerName;
-		playerID = 0;
+		playerID = -1;
 	}
 	
 	public Player(String playerName, int playerID) 
@@ -39,6 +39,39 @@ public class Player implements Visitable
 		visitor.visit(this);
 	}
 	
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (obj == null) 
+		{
+	        return false;
+	    }
+		
+	    if (getClass() != obj.getClass()) 
+	    {
+	        return false;
+	    }
+	    
+	    final Player other = (Player) obj;
+	    
+	    if ((this.playerName == null) ? (other.playerName != null) : 
+	    	!this.playerName.equals(other.playerName)) 
+	    {
+	        return false;
+	    }
+	    
+	    if (this.playerID != other.playerID) 
+	    {
+	        return false;
+	    }
+	    
+	    return true;
+	}
 	
-	
+
+	@Override
+	public int hashCode() 
+	{
+		return this.playerID * this.playerName.hashCode();
+	}
 }

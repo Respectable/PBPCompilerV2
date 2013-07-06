@@ -267,6 +267,9 @@ public class PlayerVisitor implements Visitor
 	@Override
 	public void visit(Violation violation) {}
 
+	@Override
+	public void visit(Possession possession) {}
+
 	
 
 }

@@ -101,6 +101,9 @@ public class Compiler {
 				
 				ShotLocationVisitor shotVisitor = new ShotLocationVisitor(shots, pbp);
 				game.accept(shotVisitor);
+				
+				PossessionVisitor possessionVisitor = new PossessionVisitor(rosters);
+				game.accept(possessionVisitor);
 			}
 			catch(Exception e)
 			{
