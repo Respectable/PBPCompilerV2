@@ -42,6 +42,11 @@ public class Possession implements Visitable
 		{
 			System.out.println("Home Unit Full, cannot add player: " +
 					player.getPlayerName());
+			System.out.println("The unit already contains the following:");
+			for (Player p : homePlayers)
+			{
+				System.out.println(p.getPlayerName());
+			}
 			System.exit(-1);
 		}
 	}
@@ -56,6 +61,11 @@ public class Possession implements Visitable
 		{
 			System.out.println("Away Unit Full, cannot add player: " +
 					player.getPlayerName());
+			System.out.println("The unit already contains the following:");
+			for (Player p : awayPlayers)
+			{
+				System.out.println(p.getPlayerName());
+			}
 			System.exit(-1);
 		}
 	}

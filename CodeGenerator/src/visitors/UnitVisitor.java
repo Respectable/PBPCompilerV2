@@ -30,9 +30,12 @@ public class UnitVisitor implements Visitor
 	private RosterSQLGenerator rosters;
 	private ArrayList<Possession> backPossessions;
 	private Player currentPlayer;
-	private boolean subInPossession, currentPlayerOnCourt, currentPlayerIsHome;
+	private boolean subInPossession, currentPlayerOnCourt, currentPlayerIsHome,
+				debug, debugRun;
+	private int debugCounter;
+	private String debugString;
 	
-	public UnitVisitor(RosterSQLGenerator rosters)
+	public UnitVisitor(RosterSQLGenerator rosters, boolean debug)
 	{
 		this.rosters = rosters;
 		this.backPossessions = new ArrayList<Possession>();
@@ -40,6 +43,10 @@ public class UnitVisitor implements Visitor
 		this.subInPossession = false;
 		this.currentPlayerOnCourt = false;
 		currentPlayerIsHome = true;
+		this.debug = debug;
+		this.debugCounter = 0;
+		this.debugString = "";
+		this.debugRun = false;
 	}
 	
 	@Override
@@ -57,18 +64,39 @@ public class UnitVisitor implements Visitor
 		{
 			for (Possession poss : p.getPossessions())
 			{
-				System.out.println("Possession------------------------------");
-				System.out.println("Home Players:");
-				for (Player player : poss.getHomePlayers())
+				if(poss.getHomePlayers().size() < 5)
 				{
-					System.out.println(player.getPlayerName());
+					System.out.println("Home unit not filled");
+					System.out.println("Possession------------------------------");
+					System.out.println("Home Players:");
+					for (Player player : poss.getHomePlayers())
+					{
+						System.out.println(player.getPlayerName());
+					}
+					System.out.println("Away Players:");
+					for (Player player : poss.getAwayPlayers())
+					{
+						System.out.println(player.getPlayerName());
+					}
+					System.out.println("----------------------------------------");
 				}
-				System.out.println("Away Players:");
-				for (Player player : poss.getAwayPlayers())
+				if(poss.getAwayPlayers().size() < 5)
 				{
-					System.out.println(player.getPlayerName());
+					System.out.println("Away unit not filled");
+					System.out.println("Possession------------------------------");
+					System.out.println("Home Players:");
+					for (Player player : poss.getHomePlayers())
+					{
+						System.out.println(player.getPlayerName());
+					}
+					System.out.println("Away Players:");
+					for (Player player : poss.getAwayPlayers())
+					{
+						System.out.println(player.getPlayerName());
+					}
+					System.out.println("----------------------------------------");
 				}
-				System.out.println("----------------------------------------");
+				
 			}
 		}
 	}
@@ -109,8 +137,23 @@ public class UnitVisitor implements Visitor
 			for (Possession p : period.getPossessions())
 			{
 				p.accept(this);
+				if (!currentPlayerOnCourt & !subInPossession)
+				{
+					backPossessions.add(p);
+				}
+				else if (currentPlayerOnCourt)
+				{
+					for (Possession poss : backPossessions)
+					{
+						poss.addAwayPlayer(currentPlayer);
+					}
+					backPossessions = new ArrayList<Possession>();
+					p.addAwayPlayer(currentPlayer);
+				}
+				subInPossession = false;
 			}
 			backPossessions = new ArrayList<Possession>();
+			currentPlayerOnCourt = false;
 		}
 	}
 
@@ -234,7 +277,7 @@ public class UnitVisitor implements Visitor
 		}
 		else if (currentPlayerOnCourt & sub.getOut().equals(currentPlayer))
 		{
-			currentPlayerOnCourt = true;
+			currentPlayerOnCourt = false;
 			subInPossession = true;
 		}
 	}
