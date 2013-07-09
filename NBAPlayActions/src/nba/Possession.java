@@ -34,12 +34,40 @@ public class Possession implements Visitable
 	
 	public void addHomePlayer(Player player)
 	{
-		homePlayers.add(player);
+		if (homePlayers.size() < 5)
+		{
+			homePlayers.add(player);
+		}
+		else
+		{
+			System.out.println("Home Unit Full, cannot add player: " +
+					player.getPlayerName());
+			System.exit(-1);
+		}
 	}
 	
 	public void addAwayPlayer(Player player)
 	{
-		awayPlayers.add(player);
+		if (awayPlayers.size() < 5)
+		{
+			awayPlayers.add(player);
+		}
+		else
+		{
+			System.out.println("Away Unit Full, cannot add player: " +
+					player.getPlayerName());
+			System.exit(-1);
+		}
+	}
+	
+	public boolean removeHomePlayer(Player player)
+	{
+		return homePlayers.remove(player);
+	}
+	
+	public boolean removeAwayPlayer(Player player)
+	{
+		return awayPlayers.remove(player);
 	}
 	
 	public void setTeamRoles(int offTeamID, int defTeamID)
@@ -60,6 +88,18 @@ public class Possession implements Visitable
 	public ArrayList<Play> getPossessionPlays() { return this.possessionPlays; }
 	public ArrayList<Player> getHomePlayers() { return this.homePlayers; }
 	public ArrayList<Player> getAwayPlayers() { return this.awayPlayers; }
+	public int getHomeUnitSize() { return this.homePlayers.size(); }
+	public int getAwayUnitSize() { return this.awayPlayers.size(); }
+	
+	public boolean homeUnitContainsPlayer(Player player)
+	{
+		return homePlayers.contains(player);
+	}
+	
+	public boolean awayUnitContainsPlayer(Player player)
+	{
+		return awayPlayers.contains(player);
+	}
 	
 	@Override
 	public void accept(Visitor visitor) 

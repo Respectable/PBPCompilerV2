@@ -104,6 +104,9 @@ public class Compiler {
 				
 				PossessionVisitor possessionVisitor = new PossessionVisitor(rosters);
 				game.accept(possessionVisitor);
+				
+				UnitVisitor unitVisitor = new UnitVisitor(rosters);
+				game.accept(unitVisitor);
 			}
 			catch(Exception e)
 			{

@@ -8,7 +8,7 @@ public class Substitution extends PlayType
 {
 	private Player out, in;
 	
-	public Substitution(Player out, Player in)
+	public Substitution(Player in, Player out)
 	{
 		this.out = out;
 		this.in = in;
