@@ -81,27 +81,70 @@ public class RosterSQLGenerator
 		return teamPlayers;
 	}
 	
-	public boolean findHomePlayer(Player player)
+	public PlayerSearchState findHomePlayer(Player player)
 	{
 		String[] playerNameArray;
-		Player tempPlayer;
+		Player tempPlayer = new Player("Dummy", -1);
+		Player returnPlayer = new Player("Dummy", -1);
+		ArrayList<Player> tempPlayers = new ArrayList<Player>(getHomeActive());
+		PlayerSearchState currentState = PlayerSearchState.NOT_FOUND;
 		
 		playerNameArray = cleanPlayerName(player.getPlayerName());
 			
-		tempPlayer = searchPlayers(getHomeActive(), playerNameArray);
-			
-		if(tempPlayer != null)
+		while(tempPlayer != null)
 		{
-			player.setPlayerID(tempPlayer.getPlayerID());
-			player.setPlayerName(tempPlayer.getPlayerName());
-			return true;
+			switch(currentState)
+			{
+			case NOT_FOUND:
+				returnPlayer = searchPlayers(tempPlayers, playerNameArray);
+				tempPlayer = returnPlayer;
+				if (tempPlayer != null)
+				{
+					currentState = PlayerSearchState.FOUND;
+					tempPlayers.remove(tempPlayer);
+				}
+				else
+				{
+					break;
+				}
+			case FOUND:
+				tempPlayer = searchPlayers(tempPlayers, playerNameArray);
+				if (tempPlayer != null)
+				{
+					currentState = PlayerSearchState.DUPLICATE_HOME;
+					tempPlayers.remove(tempPlayer);
+				}
+				else
+				{
+					break;
+				}
+			default:
+				tempPlayer = null;
+				break;
+			}
 		}
-		else
+		
+		switch(currentState)
 		{
+		case NOT_FOUND:
 			System.out.println("Could not find player: " + player.getPlayerName());
-			player.setPlayerID(-1);
-			player.setPlayerName("#NOT_FOUND");
-			return false;
+			player.setPlayerID(currentState.getValue());
+			player.setPlayerName(currentState.getText());
+			return currentState;
+		case FOUND:
+			player.setPlayerID(returnPlayer.getPlayerID());
+			player.setPlayerName(returnPlayer.getPlayerName());
+			return currentState;
+		case DUPLICATE_HOME:
+			System.out.println("Multiple players with name " + 
+					player.getPlayerName() + " on home team");
+			player.setPlayerID(currentState.getValue());
+			player.setPlayerName(currentState.getText());
+			return currentState;
+		default:
+			System.out.println("Error finding player" + player.getPlayerName());
+			System.exit(-1);
+			return currentState;
 		}
 	}
 	
@@ -110,28 +153,70 @@ public class RosterSQLGenerator
 		return getHomeActive().contains(player);
 	}
 	
-	public boolean findAwayPlayer(Player player)
+	public PlayerSearchState findAwayPlayer(Player player)
 	{
 		String[] playerNameArray;
-		Player tempPlayer;
-		
+		Player tempPlayer = new Player("Dummy", -1);
+		Player returnPlayer = new Player("Dummy", -1);
+		ArrayList<Player> tempPlayers = new ArrayList<Player>(getAwayActive());
+		PlayerSearchState currentState = PlayerSearchState.NOT_FOUND;
 		
 		playerNameArray = cleanPlayerName(player.getPlayerName());
-		
-		tempPlayer = searchPlayers(getAwayActive(), playerNameArray);
-		
-		if(tempPlayer != null)
+			
+		while(tempPlayer != null)
 		{
-			player.setPlayerID(tempPlayer.getPlayerID());
-			player.setPlayerName(tempPlayer.getPlayerName());
-			return true;
+			switch(currentState)
+			{
+			case NOT_FOUND:
+				returnPlayer = searchPlayers(tempPlayers, playerNameArray);
+				tempPlayer = returnPlayer;
+				if (tempPlayer != null)
+				{
+					currentState = PlayerSearchState.FOUND;
+					tempPlayers.remove(tempPlayer);
+				}
+				else
+				{
+					break;
+				}
+			case FOUND:
+				tempPlayer = searchPlayers(tempPlayers, playerNameArray);
+				if (tempPlayer != null)
+				{
+					currentState = PlayerSearchState.DUPLICATE_AWAY;
+					tempPlayers.remove(tempPlayer);
+				}
+				else
+				{
+					break;
+				}
+			default:
+				tempPlayer = null;
+				break;
+			}
 		}
-		else
+		
+		switch(currentState)
 		{
+		case NOT_FOUND:
 			System.out.println("Could not find player: " + player.getPlayerName());
-			player.setPlayerID(-1);
-			player.setPlayerName("#NOT_FOUND");
-			return false;
+			player.setPlayerID(currentState.getValue());
+			player.setPlayerName(currentState.getText());
+			return currentState;
+		case FOUND:
+			player.setPlayerID(returnPlayer.getPlayerID());
+			player.setPlayerName(returnPlayer.getPlayerName());
+			return currentState;
+		case DUPLICATE_AWAY:
+			System.out.println("Multiple players with name " + 
+					player.getPlayerName() + " on away team");
+			player.setPlayerID(currentState.getValue());
+			player.setPlayerName(currentState.getText());
+			return currentState;
+		default:
+			System.out.println("Error finding player" + player.getPlayerName());
+			System.exit(-1);
+			return currentState;
 		}
 	}
 	
@@ -140,27 +225,138 @@ public class RosterSQLGenerator
 		return getAwayActive().contains(player);
 	}
 	
-	public boolean findPlayer(Player player)
+	public PlayerSearchState findPlayer(Player player)
 	{
 		String[] playerNameArray;
-		Player tempPlayer;
+		Player tempPlayer = new Player("Dummy", -1);
+		Player returnPlayer = new Player("Dummy", -1);
+		ArrayList<Player> tempPlayers = new ArrayList<Player>(getAwayActive());
+		PlayerSearchState currentState = PlayerSearchState.NOT_FOUND;
 		
 		playerNameArray = cleanPlayerName(player.getPlayerName());
-		
-		tempPlayer = searchPlayers(getActive(), playerNameArray);
-		
-		if(tempPlayer != null)
+			
+		while(tempPlayer != null)
 		{
-			player.setPlayerID(tempPlayer.getPlayerID());
-			player.setPlayerName(tempPlayer.getPlayerName());
-			return true;
+			switch(currentState)
+			{
+			case NOT_FOUND:
+				returnPlayer = searchPlayers(tempPlayers, playerNameArray);
+				tempPlayer = returnPlayer;
+				if (tempPlayer != null)
+				{
+					currentState = PlayerSearchState.FOUND;
+					tempPlayers.remove(tempPlayer);
+				}
+				else
+				{
+					break;
+				}
+			case FOUND:
+				tempPlayer = searchPlayers(tempPlayers, playerNameArray);
+				if (tempPlayer != null)
+				{
+					currentState = PlayerSearchState.DUPLICATE_AWAY;
+					tempPlayers.remove(tempPlayer);
+				}
+				else
+				{
+					break;
+				}
+			default:
+				tempPlayer = null;
+				break;
+			}
 		}
-		else
+		
+		tempPlayer = new Player("Dummy", -1);
+		tempPlayers = new ArrayList<Player>(getHomeActive());
+		
+		while(tempPlayer != null)
 		{
+			switch(currentState)
+			{
+			case NOT_FOUND:
+				returnPlayer = searchPlayers(tempPlayers, playerNameArray);
+				tempPlayer = returnPlayer;
+				if (tempPlayer != null)
+				{
+					currentState = PlayerSearchState.FOUND;
+					tempPlayers.remove(tempPlayer);
+				}
+				else
+				{
+					break;
+				}
+			case FOUND:
+				tempPlayer = searchPlayers(tempPlayers, playerNameArray);
+				if (tempPlayer != null)
+				{
+					tempPlayers.remove(tempPlayer);
+					if(searchHomePlayers(returnPlayer))
+						currentState = PlayerSearchState.DUPLICATE_HOME;
+					else
+						currentState = PlayerSearchState.SINGLE_HOME_AWAY;
+				}
+				else
+				{
+					break;
+				}
+			case SINGLE_HOME_AWAY: case DUPLICATE_AWAY:
+				tempPlayer = searchPlayers(tempPlayers, playerNameArray);
+				if (tempPlayer != null)
+				{
+					tempPlayers.remove(tempPlayer);
+					currentState = PlayerSearchState.MULT_HOME_AWAY;
+				}
+				else
+				{
+					break;
+				}
+			default:
+				tempPlayer = null;
+				break;
+			}
+		}
+		
+		switch(currentState)
+		{
+		case NOT_FOUND:
 			System.out.println("Could not find player: " + player.getPlayerName());
-			player.setPlayerID(-1);
-			player.setPlayerName("#NOT_FOUND");
-			return false;
+			player.setPlayerID(currentState.getValue());
+			player.setPlayerName(currentState.getText());
+			return currentState;
+		case FOUND:
+			player.setPlayerID(returnPlayer.getPlayerID());
+			player.setPlayerName(returnPlayer.getPlayerName());
+			return currentState;
+		case DUPLICATE_HOME:
+			System.out.println("Multiple players with name " + 
+					player.getPlayerName() + " on home team");
+			player.setPlayerID(currentState.getValue());
+			player.setPlayerName(currentState.getText());
+			return currentState;
+		case DUPLICATE_AWAY:
+			System.out.println("Multiple players with name " + 
+					player.getPlayerName() + " on away team");
+			player.setPlayerID(currentState.getValue());
+			player.setPlayerName(currentState.getText());
+			return currentState;
+		case SINGLE_HOME_AWAY:
+			System.out.println("Single players with name " + 
+					player.getPlayerName() + " on both teams");
+			player.setPlayerID(currentState.getValue());
+			player.setPlayerName(currentState.getText());
+			return currentState;
+		case MULT_HOME_AWAY:
+			System.out.println("Multiple players with name " + 
+					player.getPlayerName() + " on both teams");
+			player.setPlayerID(currentState.getValue());
+			player.setPlayerName(currentState.getText());
+			return currentState;
+		default:
+			System.out.println("Error finding player" + player.getPlayerName());
+			System.exit(-1);
+			return currentState;
 		}
 	}
 	

@@ -34,6 +34,7 @@ public class UnitVisitor implements Visitor
 				debug, debugRun;
 	private int debugCounter;
 	private String debugString;
+	private Possession currentPossession;
 	
 	public UnitVisitor(RosterSQLGenerator rosters, boolean debug)
 	{
@@ -42,7 +43,7 @@ public class UnitVisitor implements Visitor
 		this.currentPlayer = null;
 		this.subInPossession = false;
 		this.currentPlayerOnCourt = false;
-		currentPlayerIsHome = true;
+		this.currentPlayerIsHome = true;
 		this.debug = debug;
 		this.debugCounter = 0;
 		this.debugString = "";
@@ -109,6 +110,7 @@ public class UnitVisitor implements Visitor
 			currentPlayer = player;
 			for (Possession p : period.getPossessions())
 			{
+				currentPossession = p;
 				p.accept(this);
 				if (!currentPlayerOnCourt & !subInPossession)
 				{
@@ -129,13 +131,14 @@ public class UnitVisitor implements Visitor
 			currentPlayerOnCourt = false;
 		}
 		
-		currentPlayerIsHome = false;
+		this.currentPlayerIsHome = false;
 		
 		for (Player player : rosters.getAwayActive())
 		{
 			currentPlayer = player;
 			for (Possession p : period.getPossessions())
 			{
+				currentPossession = p;
 				p.accept(this);
 				if (!currentPlayerOnCourt & !subInPossession)
 				{
@@ -145,9 +148,17 @@ public class UnitVisitor implements Visitor
 				{
 					for (Possession poss : backPossessions)
 					{
+						if (currentPlayer.equals(new Player("Orlando Johnson", 203111)))
+						{
+							int x = 1;
+						}
 						poss.addAwayPlayer(currentPlayer);
 					}
 					backPossessions = new ArrayList<Possession>();
+					if (currentPlayer.equals(new Player("Orlando Johnson", 203111)))
+					{
+						int x = 1;
+					}
 					p.addAwayPlayer(currentPlayer);
 				}
 				subInPossession = false;
@@ -155,6 +166,7 @@ public class UnitVisitor implements Visitor
 			backPossessions = new ArrayList<Possession>();
 			currentPlayerOnCourt = false;
 		}
+		this.currentPlayerIsHome = true;
 	}
 
 	@Override
@@ -247,7 +259,7 @@ public class UnitVisitor implements Visitor
 		
 		if (!currentPlayerOnCourt & sub.getOut().equals(currentPlayer))
 		{
-			if (currentPlayerIsHome)
+			if (this.currentPlayerIsHome)
 			{
 				for (Possession poss : backPossessions)
 				{
