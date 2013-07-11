@@ -11,7 +11,7 @@ import com.google.gson.JsonParser;
 public class PlayerStatsJson 
 {
 	private int teamID, playerID;
-	private String teamAbbr, playerName, startPosition;
+	private String teamAbbr, playerName, startPosition, comment;
 	
 	public PlayerStatsJson()
 	{
@@ -19,13 +19,14 @@ public class PlayerStatsJson
 	}
 
 	public PlayerStatsJson(int teamID, int playerID, String teamAbbr,
-			String playerName, String startPosition) 
+			String playerName, String startPosition, String comment) 
 	{
 		this.teamID = teamID;
 		this.playerID = playerID;
 		this.teamAbbr = teamAbbr;
 		this.playerName = playerName;
 		this.startPosition = startPosition;
+		this.comment = comment;
 	}
 
 	public int getTeamID() { return teamID; }
@@ -33,12 +34,13 @@ public class PlayerStatsJson
 	public String getTeamAbbr() { return teamAbbr; }
 	public String getPlayerName() { return playerName; }
 	public String getStartPosition() { return startPosition; }
+	public String getComment() {return comment; }
 	
 	public static ArrayList<PlayerStatsJson> parsePlayerStats(String json)
 	{
 		Gson gson = new Gson();
 		int teamID, playerID;
-		String teamAbbr, playerName, startPosition;
+		String teamAbbr, playerName, startPosition, comment;
 		JsonArray array, tempArray;
 		ArrayList<PlayerStatsJson> players = new ArrayList<PlayerStatsJson>();
 		
@@ -52,8 +54,9 @@ public class PlayerStatsJson
 			teamAbbr =  gson.fromJson(tempArray.get(2), String.class);
 			playerName =  gson.fromJson(tempArray.get(5), String.class);
 			startPosition =  gson.fromJson(tempArray.get(6), String.class);
+			comment =  gson.fromJson(tempArray.get(7), String.class);
 			players.add(new PlayerStatsJson(teamID, playerID, teamAbbr, 
-					playerName, startPosition));
+					playerName, startPosition, comment));
 		}
 		
 		return players;

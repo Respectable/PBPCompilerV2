@@ -15,7 +15,8 @@ public class RosterSQLGenerator
 {
 	private ArrayList<Player> homeStarters, awayStarters,
 								homeBench, awayBench,
-								homeInactive, awayInactive;
+								homeInactive, awayInactive,
+								homeDNP, awayDNP;
 	private int homeID, awayID;
 	private String gameID;
 	
@@ -28,6 +29,8 @@ public class RosterSQLGenerator
 		this.awayStarters = parseStarters(awayID, players);
 		this.awayBench = parseBench(awayID, players);
 		this.awayInactive = parseInactive(awayID, inactive);
+		this.homeDNP = parseDNP(homeID, players);
+		this.awayDNP = parseDNP(awayID, players);
 		this.homeID = homeID;
 		this.awayID = awayID;
 		this.gameID = gameID;
@@ -39,6 +42,8 @@ public class RosterSQLGenerator
 	public ArrayList<Player> getAwayBench() { return awayBench; }
 	public ArrayList<Player> getHomeInactive() { return homeInactive; }
 	public ArrayList<Player> getAwayInactive() { return awayInactive; }
+	public ArrayList<Player> getHomeDNP() { return homeDNP; }
+	public ArrayList<Player> getAwayDNP() { return awayDNP; }
 	public int getHomeID() { return this.homeID; }
 	public int getAwayID() { return this.awayID; }
 	
@@ -434,6 +439,21 @@ public class RosterSQLGenerator
 		for(PlayerStatsJson player : players)
 		{
 			if ((player.getTeamID() == teamID) && (player.getStartPosition().equals("")))
+			{
+				bench.add(new Player(player.getPlayerName(), player.getPlayerID()));
+			}
+		}
+		
+		return bench;
+	}
+	
+	private ArrayList<Player> parseDNP(int teamID, ArrayList<PlayerStatsJson> players)
+	{
+		ArrayList<Player> bench = new ArrayList<Player>();
+		
+		for(PlayerStatsJson player : players)
+		{
+			if ((player.getTeamID() == teamID) && (player.getComment().contains("DNP")))
 			{
 				bench.add(new Player(player.getPlayerName(), player.getPlayerID()));
 			}
