@@ -60,46 +60,6 @@ public class UnitVisitor implements Visitor
 		{
 			p.accept(this);
 		}
-		
-		for (Period p : game.getPeriods())
-		{
-			for (Possession poss : p.getPossessions())
-			{
-				if(poss.getHomePlayers().size() < 5)
-				{
-					System.out.println("Home unit not filled");
-					System.out.println("Possession------------------------------");
-					System.out.println("Home Players:");
-					for (Player player : poss.getHomePlayers())
-					{
-						System.out.println(player.getPlayerName());
-					}
-					System.out.println("Away Players:");
-					for (Player player : poss.getAwayPlayers())
-					{
-						System.out.println(player.getPlayerName());
-					}
-					System.out.println("----------------------------------------");
-				}
-				if(poss.getAwayPlayers().size() < 5)
-				{
-					System.out.println("Away unit not filled");
-					System.out.println("Possession------------------------------");
-					System.out.println("Home Players:");
-					for (Player player : poss.getHomePlayers())
-					{
-						System.out.println(player.getPlayerName());
-					}
-					System.out.println("Away Players:");
-					for (Player player : poss.getAwayPlayers())
-					{
-						System.out.println(player.getPlayerName());
-					}
-					System.out.println("----------------------------------------");
-				}
-				
-			}
-		}
 	}
 
 	@Override
@@ -148,17 +108,9 @@ public class UnitVisitor implements Visitor
 				{
 					for (Possession poss : backPossessions)
 					{
-						if (currentPlayer.equals(new Player("Orlando Johnson", 203111)))
-						{
-							int x = 1;
-						}
 						poss.addAwayPlayer(currentPlayer);
 					}
 					backPossessions = new ArrayList<Possession>();
-					if (currentPlayer.equals(new Player("Orlando Johnson", 203111)))
-					{
-						int x = 1;
-					}
 					p.addAwayPlayer(currentPlayer);
 				}
 				subInPossession = false;
