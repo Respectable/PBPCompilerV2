@@ -59,6 +59,7 @@ public class RosterSQLGenerator
 	{
 		ArrayList<Player> teamPlayers = new ArrayList<Player>(homeStarters);
 		teamPlayers.addAll(homeBench);
+		teamPlayers.removeAll(homeDNP);
 		return teamPlayers;
 	}
 	
@@ -74,6 +75,7 @@ public class RosterSQLGenerator
 	{
 		ArrayList<Player> teamPlayers = new ArrayList<Player>(awayStarters);
 		teamPlayers.addAll(awayBench);
+		teamPlayers.removeAll(awayDNP);
 		return teamPlayers;
 	}
 	
@@ -83,6 +85,8 @@ public class RosterSQLGenerator
 		teamPlayers.addAll(awayBench);
 		teamPlayers.addAll(homeStarters);
 		teamPlayers.addAll(homeBench);
+		teamPlayers.removeAll(homeDNP);
+		teamPlayers.removeAll(awayDNP);
 		return teamPlayers;
 	}
 	
