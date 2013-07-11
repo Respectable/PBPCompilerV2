@@ -1,5 +1,9 @@
 package visitors;
 
+import java.util.ArrayList;
+
+import jsonObjects.ShotJson;
+import codeGenerator.RosterSQLGenerator;
 import visitor.Visitor;
 import nba.*;
 import nba.play.*;
@@ -22,6 +26,16 @@ import nba.playType.violation.*;
 public class PlayerPatchUpVisitor implements Visitor
 {
 
+	private RosterSQLGenerator rosters;
+	private ArrayList<ShotJson> shots;
+	
+	public PlayerPatchUpVisitor(RosterSQLGenerator rosters, 
+			ArrayList<ShotJson> shots)
+	{
+		this.rosters = rosters;
+		this.shots = shots;
+	}
+	
 	@Override
 	public void visit(ContextInfo contextInfo) {
 		// TODO Auto-generated method stub
@@ -33,45 +47,45 @@ public class PlayerPatchUpVisitor implements Visitor
 	{
 		
 		
-		for (Period p : game.getPeriods())
-		{
-			for (Possession poss : p.getPossessions())
-			{
-				if(poss.getHomePlayers().size() < 5)
-				{
-					System.out.println("Home unit not filled");
-					System.out.println("Possession------------------------------");
-					System.out.println("Home Players:");
-					for (Player player : poss.getHomePlayers())
-					{
-						System.out.println(player.getPlayerName());
-					}
-					System.out.println("Away Players:");
-					for (Player player : poss.getAwayPlayers())
-					{
-						System.out.println(player.getPlayerName());
-					}
-					System.out.println("----------------------------------------");
-				}
-				if(poss.getAwayPlayers().size() < 5)
-				{
-					System.out.println("Away unit not filled");
-					System.out.println("Possession------------------------------");
-					System.out.println("Home Players:");
-					for (Player player : poss.getHomePlayers())
-					{
-						System.out.println(player.getPlayerName());
-					}
-					System.out.println("Away Players:");
-					for (Player player : poss.getAwayPlayers())
-					{
-						System.out.println(player.getPlayerName());
-					}
-					System.out.println("----------------------------------------");
-				}
-				
-			}
-		}
+//		for (Period p : game.getPeriods())
+//		{
+//			for (Possession poss : p.getPossessions())
+//			{
+//				if(poss.getHomePlayers().size() < 5)
+//				{
+//					System.out.println("Home unit not filled");
+//					System.out.println("Possession------------------------------");
+//					System.out.println("Home Players:");
+//					for (Player player : poss.getHomePlayers())
+//					{
+//						System.out.println(player.getPlayerName());
+//					}
+//					System.out.println("Away Players:");
+//					for (Player player : poss.getAwayPlayers())
+//					{
+//						System.out.println(player.getPlayerName());
+//					}
+//					System.out.println("----------------------------------------");
+//				}
+//				if(poss.getAwayPlayers().size() < 5)
+//				{
+//					System.out.println("Away unit not filled");
+//					System.out.println("Possession------------------------------");
+//					System.out.println("Home Players:");
+//					for (Player player : poss.getHomePlayers())
+//					{
+//						System.out.println(player.getPlayerName());
+//					}
+//					System.out.println("Away Players:");
+//					for (Player player : poss.getAwayPlayers())
+//					{
+//						System.out.println(player.getPlayerName());
+//					}
+//					System.out.println("----------------------------------------");
+//				}
+//				
+//			}
+//		}
 	}
 
 	@Override

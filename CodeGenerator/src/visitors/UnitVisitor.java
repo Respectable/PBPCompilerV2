@@ -30,13 +30,10 @@ public class UnitVisitor implements Visitor
 	private RosterSQLGenerator rosters;
 	private ArrayList<Possession> backPossessions;
 	private Player currentPlayer;
-	private boolean subInPossession, currentPlayerOnCourt, currentPlayerIsHome,
-				debug, debugRun;
-	private int debugCounter;
-	private String debugString;
+	private boolean subInPossession, currentPlayerOnCourt, currentPlayerIsHome;
 	private Possession currentPossession;
 	
-	public UnitVisitor(RosterSQLGenerator rosters, boolean debug)
+	public UnitVisitor(RosterSQLGenerator rosters)
 	{
 		this.rosters = rosters;
 		this.backPossessions = new ArrayList<Possession>();
@@ -44,10 +41,6 @@ public class UnitVisitor implements Visitor
 		this.subInPossession = false;
 		this.currentPlayerOnCourt = false;
 		this.currentPlayerIsHome = true;
-		this.debug = debug;
-		this.debugCounter = 0;
-		this.debugString = "";
-		this.debugRun = false;
 	}
 	
 	@Override
