@@ -129,7 +129,6 @@ public class RosterSQLGenerator
 		case NOT_FOUND:
 			System.out.println("Could not find player: " + player.getPlayerName());
 			player.setPlayerID(currentState.getValue());
-			player.setPlayerName(currentState.getText());
 			return currentState;
 		case FOUND:
 			player.setPlayerID(returnPlayer.getPlayerID());
@@ -139,7 +138,6 @@ public class RosterSQLGenerator
 			System.out.println("Multiple players with name " + 
 					player.getPlayerName() + " on home team");
 			player.setPlayerID(currentState.getValue());
-			player.setPlayerName(currentState.getText());
 			return currentState;
 		default:
 			System.out.println("Error finding player" + player.getPlayerName());
@@ -201,7 +199,6 @@ public class RosterSQLGenerator
 		case NOT_FOUND:
 			System.out.println("Could not find player: " + player.getPlayerName());
 			player.setPlayerID(currentState.getValue());
-			player.setPlayerName(currentState.getText());
 			return currentState;
 		case FOUND:
 			player.setPlayerID(returnPlayer.getPlayerID());
@@ -211,7 +208,6 @@ public class RosterSQLGenerator
 			System.out.println("Multiple players with name " + 
 					player.getPlayerName() + " on away team");
 			player.setPlayerID(currentState.getValue());
-			player.setPlayerName(currentState.getText());
 			return currentState;
 		default:
 			System.out.println("Error finding player" + player.getPlayerName());
@@ -323,7 +319,6 @@ public class RosterSQLGenerator
 		case NOT_FOUND:
 			System.out.println("Could not find player: " + player.getPlayerName());
 			player.setPlayerID(currentState.getValue());
-			player.setPlayerName(currentState.getText());
 			return currentState;
 		case FOUND:
 			player.setPlayerID(returnPlayer.getPlayerID());
@@ -333,25 +328,21 @@ public class RosterSQLGenerator
 			System.out.println("Multiple players with name " + 
 					player.getPlayerName() + " on home team");
 			player.setPlayerID(currentState.getValue());
-			player.setPlayerName(currentState.getText());
 			return currentState;
 		case DUPLICATE_AWAY:
 			System.out.println("Multiple players with name " + 
 					player.getPlayerName() + " on away team");
 			player.setPlayerID(currentState.getValue());
-			player.setPlayerName(currentState.getText());
 			return currentState;
 		case SINGLE_HOME_AWAY:
 			System.out.println("Single players with name " + 
 					player.getPlayerName() + " on both teams");
 			player.setPlayerID(currentState.getValue());
-			player.setPlayerName(currentState.getText());
 			return currentState;
 		case MULT_HOME_AWAY:
 			System.out.println("Multiple players with name " + 
 					player.getPlayerName() + " on both teams");
 			player.setPlayerID(currentState.getValue());
-			player.setPlayerName(currentState.getText());
 			return currentState;
 		default:
 			System.out.println("Error finding player" + player.getPlayerName());

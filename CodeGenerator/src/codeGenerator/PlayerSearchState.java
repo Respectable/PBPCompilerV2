@@ -2,24 +2,21 @@ package codeGenerator;
 
 public enum PlayerSearchState 
 {
-	FOUND (0, ""),
-	NOT_FOUND (-1, "#NOT_FOUND"),
-	DUPLICATE_HOME (-2, "#DUPLICATE_HOME"),
-	DUPLICATE_AWAY (-3, "#DUPLICATE_AWAY"),
-	SINGLE_HOME_AWAY (-4, "#SINGLE_HOME_AWAY"),
-	MULT_HOME_AWAY (-5, "#MULT_HOME_AWAY");
+	FOUND (0),
+	NOT_FOUND (-1),
+	DUPLICATE_HOME (-2),
+	DUPLICATE_AWAY (-3),
+	SINGLE_HOME_AWAY (-4),
+	MULT_HOME_AWAY (-5);
 	
 	private final int value;
-	private final String text;
 	
-	PlayerSearchState(int value, String text)
+	PlayerSearchState(int value)
 	{
 		this.value = value;
-		this.text = text;
 	}
 	
 	public int getValue() { return value; }
-	public String getText() { return text; }
 	
 	public PlayerSearchState getState(int value)
 	{
