@@ -370,7 +370,6 @@ public class RosterSQLGenerator
 		String tempPlayerName;
 		
 		tempPlayerName = playerName.replace('.', ' ');
-		tempPlayerName = tempPlayerName.replace('-', ' ');
 		tempPlayerName = tempPlayerName.trim();
 		return tempPlayerName.split(" ");
 	}
@@ -378,18 +377,39 @@ public class RosterSQLGenerator
 	private Player searchPlayers(ArrayList<Player> players, String[] playerName)
 	{
 		boolean found = false;
+		String[] reversedName, beingSearched, currentPlayerName;
+		
+		reversedName = new String[playerName.length];
+		for (int i =0; i < playerName.length; i++)
+		{
+			reversedName[i] = playerName[playerName.length - (1 + i)];
+		}
+		
 		for(Player player : players)
 		{
-			for(String namePart : playerName)
+			currentPlayerName = cleanPlayerName(player.getPlayerName());
+			beingSearched = new String[currentPlayerName.length];
+			for (int i =0; i < currentPlayerName.length; i++)
 			{
-				if (player.getPlayerName().contains(namePart))
+				beingSearched[i] = 
+						currentPlayerName[currentPlayerName.length - (1 + i)];
+			}
+			found = reversedName[0].equals(
+					beingSearched[0]);
+					
+			if (found)
+			{
+				for(String namePart : playerName)
 				{
-					found = true;
-				}
-				else
-				{
-					found = false;
-					break;
+					if (player.getPlayerName().contains(namePart))
+					{
+						found = true;
+					}
+					else
+					{
+						found = false;
+						break;
+					}
 				}
 			}
 			if (found)
