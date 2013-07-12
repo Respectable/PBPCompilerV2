@@ -65,6 +65,11 @@ public class PBPJson extends NBAJsonObject
 	public int getEventMsgActionType() { return eventMsgActionType; }
 	public int getPeriod() { return period; }
 	
+	public void setEventNum(int playID)
+	{
+		this.eventNum = playID;
+	}
+	
 	public static ArrayList<PBPJson> parsePBPJson(String json)
 	{
 		Gson gson = new Gson();
