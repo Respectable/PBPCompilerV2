@@ -2,6 +2,7 @@ package jsonObjects;
 
 import java.io.BufferedReader;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -167,5 +168,10 @@ public class PBPJson extends NBAJsonObject
 		return pbpString;
 	}
 
-	
+	//Sort by play_id
+    public static Comparator<PBPJson> COMPARE_BY_PLAY_ID = new Comparator<PBPJson>() {
+        public int compare(PBPJson one, PBPJson other) {
+            return Integer.compare(one.getEventNum(), other.getEventNum());
+        }
+    };
 }
