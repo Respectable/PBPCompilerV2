@@ -5,5 +5,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/NBAJson"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/NBAPlayActions"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.24-bin.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/NBADownloader"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

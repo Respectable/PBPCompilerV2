@@ -117,7 +117,7 @@ public class PlayerPatchUpVisitor implements Visitor
 			{
 				if(rosters.searchHomePlayers(player2))
 				{
-					rosters.findAwayPlayer(player);
+					rosters.setAwayPlayer(player);
 				}
 				else if(rosters.searchAwayPlayers(player2))
 				{
@@ -136,7 +136,7 @@ public class PlayerPatchUpVisitor implements Visitor
 			{
 				if(rosters.searchHomePlayers(player1))
 				{
-					rosters.findAwayPlayer(player);
+					rosters.setAwayPlayer(player);
 				}
 				else if(rosters.searchAwayPlayers(player1))
 				{
@@ -155,7 +155,7 @@ public class PlayerPatchUpVisitor implements Visitor
 						player1.equals(player2))
 			{
 				rosters.findHomePlayer(player1);
-				rosters.findAwayPlayer(player2);
+				rosters.setAwayPlayer(player2);
 			}
 			//TODO handle unknown player whom is 'tipped to' in jump ball
 			break;
@@ -167,7 +167,7 @@ public class PlayerPatchUpVisitor implements Visitor
 			{
 				if(rosters.searchHomePlayers(player2))
 				{
-					rosters.findAwayPlayer(player);
+					rosters.setAwayPlayer(player);
 				}
 				else if(rosters.searchAwayPlayers(player2))
 				{
@@ -186,7 +186,7 @@ public class PlayerPatchUpVisitor implements Visitor
 			{
 				if(rosters.searchHomePlayers(player1))
 				{
-					rosters.findAwayPlayer(player);
+					rosters.setAwayPlayer(player);
 				}
 				else if(rosters.searchAwayPlayers(player1))
 				{
@@ -205,7 +205,7 @@ public class PlayerPatchUpVisitor implements Visitor
 						player1.equals(player2))
 			{
 				rosters.findHomePlayer(player1);
-				rosters.findAwayPlayer(player2);
+				rosters.setAwayPlayer(player2);
 			}
 			break;
 		case DOUBLEFOUL:
@@ -216,7 +216,7 @@ public class PlayerPatchUpVisitor implements Visitor
 			{
 				if(rosters.searchHomePlayers(player2))
 				{
-					rosters.findAwayPlayer(player);
+					rosters.setAwayPlayer(player);
 				}
 				else if(rosters.searchAwayPlayers(player2))
 				{
@@ -235,7 +235,7 @@ public class PlayerPatchUpVisitor implements Visitor
 			{
 				if(rosters.searchHomePlayers(player1))
 				{
-					rosters.findAwayPlayer(player);
+					rosters.setAwayPlayer(player);
 				}
 				else if(rosters.searchAwayPlayers(player1))
 				{
@@ -254,7 +254,7 @@ public class PlayerPatchUpVisitor implements Visitor
 						player1.equals(player2))
 			{
 				rosters.findHomePlayer(player1);
-				rosters.findAwayPlayer(player2);
+				rosters.setAwayPlayer(player2);
 			}
 			break;
 		}
@@ -277,45 +277,45 @@ public class PlayerPatchUpVisitor implements Visitor
 		}
 		
 		
-//		for (Period p : game.getPeriods())
-//		{
-//			for (Possession poss : p.getPossessions())
-//			{
-//				if(poss.getHomePlayers().size() < 5)
-//				{
-//					System.out.println("Home unit not filled");
-//					System.out.println("Possession------------------------------");
-//					System.out.println("Home Players:");
-//					for (Player player : poss.getHomePlayers())
-//					{
-//						System.out.println(player.getPlayerName());
-//					}
-//					System.out.println("Away Players:");
-//					for (Player player : poss.getAwayPlayers())
-//					{
-//						System.out.println(player.getPlayerName());
-//					}
-//					System.out.println("----------------------------------------");
-//				}
-//				if(poss.getAwayPlayers().size() < 5)
-//				{
-//					System.out.println("Away unit not filled");
-//					System.out.println("Possession------------------------------");
-//					System.out.println("Home Players:");
-//					for (Player player : poss.getHomePlayers())
-//					{
-//						System.out.println(player.getPlayerName());
-//					}
-//					System.out.println("Away Players:");
-//					for (Player player : poss.getAwayPlayers())
-//					{
-//						System.out.println(player.getPlayerName());
-//					}
-//					System.out.println("----------------------------------------");
-//				}
-//				
-//			}
-//		}
+		for (Period p : game.getPeriods())
+		{
+			for (Possession poss : p.getPossessions())
+			{
+				if(poss.getHomePlayers().size() < 5)
+				{
+					System.out.println("Home unit not filled");
+					System.out.println("Possession------------------------------");
+					System.out.println("Home Players:");
+					for (Player player : poss.getHomePlayers())
+					{
+						System.out.println(player.getPlayerName());
+					}
+					System.out.println("Away Players:");
+					for (Player player : poss.getAwayPlayers())
+					{
+						System.out.println(player.getPlayerName());
+					}
+					System.out.println("----------------------------------------");
+				}
+				if(poss.getAwayPlayers().size() < 5)
+				{
+					System.out.println("Away unit not filled");
+					System.out.println("Possession------------------------------");
+					System.out.println("Home Players:");
+					for (Player player : poss.getHomePlayers())
+					{
+						System.out.println(player.getPlayerName());
+					}
+					System.out.println("Away Players:");
+					for (Player player : poss.getAwayPlayers())
+					{
+						System.out.println(player.getPlayerName());
+					}
+					System.out.println("----------------------------------------");
+				}
+				
+			}
+		}
 	}
 
 	@Override

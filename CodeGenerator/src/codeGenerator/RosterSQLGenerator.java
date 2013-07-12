@@ -1,13 +1,27 @@
 package codeGenerator;
 
+import java.io.BufferedReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 
+import jsonObjects.BoxJson;
+import jsonObjects.PBPJson;
 import jsonObjects.boxScoreObjects.InactiveJson;
 import jsonObjects.boxScoreObjects.PlayerStatsJson;
+
+import nba.play.Play;
+import nba.playType.foul.Foul;
+import nba.playType.freeThrow.FreeThrow;
+import nba.playType.rebound.Rebound;
+import nba.playType.shot.Shot;
+import nba.playType.turnover.Turnover;
+import nbaDownloader.NBADownloader;
+import nba.playType.block.*;
+import nba.playType.steal.*;
 
 import nba.Player;
 
@@ -19,9 +33,10 @@ public class RosterSQLGenerator
 								homeDNP, awayDNP;
 	private int homeID, awayID;
 	private String gameID;
+	private ArrayList<PBPJson> pbp;
 	
 	public RosterSQLGenerator(int homeID, int awayID, String gameID, ArrayList<InactiveJson> inactive,
-								ArrayList<PlayerStatsJson> players)
+								ArrayList<PlayerStatsJson> players, ArrayList<PBPJson> pbp)
 	{
 		this.homeStarters = parseStarters(homeID, players);
 		this.homeBench = parseBench(homeID, players);
@@ -34,6 +49,8 @@ public class RosterSQLGenerator
 		this.homeID = homeID;
 		this.awayID = awayID;
 		this.gameID = gameID;
+		this.pbp = pbp;
+		Collections.sort(this.pbp, PBPJson.COMPARE_BY_PLAY_ID);
 	}
 
 	public ArrayList<Player> getHomeStarters() { return homeStarters; }
@@ -90,7 +107,7 @@ public class RosterSQLGenerator
 		return teamPlayers;
 	}
 	
-	public PlayerSearchState findHomePlayer(Player player)
+	public void setHomePlayer(Player player, Play currentPlay)
 	{
 		String[] playerNameArray;
 		Player tempPlayer = new Player("Dummy", -1);
@@ -138,20 +155,17 @@ public class RosterSQLGenerator
 		case NOT_FOUND:
 			System.out.println("Could not find player: " + player.getPlayerName());
 			player.setPlayerID(currentState.getValue());
-			return currentState;
+			break;
 		case FOUND:
 			player.setPlayerID(returnPlayer.getPlayerID());
 			player.setPlayerName(returnPlayer.getPlayerName());
-			return currentState;
+			break;
 		case DUPLICATE_HOME:
-			System.out.println("Multiple players with name " + 
-					player.getPlayerName() + " on home team");
-			player.setPlayerID(currentState.getValue());
-			return currentState;
+			duplicateHomeSearch(player, currentPlay);
 		default:
 			System.out.println("Error finding player" + player.getPlayerName());
 			System.exit(-1);
-			return currentState;
+			break;
 		}
 	}
 	
@@ -160,7 +174,132 @@ public class RosterSQLGenerator
 		return getHomeActive().contains(player);
 	}
 	
-	public PlayerSearchState findAwayPlayer(Player player)
+	private void duplicateHomeSearch(Player player, Play currentPlay)
+	{
+		int index, startTime, endTime;
+		PBPJson relevantPlay = new PBPJson();
+		ArrayList<PlayerStatsJson> relevantPlayers;
+		ArrayList<Player> homePlayers;
+		
+		relevantPlay.setEventNum(currentPlay.getPlayID());
+		index = Collections.binarySearch(this.pbp, relevantPlay, 
+				PBPJson.COMPARE_BY_PLAY_ID);
+		
+		if (index == -1)
+		{
+			System.out.println("Game: " + this.gameID + " " +
+					"Play: " + currentPlay.getPlayID() + 
+					" Play not found.");
+		}
+		else
+		{
+			relevantPlay = this.pbp.get(index);
+		}
+		startTime = convertStringTime(relevantPlay.getGameTime());
+		startTime += addPeriodTime(relevantPlay.getPeriod());
+		startTime -= 5;
+		endTime = convertStringTime(relevantPlay.getGameTime());
+		endTime += addPeriodTime(relevantPlay.getPeriod());
+		endTime += 5;
+		relevantPlayers = downloadCustomBoxScore(startTime, endTime);
+		homePlayers = parseStarters(homeID, relevantPlayers);
+		homePlayers.addAll(parseBench(homeID, relevantPlayers));
+		singleTeamDuplicate(player, currentPlay, homePlayers,
+				relevantPlayers);
+	}
+	
+	private void singleTeamDuplicate(Player player, Play currentPlay,
+			ArrayList<Player> players, ArrayList<PlayerStatsJson> playerStats)
+	{
+		String[] playerNameArray;
+		Player tempPlayer = new Player("Dummy", -1);
+		Player returnPlayer = new Player("Dummy", -1);
+		ArrayList<Player> tempPlayers = new ArrayList<Player>(players);
+		PlayerSearchState currentState = PlayerSearchState.NOT_FOUND;
+		
+		playerNameArray = cleanPlayerName(player.getPlayerName());
+			
+		while(tempPlayer != null)
+		{
+			switch(currentState)
+			{
+			case NOT_FOUND:
+				returnPlayer = searchPlayers(tempPlayers, playerNameArray);
+				tempPlayer = returnPlayer;
+				if (tempPlayer != null)
+				{
+					currentState = PlayerSearchState.FOUND;
+					tempPlayers.remove(tempPlayer);
+				}
+				else
+				{
+					break;
+				}
+			case FOUND:
+				tempPlayer = searchPlayers(tempPlayers, playerNameArray);
+				if (tempPlayer != null)
+				{
+					currentState = PlayerSearchState.DUPLICATE_HOME;
+					tempPlayers.remove(tempPlayer);
+				}
+				else
+				{
+					break;
+				}
+			default:
+				tempPlayer = null;
+				break;
+			}
+		}
+		
+		switch(currentState)
+		{
+		case NOT_FOUND:
+			System.out.println("Could not find player: " + player.getPlayerName());
+			player.setPlayerID(currentState.getValue());
+			break;
+		case FOUND:
+			player.setPlayerID(returnPlayer.getPlayerID());
+			player.setPlayerName(returnPlayer.getPlayerName());
+			break;
+		case DUPLICATE_HOME:
+			if (currentPlay.getPlayType() instanceof Rebound)
+			{
+				
+			}
+			else if (currentPlay.getPlayType() instanceof Turnover)
+			{
+				
+			}
+			else if (currentPlay.getPlayType() instanceof Shot)
+			{
+				
+			}
+			else if (currentPlay.getPlayType() instanceof Foul)
+			{
+				
+			}
+			else if (currentPlay.getPlayType() instanceof FreeThrow)
+			{
+				
+			}
+			else if (currentPlay.getPlayType() instanceof Steal)
+			{
+				
+			}
+			else if (currentPlay.getPlayType() instanceof Block)
+			{
+				
+			}
+		default:
+			System.out.println("Error finding player" + player.getPlayerName());
+			System.exit(-1);
+			break;
+		}
+	}
+	
+	
+	public PlayerSearchState setAwayPlayer(Player player, Play currentPlay)
 	{
 		String[] playerNameArray;
 		Player tempPlayer = new Player("Dummy", -1);
@@ -230,7 +369,7 @@ public class RosterSQLGenerator
 		return getAwayActive().contains(player);
 	}
 	
-	public PlayerSearchState findPlayer(Player player)
+	public PlayerSearchState setPlayer(Player player, Play currentPlay)
 	{
 		String[] playerNameArray;
 		Player tempPlayer = new Player("Dummy", -1);
@@ -561,5 +700,36 @@ public class RosterSQLGenerator
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	private int convertStringTime(String time)
+	{
+		String[] timeParts = time.split(":");
+		String min = timeParts[0];
+		String tens = timeParts[1].substring(0,1);
+		String singles = timeParts[1].substring(1, 2);
+		return ((Integer.parseInt(min) * 60) + (Integer.parseInt(tens) * 10) +
+				Integer.parseInt(singles)) * 10;
+	}
+	
+	private int addPeriodTime(int period)
+	{
+		return (period - 1) * (12 * 60 * 10);
+	}
+	
+	private ArrayList<PlayerStatsJson> downloadCustomBoxScore(int startTime,
+															  int endTime)
+	{
+		try 
+		{
+			Thread.sleep(3000);
+		} 
+		catch (InterruptedException e) 
+		{
+			e.printStackTrace();
+		}
+		BufferedReader br = NBADownloader.downloadCustomBox(
+				gameID, startTime, endTime);
+		return BoxJson.getBoxScore(br).getPlayerStats();
 	}
 }

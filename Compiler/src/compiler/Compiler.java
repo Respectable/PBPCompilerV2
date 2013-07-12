@@ -88,7 +88,7 @@ public class Compiler {
 				int awayID = boxScore.getGameSummary().getAwayID();
 				
 				RosterSQLGenerator rosters = new RosterSQLGenerator(homeID, awayID,
-						gameID, boxScore.getInactives(), boxScore.getPlayerStats());
+						gameID, boxScore.getInactives(), boxScore.getPlayerStats(), pbp);
 				
 				OfficalSQLGenerator officals = new OfficalSQLGenerator(gameID, 
 						boxScore.getOfficals());
@@ -107,6 +107,9 @@ public class Compiler {
 				
 				UnitVisitor unitVisitor = new UnitVisitor(rosters);
 				game.accept(unitVisitor);
+				
+				PlayerPatchUpVisitor patchUp = new PlayerPatchUpVisitor(rosters, shots);
+				game.accept(patchUp);
 			}
 			catch(Exception e)
 			{
