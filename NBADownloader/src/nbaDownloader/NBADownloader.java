@@ -36,6 +36,11 @@ public class NBADownloader
 												"playerinfocallback";
 	private final static String teamURL = "stats/commonteamyears?LeagueID=00"+
 											"&callback=teaminfocallback";
+	private final static String customBoxStart = "stats/boxscore?GameID=";
+	private final static String customBoxMid = "&RangeType=2&StartPeriod=0&EndPeriod=0"+
+											"&StartRange=";
+	private final static String customBoxEnd = "&EndRange=";
+												
 	
 	public NBADownloader()
 	{
@@ -61,6 +66,15 @@ public class NBADownloader
 		catch (IOException ioe) 
 		{
 			ioe.printStackTrace();
+			try 
+			{
+				Thread.sleep(3000);
+			} 
+			catch (InterruptedException e) 
+			{
+				e.printStackTrace();
+			}
+			br = download(urlString);
 		}
 		
 		return br;
@@ -178,5 +192,11 @@ public class NBADownloader
 	public static void saveTeamData(String savePath)
 	{
 		saveTeamData(savePath, "Teams");
+	}
+	
+	public static BufferedReader downloadCustomBox(String gameID, int startTime, int endTime)
+	{
+		return download(customBoxStart + gameID + customBoxMid + startTime +
+							customBoxEnd + endTime);
 	}
 }
