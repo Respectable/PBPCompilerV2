@@ -26,6 +26,7 @@ public class PlayerVisitor implements Visitor
 	private RosterSQLGenerator rosters;
 	private PlayerVisitorState state;
 	private PlayRole currentTeam;
+	private Play currentPlay;
 	
 	public PlayerVisitor(RosterSQLGenerator rosters)
 	{
@@ -92,6 +93,14 @@ public class PlayerVisitor implements Visitor
 		{
 			this.state = PlayerVisitorState.EJECTION;
 		}
+		else if (play.getPlayType() instanceof Block)
+		{
+			this.state = PlayerVisitorState.BLOCK;
+		}
+		else if (play.getPlayType() instanceof Steal)
+		{
+			this.state = PlayerVisitorState.STEAL;
+		}
 	}
 	
 	@Override
@@ -112,6 +121,7 @@ public class PlayerVisitor implements Visitor
 		for(Play p : period.getPlays())
 		{
 			changeState(p);
+			currentPlay = p;
 			this.currentTeam = p.getContextInfo().getPlayRole();
 			p.accept(this);
 		}
@@ -123,23 +133,23 @@ public class PlayerVisitor implements Visitor
 		switch (state)
 		{
 		case JUMPBALL: case DOUBLEFOUL: case DOUBLETECH: 
-			rosters.findPlayer(player);
+			rosters.setPlayer(player, currentPlay);
 			break;
 		case PLAYERREBOUND: case PLAYERTURNOVER: case PLAYERVIOLATION:
 		case SHOT: case PLAYERFOUL: case FREETHROW: case PLAYERTECH:
-		case EJECTION: case SUB:
+		case EJECTION: case SUB: case BLOCK: case STEAL:
 			if(currentTeam.equals(PlayRole.HOME))
 			{
-				rosters.findHomePlayer(player);
+				rosters.setHomePlayer(player, currentPlay);
 					
 			}
 			else if(currentTeam.equals(PlayRole.AWAY))
 			{
-				rosters.findAwayPlayer(player);
+				rosters.setAwayPlayer(player, currentPlay);
 			}
 			else
 			{
-				rosters.findPlayer(player);
+				rosters.setPlayer(player, currentPlay);
 			}
 			break;
 		case TEAMREBOUND: case TEAMTURNOVER: case TEAMVIOLATION:
