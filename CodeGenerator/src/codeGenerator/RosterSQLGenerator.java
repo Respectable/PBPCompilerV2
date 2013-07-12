@@ -560,65 +560,100 @@ public class RosterSQLGenerator
 		return null;
 	}
 	
-	private ArrayList<Player> parseStarters(int teamID, ArrayList<PlayerStatsJson> players)
+	public class CheckStarters implements PlayerParser<PlayerStatsJson>
+	{
+		@Override
+		public boolean check(int teamID, PlayerStatsJson player) 
+		{
+			return (player.getTeamID() == teamID) && 
+				(!player.getStartPosition().equals(""));
+		}
+	}
+	
+	public class CheckBench implements PlayerParser<PlayerStatsJson>
+	{
+		@Override
+		public boolean check(int teamID, PlayerStatsJson player) 
+		{
+			return (player.getTeamID() == teamID) &&
+					(player.getStartPosition().equals(""));
+		}
+	}
+	
+	public class CheckDNP implements PlayerParser<PlayerStatsJson>
+	{
+		@Override
+		public boolean check(int teamID, PlayerStatsJson player) 
+		{
+			return (player.getTeamID() == teamID) && 
+					(player.getComment().contains("DNP"));
+		}
+	}
+	
+	public class CheckInactive implements PlayerParser<InactiveJson>
+	{
+		@Override
+		public boolean check(int teamID, InactiveJson player) 
+		{
+			return player.getTeamID() == teamID;
+		}
+	}
+	
+	private ArrayList<Player> parsePlayers(int teamID, 
+			ArrayList<PlayerStatsJson> players, 
+			PlayerParser<PlayerStatsJson> playerParser)
 	{
 		ArrayList<Player> starters = new ArrayList<Player>();
 		
 		for(PlayerStatsJson player : players)
 		{
-			if ((player.getTeamID() == teamID) && (!player.getStartPosition().equals("")))
-			{
-				starters.add(new Player(player.getPlayerName(), player.getPlayerID()));
-			}
+			if(playerParser.check(teamID, player))
+				starters.add(new Player(player.getPlayerName(), 
+										player.getPlayerID()));
 		}
 		
 		return starters;
 	}
 	
-	private ArrayList<Player> parseBench(int teamID, ArrayList<PlayerStatsJson> players)
+	private ArrayList<Player> parseInactivePlayers(int teamID, 
+			ArrayList<InactiveJson> players, 
+			PlayerParser<InactiveJson> playerParser)
 	{
-		ArrayList<Player> bench = new ArrayList<Player>();
-		
-		for(PlayerStatsJson player : players)
-		{
-			if ((player.getTeamID() == teamID) && (player.getStartPosition().equals("")))
-			{
-				bench.add(new Player(player.getPlayerName(), player.getPlayerID()));
-			}
-		}
-		
-		return bench;
-	}
-	
-	private ArrayList<Player> parseDNP(int teamID, ArrayList<PlayerStatsJson> players)
-	{
-		ArrayList<Player> bench = new ArrayList<Player>();
-		
-		for(PlayerStatsJson player : players)
-		{
-			if ((player.getTeamID() == teamID) && (player.getComment().contains("DNP")))
-			{
-				bench.add(new Player(player.getPlayerName(), player.getPlayerID()));
-			}
-		}
-		
-		return bench;
-	}
-	
-	private ArrayList<Player> parseInactive(int teamID, ArrayList<InactiveJson> players)
-	{
-		ArrayList<Player> inactive = new ArrayList<Player>();
+		ArrayList<Player> inactives = new ArrayList<Player>();
 		
 		for(InactiveJson player : players)
 		{
-			if (player.getTeamID() == teamID)
-			{
-				inactive.add(new Player(player.getFirstName() + " " + player.getLastName(),
-											player.getPlayerID()));
-			}
+			if(playerParser.check(teamID, player))
+				inactives.add(new Player(player.getFirstName() + " " +
+										player.getLastName(),
+										player.getPlayerID()));
 		}
 		
-		return inactive;
+		return inactives;
+	}
+	
+	private ArrayList<Player> parseStarters(int teamID,
+			ArrayList<PlayerStatsJson> players)
+	{
+		return parsePlayers(teamID, players, new CheckStarters());
+	}
+	
+	private ArrayList<Player> parseBench(int teamID,
+			ArrayList<PlayerStatsJson> players)
+	{
+		return parsePlayers(teamID, players, new CheckBench());
+	}
+	
+	private ArrayList<Player> parseDNP(int teamID,
+			ArrayList<PlayerStatsJson> players)
+	{
+		return parsePlayers(teamID, players, new CheckDNP());
+	}
+	
+	private ArrayList<Player> parseInactive(int teamID,
+			ArrayList<InactiveJson> players)
+	{
+		return parseInactivePlayers(teamID, players, new CheckInactive());
 	}
 	
 	public void compile(String path,
