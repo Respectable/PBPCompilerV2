@@ -133,24 +133,12 @@ public class PlayerVisitor implements Visitor
 		switch (state)
 		{
 		case JUMPBALL: case DOUBLEFOUL: case DOUBLETECH: 
-			rosters.setPlayer(player, currentPlay);
+			rosters.setPlayer(player, currentPlay, PlayRole.NEUTRAL);
 			break;
 		case PLAYERREBOUND: case PLAYERTURNOVER: case PLAYERVIOLATION:
 		case SHOT: case PLAYERFOUL: case FREETHROW: case PLAYERTECH:
 		case EJECTION: case SUB: case BLOCK: case STEAL:
-			if(currentTeam.equals(PlayRole.HOME))
-			{
-				rosters.setHomePlayer(player, currentPlay);
-					
-			}
-			else if(currentTeam.equals(PlayRole.AWAY))
-			{
-				rosters.setAwayPlayer(player, currentPlay);
-			}
-			else
-			{
-				rosters.setPlayer(player, currentPlay);
-			}
+			rosters.setPlayer(player, currentPlay, currentTeam);
 			break;
 		case TEAMREBOUND: case TEAMTURNOVER: case TEAMVIOLATION:
 		case TIMEOUT: case TEAMFOUL: case TEAMTECH:
