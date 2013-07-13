@@ -233,9 +233,6 @@ public class RosterSQLGenerator
 		{
 			parsePlayData(player, currentPlay, role, pbpData);
 		}
-		
-		parsePlayData(player, currentPlay, role,
-				pbpData);
 	}
 	
 	private void parsePlayData(Player player, Play currentPlay, PlayRole role,
