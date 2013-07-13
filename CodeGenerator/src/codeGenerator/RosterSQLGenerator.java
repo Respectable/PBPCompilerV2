@@ -120,8 +120,11 @@ public class RosterSQLGenerator
 		while(tempPlayer != null)
 		{
 			tempPlayer = searchPlayerText(possiblePlayers, playerNameArray);
-			possiblePlayers.remove(tempPlayer);
-			matchingPlayers.add(tempPlayer);
+			if(tempPlayer != null)
+			{
+				possiblePlayers.remove(tempPlayer);
+				matchingPlayers.add(tempPlayer);
+			}
 		}
 		
 		return matchingPlayers;
