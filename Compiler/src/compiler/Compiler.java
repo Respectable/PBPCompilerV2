@@ -108,8 +108,6 @@ public class Compiler {
 				UnitVisitor unitVisitor = new UnitVisitor(rosters);
 				game.accept(unitVisitor);
 				
-				PlayerPatchUpVisitor patchUp = new PlayerPatchUpVisitor(rosters, shots);
-				game.accept(patchUp);
 			}
 			catch(Exception e)
 			{

@@ -75,15 +75,31 @@ public class PlayerStatsJson
 			playerName =  gson.fromJson(tempArray.get(5), String.class);
 			startPosition =  gson.fromJson(tempArray.get(6), String.class);
 			comment =  gson.fromJson(tempArray.get(7), String.class);
-			fga = gson.fromJson(tempArray.get(10), int.class);
-			fta = gson.fromJson(tempArray.get(16), int.class);
-			reb = gson.fromJson(tempArray.get(20), int.class);
-			ast = gson.fromJson(tempArray.get(21), int.class);
-			stl = gson.fromJson(tempArray.get(22), int.class);
-			blk = gson.fromJson(tempArray.get(23), int.class);
-			to = gson.fromJson(tempArray.get(24), int.class);
-			pf = gson.fromJson(tempArray.get(25), int.class);
-			pts = gson.fromJson(tempArray.get(26), int.class);
+			if (!(tempArray.get(10) == null))
+			{
+				fga = gson.fromJson(tempArray.get(10), int.class);
+				fta = gson.fromJson(tempArray.get(16), int.class);
+				reb = gson.fromJson(tempArray.get(20), int.class);
+				ast = gson.fromJson(tempArray.get(21), int.class);
+				stl = gson.fromJson(tempArray.get(22), int.class);
+				blk = gson.fromJson(tempArray.get(23), int.class);
+				to = gson.fromJson(tempArray.get(24), int.class);
+				pf = gson.fromJson(tempArray.get(25), int.class);
+				pts = gson.fromJson(tempArray.get(26), int.class);
+				
+			}
+			else
+			{
+				fga = 0;
+				fta = 0;
+				reb = 0;
+				ast = 0;
+				stl = 0;
+				blk = 0;
+				to = 0;
+				pf = 0;
+				pts = 0;
+			}
 			players.add(new PlayerStatsJson(teamID, playerID, teamAbbr, 
 					playerName, startPosition, comment, reb, ast, stl,
 					blk, to, pf, pts, fga, fta));
