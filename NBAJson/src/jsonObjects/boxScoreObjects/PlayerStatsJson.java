@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -75,7 +76,7 @@ public class PlayerStatsJson
 			playerName =  gson.fromJson(tempArray.get(5), String.class);
 			startPosition =  gson.fromJson(tempArray.get(6), String.class);
 			comment =  gson.fromJson(tempArray.get(7), String.class);
-			if (!(tempArray.get(10) == null))
+			if (tempArray.get(10) != JsonNull.INSTANCE)
 			{
 				fga = gson.fromJson(tempArray.get(10), int.class);
 				fta = gson.fromJson(tempArray.get(16), int.class);
