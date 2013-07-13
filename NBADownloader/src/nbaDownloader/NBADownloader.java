@@ -196,7 +196,7 @@ public class NBADownloader
 	
 	public static BufferedReader downloadCustomBox(String gameID, int startTime, int endTime)
 	{
-		return download(customBoxStart + gameID + customBoxMid + startTime +
+		return download(urlStart + customBoxStart + gameID + customBoxMid + startTime +
 							customBoxEnd + endTime);
 	}
 }
