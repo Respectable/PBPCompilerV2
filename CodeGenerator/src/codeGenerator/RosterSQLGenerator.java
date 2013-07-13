@@ -172,7 +172,7 @@ public class RosterSQLGenerator
 		int index, startTime, endTime;
 		PBPJson relevantPlay = new PBPJson();
 		ArrayList<PlayerStatsJson> pbpData;
-		ArrayList<Player> possiblePlayers;
+		ArrayList<Player> possiblePlayers, matchingPlayers;
 		
 		relevantPlay.setEventNum(currentPlay.getPlayID());
 		index = Collections.binarySearch(this.pbp, relevantPlay, 
@@ -213,97 +213,96 @@ public class RosterSQLGenerator
 			possiblePlayers.addAll(parseTeam(awayID, pbpData));
 		}
 		
-		singleTeamDuplicate(player, currentPlay, homePlayers,
+		matchingPlayers = getMatchingPlayers(possiblePlayers, player);
+		
+		if (matchingPlayers.size() < 1)
+		{
+			System.out.println("Could not find player on 2nd pass: " 
+								+ player.getPlayerName());
+			player.setPlayerID(-2);
+		}
+		else if (matchingPlayers.size() == 1)
+		{
+			player.setPlayerID(matchingPlayers.get(0).getPlayerID());
+			player.setPlayerName(matchingPlayers.get(0).getPlayerName());
+		}
+		else
+		{
+			parsePlayData(player, currentPlay, role, pbpData);
+		}
+		
+		parsePlayData(player, currentPlay, role,
 				pbpData);
 	}
 	
-	private void singleTeamDuplicate(Player player, Play currentPlay,
-			ArrayList<Player> players, ArrayList<PlayerStatsJson> playerStats)
+	private void parsePlayData(Player player, Play currentPlay, PlayRole role,
+								ArrayList<PlayerStatsJson> pbpData)
 	{
-		String[] playerNameArray;
-		Player tempPlayer = new Player("Dummy", -1);
-		Player returnPlayer = new Player("Dummy", -1);
-		ArrayList<Player> tempPlayers = new ArrayList<Player>(players);
-		PlayerSearchState currentState = PlayerSearchState.NOT_FOUND;
+		ArrayList<Player> possiblePlayers, matchingPlayers;
+		int teamID;
 		
-		playerNameArray = cleanPlayerName(player.getPlayerName());
-			
-		while(tempPlayer != null)
+		if (role.equals(PlayRole.NEUTRAL))
 		{
-			switch(currentState)
-			{
-			case NOT_FOUND:
-				returnPlayer = searchPlayerText(tempPlayers, playerNameArray);
-				tempPlayer = returnPlayer;
-				if (tempPlayer != null)
-				{
-					currentState = PlayerSearchState.FOUND;
-					tempPlayers.remove(tempPlayer);
-				}
-				else
-				{
-					break;
-				}
-			case FOUND:
-				tempPlayer = searchPlayerText(tempPlayers, playerNameArray);
-				if (tempPlayer != null)
-				{
-					currentState = PlayerSearchState.DUPLICATE_HOME;
-					tempPlayers.remove(tempPlayer);
-				}
-				else
-				{
-					break;
-				}
-			default:
-				tempPlayer = null;
-				break;
-			}
+			player.setPlayerID(-2);
+			System.out.println("Could not find player on 2nd pass: " 
+					+ player.getPlayerName() + ", Player on both teams");
+			return;
 		}
 		
-		switch(currentState)
+		if (role.equals(PlayRole.HOME))
+			teamID = homeID;
+		else
+			teamID = awayID;
+		
+		possiblePlayers = new ArrayList<Player>();
+		
+		if (currentPlay.getPlayType() instanceof Rebound)
 		{
-		case NOT_FOUND:
-			System.out.println("Could not find player: " + player.getPlayerName());
-			player.setPlayerID(currentState.getValue());
-			break;
-		case FOUND:
-			player.setPlayerID(returnPlayer.getPlayerID());
-			player.setPlayerName(returnPlayer.getPlayerName());
-			break;
-		case DUPLICATE_HOME:
-			if (currentPlay.getPlayType() instanceof Rebound)
-			{
-				
-			}
-			else if (currentPlay.getPlayType() instanceof Turnover)
-			{
-				
-			}
-			else if (currentPlay.getPlayType() instanceof Shot)
-			{
-				
-			}
-			else if (currentPlay.getPlayType() instanceof Foul)
-			{
-				
-			}
-			else if (currentPlay.getPlayType() instanceof FreeThrow)
-			{
-				
-			}
-			else if (currentPlay.getPlayType() instanceof Steal)
-			{
-				
-			}
-			else if (currentPlay.getPlayType() instanceof Block)
-			{
-				
-			}
-		default:
-			System.out.println("Error finding player" + player.getPlayerName());
-			System.exit(-1);
-			break;
+			possiblePlayers = parseReb(teamID, pbpData);
+		}
+		else if (currentPlay.getPlayType() instanceof Turnover)
+		{
+			possiblePlayers = parseTO(teamID, pbpData);
+		}
+		else if (currentPlay.getPlayType() instanceof Shot)
+		{
+			possiblePlayers = parseShot(teamID, pbpData);
+		}
+		else if (currentPlay.getPlayType() instanceof Foul)
+		{
+			possiblePlayers = parsePF(teamID, pbpData);
+		}
+		else if (currentPlay.getPlayType() instanceof FreeThrow)
+		{
+			possiblePlayers = parseFT(teamID, pbpData);
+		}
+		else if (currentPlay.getPlayType() instanceof Steal)
+		{
+			possiblePlayers = parseStl(teamID, pbpData);
+		}
+		else if (currentPlay.getPlayType() instanceof Block)
+		{
+			possiblePlayers = parseBlk(teamID, pbpData);
+		}
+		
+		matchingPlayers = getMatchingPlayers(possiblePlayers, player);
+		
+		if (matchingPlayers.size() < 1)
+		{
+			System.out.println("Could not find player on 3rd pass: " 
+								+ player.getPlayerName());
+			player.setPlayerID(-2);
+		}
+		else if (matchingPlayers.size() == 1)
+		{
+			player.setPlayerID(matchingPlayers.get(0).getPlayerID());
+			player.setPlayerName(matchingPlayers.get(0).getPlayerName());
+		}
+		else
+		{
+			System.out.println("Could not narrow results on 3rd pass: " 
+					+ player.getPlayerName());
+			player.setPlayerID(-2);
 		}
 	}
 	
@@ -412,6 +411,76 @@ public class RosterSQLGenerator
 		}
 	}
 	
+	public class CheckReb implements PlayerParser<PlayerStatsJson>
+	{
+		@Override
+		public boolean check(int teamID, PlayerStatsJson player) 
+		{
+			return player.getTeamID() == teamID &&
+					player.getReb() > 0;
+		}
+	}
+	
+	public class CheckTO implements PlayerParser<PlayerStatsJson>
+	{
+		@Override
+		public boolean check(int teamID, PlayerStatsJson player) 
+		{
+			return player.getTeamID() == teamID &&
+					player.getTo() > 0;
+		}
+	}
+	
+	public class CheckShot implements PlayerParser<PlayerStatsJson>
+	{
+		@Override
+		public boolean check(int teamID, PlayerStatsJson player) 
+		{
+			return player.getTeamID() == teamID &&
+					player.getFga() > 0;
+		}
+	}
+	
+	public class CheckPF implements PlayerParser<PlayerStatsJson>
+	{
+		@Override
+		public boolean check(int teamID, PlayerStatsJson player) 
+		{
+			return player.getTeamID() == teamID &&
+					player.getPf() > 0;
+		}
+	}
+	
+	public class CheckFT implements PlayerParser<PlayerStatsJson>
+	{
+		@Override
+		public boolean check(int teamID, PlayerStatsJson player) 
+		{
+			return player.getTeamID() == teamID &&
+					player.getFta() > 0;
+		}
+	}
+	
+	public class CheckStl implements PlayerParser<PlayerStatsJson>
+	{
+		@Override
+		public boolean check(int teamID, PlayerStatsJson player) 
+		{
+			return player.getTeamID() == teamID &&
+					player.getStl() > 0;
+		}
+	}
+	
+	public class CheckBlk implements PlayerParser<PlayerStatsJson>
+	{
+		@Override
+		public boolean check(int teamID, PlayerStatsJson player) 
+		{
+			return player.getTeamID() == teamID &&
+					player.getBlk() > 0;
+		}
+	}
+	
 	public class CheckInactive implements PlayerParser<InactiveJson>
 	{
 		@Override
@@ -476,6 +545,48 @@ public class RosterSQLGenerator
 			ArrayList<PlayerStatsJson> players)
 	{
 		return parsePlayers(teamID, players, new CheckTeam());
+	}
+	
+	private ArrayList<Player> parseReb(int teamID,
+			ArrayList<PlayerStatsJson> players)
+	{
+		return parsePlayers(teamID, players, new CheckReb());
+	}
+	
+	private ArrayList<Player> parseTO(int teamID,
+			ArrayList<PlayerStatsJson> players)
+	{
+		return parsePlayers(teamID, players, new CheckTO());
+	}
+	
+	private ArrayList<Player> parseShot(int teamID,
+			ArrayList<PlayerStatsJson> players)
+	{
+		return parsePlayers(teamID, players, new CheckShot());
+	}
+	
+	private ArrayList<Player> parsePF(int teamID,
+			ArrayList<PlayerStatsJson> players)
+	{
+		return parsePlayers(teamID, players, new CheckPF());
+	}
+	
+	private ArrayList<Player> parseFT(int teamID,
+			ArrayList<PlayerStatsJson> players)
+	{
+		return parsePlayers(teamID, players, new CheckFT());
+	}
+	
+	private ArrayList<Player> parseStl(int teamID,
+			ArrayList<PlayerStatsJson> players)
+	{
+		return parsePlayers(teamID, players, new CheckStl());
+	}
+	
+	private ArrayList<Player> parseBlk(int teamID,
+			ArrayList<PlayerStatsJson> players)
+	{
+		return parsePlayers(teamID, players, new CheckBlk());
 	}
 	
 	private ArrayList<Player> parseInactive(int teamID,
