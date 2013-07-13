@@ -31,7 +31,6 @@ public class UnitVisitor implements Visitor
 	private ArrayList<Possession> backPossessions;
 	private Player currentPlayer;
 	private boolean subInPossession, currentPlayerOnCourt, currentPlayerIsHome;
-	private Possession currentPossession;
 	
 	public UnitVisitor(RosterSQLGenerator rosters)
 	{
@@ -63,7 +62,6 @@ public class UnitVisitor implements Visitor
 			currentPlayer = player;
 			for (Possession p : period.getPossessions())
 			{
-				currentPossession = p;
 				p.accept(this);
 				if (!currentPlayerOnCourt & !subInPossession)
 				{
@@ -91,7 +89,6 @@ public class UnitVisitor implements Visitor
 			currentPlayer = player;
 			for (Possession p : period.getPossessions())
 			{
-				currentPossession = p;
 				p.accept(this);
 				if (!currentPlayerOnCourt & !subInPossession)
 				{
