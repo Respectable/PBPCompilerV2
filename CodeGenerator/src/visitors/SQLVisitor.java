@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import jsonObjects.PBPJson;
 
@@ -248,9 +249,52 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(Possession possession) {
-		// TODO Auto-generated method stub
+	public void visit(Possession possession) 
+	{
+		ArrayList<Player> players = possession.getAwayPlayers();
+		players.addAll(possession.getHomePlayers());
 		
+		try 
+		{
+			stmt = conn.prepareStatement("INSERT INTO `nba`.`possession` VALUES (DEFAULT);");
+			stmt.executeUpdate();
+		    
+		    rs = stmt.executeQuery("SELECT LAST_INSERT_ID()");
+
+		    if (rs.next()) 
+		    {
+		        this.currentPossessionID = rs.getInt(1);
+		    } 
+		    else 
+		    {
+		    	//TODO throw an exception from here
+		    }
+		    
+		    stmt = conn.prepareStatement("INSERT INTO `nba2`.`period_possessions`" +
+		    " (`period_id`,`possession_id`) VALUES (?,?);");
+			stmt.setInt(1, this.currentPeriodID);
+			stmt.setInt(2, this.currentPossessionID);
+		    stmt.executeUpdate();
+		    
+		    for (Player player : players)
+		    {
+		    	stmt = conn.prepareStatement("INSERT INTO `nba2`.`possession_players`" +
+		    		    " (`possession_id`,`player_id`) VALUES (?,?);");
+		    			stmt.setInt(1, this.currentPossessionID);
+		    			stmt.setInt(2, player.getPlayerID());
+		    		    stmt.executeUpdate();
+		    }
+		} 
+		catch (SQLException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		for(Play play : possession.getPossessionPlays())
+		{
+			play.accept(this);
+		}
 	}
 
 }
