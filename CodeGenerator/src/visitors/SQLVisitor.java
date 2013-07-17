@@ -39,7 +39,9 @@ public class SQLVisitor implements Visitor {
 	private ResultSet rs;
 	private PBPJson pbp;
 	private String gameID;
-	private int currentPeriodID, currentPossessionID, currentActionID;
+	private int currentPeriodID, currentPossessionID, 
+					currentActionID, currentPlayerID;
+	private boolean missed;
 	
 	public SQLVisitor(String path, String userName, String password, PBPJson pbp)
 	{
@@ -117,21 +119,24 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(Play play) {
-		// TODO Auto-generated method stub
-		
+	public void visit(Play play) 
+	{
+		play.getPlayType().accept(this);
 	}
 
 	@Override
-	public void visit(PlayerPlay play) {
-		// TODO Auto-generated method stub
-		
+	public void visit(PlayerPlay play) 
+	{
+		this.currentPlayerID = play.getPlayer().getPlayerID();
+		play.getPlayType().accept(this);
 	}
 
 	@Override
-	public void visit(MissedPlay play) {
-		// TODO Auto-generated method stub
-		
+	public void visit(MissedPlay play) 
+	{
+		this.missed = true;
+		this.currentPlayerID = play.getPlayer().getPlayerID();
+		play.getPlayType().accept(this);
 	}
 
 	@Override
@@ -293,6 +298,7 @@ public class SQLVisitor implements Visitor {
 		
 		for(Play play : possession.getPossessionPlays())
 		{
+			this.missed = false;
 			play.accept(this);
 		}
 	}
