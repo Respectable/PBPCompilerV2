@@ -155,9 +155,42 @@ public class SQLVisitor implements Visitor {
 	@Override
 	public void visit(Block block) 
 	{
+		int blockID = -1;
+		
 		if(this.currentShotID != -1)
 		{
-			
+			try 
+			{
+				stmt = conn.prepareStatement("INSERT INTO `nba2`.`block` VALUES (DEFAULT);");
+				stmt.executeUpdate();
+				
+				rs = stmt.executeQuery("SELECT LAST_INSERT_ID()");
+
+			    if (rs.next()) 
+			    {
+			    	blockID = rs.getInt(1);
+			    }
+			    else 
+			    {
+			    	//TODO throw an exception from here
+			    }
+				
+			    stmt = conn.prepareStatement("INSERT INTO `nba2`.`block_player` (`block_id`,`player_id`)" +
+						"VALUES (?,?);");
+				stmt.setInt(1, blockID);
+				stmt.setInt(2, this.currentPlayerID);
+				stmt.executeUpdate();
+				
+				stmt = conn.prepareStatement("INSERT INTO `nba2`.`block_shot` (`shot_id`,`block_id`)" +
+						"VALUES (?,?);");
+				stmt.setInt(1, this.currentShotID);
+				stmt.setInt(2, blockID);
+				stmt.executeUpdate();
+			} 
+			catch (SQLException e) 
+			{
+				e.printStackTrace();
+			}
 		}
 		else
 		{
@@ -371,8 +404,23 @@ public class SQLVisitor implements Visitor {
 	
 	private String getPlayTime(int playID)
 	{
-		//TODO
-		return "moop";
+		PBPJson relevantPlay = new PBPJson();
+		relevantPlay.setEventNum(playID);
+		int index  = Collections.binarySearch(this.pbp, relevantPlay, 
+				PBPJson.COMPARE_BY_PLAY_ID);
+		
+		if (index == -1)
+		{
+			System.out.println("Game: " + this.gameID + " " +
+					"Play: " + playID + " Play not found.");
+			System.exit(-1);
+		}
+		else
+		{
+			relevantPlay = this.pbp.get(index);
+		}
+		
+		return relevantPlay.getActualTime();
 	}
 	
 	private int getConvertedPlayTime(int playID)
