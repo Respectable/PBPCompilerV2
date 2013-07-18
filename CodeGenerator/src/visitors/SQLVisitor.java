@@ -290,9 +290,50 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(Assist assist) {
-		// TODO Auto-generated method stub
+	public void visit(Assist assist) 
+	{
+		int assistID = -1;
 		
+		if(this.currentShotID != -1)
+		{
+			try 
+			{
+				stmt = conn.prepareStatement("INSERT INTO `nba2`.`assist` VALUES (DEFAULT);");
+				stmt.executeUpdate();
+				
+				rs = stmt.executeQuery("SELECT LAST_INSERT_ID()");
+
+			    if (rs.next()) 
+			    {
+			    	assistID = rs.getInt(1);
+			    }
+			    else 
+			    {
+			    	//TODO throw an exception from here
+			    }
+				
+			    stmt = conn.prepareStatement("INSERT INTO `nba2`.`assist_player` (`assist_id`,`player_id`)" +
+						"VALUES (?,?);");
+				stmt.setInt(1, assistID);
+				stmt.setInt(2, assist.getPlayer().getPlayerID());
+				stmt.executeUpdate();
+				
+				stmt = conn.prepareStatement("INSERT INTO `nba2`.`assist_shot` (`shot_id`,`assist_id`)" +
+						"VALUES (?,?);");
+				stmt.setInt(1, this.currentShotID);
+				stmt.setInt(2, assistID);
+				stmt.executeUpdate();
+			} 
+			catch (SQLException e) 
+			{
+				e.printStackTrace();
+			}
+		}
+		else
+		{
+			System.out.println("Unable to find shot associated with assist");
+			//TODO error on shot not being found
+		}
 	}
 
 	@Override
@@ -406,7 +447,7 @@ public class SQLVisitor implements Visitor {
 	{
 		PBPJson relevantPlay = new PBPJson();
 		relevantPlay.setEventNum(playID);
-		int index  = Collections.binarySearch(this.pbp, relevantPlay, 
+		int index = Collections.binarySearch(this.pbp, relevantPlay, 
 				PBPJson.COMPARE_BY_PLAY_ID);
 		
 		if (index == -1)
