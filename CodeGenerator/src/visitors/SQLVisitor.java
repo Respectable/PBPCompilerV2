@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import jsonObjects.PBPJson;
 
@@ -37,15 +38,18 @@ public class SQLVisitor implements Visitor {
 	private Connection conn;
 	private PreparedStatement stmt;
 	private ResultSet rs;
-	private PBPJson pbp;
+	private ArrayList<PBPJson> pbp;
 	private String gameID;
 	private int currentPeriodID, currentPossessionID, 
-					currentActionID, currentPlayerID;
+					currentShotID, currentFoulID, currentTechnicalID,
+					currentStealID, currentTurnoverID, currentPlayerID;
 	private boolean missed;
+	private ContextInfo currentContext;
 	
-	public SQLVisitor(String path, String userName, String password, PBPJson pbp)
+	public SQLVisitor(String path, String userName, String password, ArrayList<PBPJson> pbp)
 	{
 		this.pbp = pbp;
+		Collections.sort(this.pbp, PBPJson.COMPARE_BY_PLAY_ID);
 		try 
 		{
 			Class.forName("com.mysql.jdbc.Driver");
@@ -67,7 +71,7 @@ public class SQLVisitor implements Visitor {
 	@Override
 	public void visit(Game game) 
 	{
-		this.gameID = pbp.getGameID();
+		this.gameID = pbp.get(0).getGameID();
 		for (Period p : game.getPeriods())
 		{
 			p.accept(this);
@@ -103,6 +107,12 @@ public class SQLVisitor implements Visitor {
 		    
 		    for(Possession p : period.getPossessions())
 		    {
+		    	currentShotID = -1;
+		    	currentFoulID = -1;
+		    	currentTechnicalID = -1;
+		    	currentStealID = -1;
+		    	currentTurnoverID = -1;
+		    	currentPlayerID = -1;
 		    	p.accept(this);
 		    }
 		} 
@@ -113,20 +123,19 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(Player player) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(Player player) {}
 
 	@Override
 	public void visit(Play play) 
 	{
+		currentContext = play.getContextInfo();
 		play.getPlayType().accept(this);
 	}
 
 	@Override
 	public void visit(PlayerPlay play) 
 	{
+		currentContext = play.getContextInfo();
 		this.currentPlayerID = play.getPlayer().getPlayerID();
 		play.getPlayType().accept(this);
 	}
@@ -134,21 +143,27 @@ public class SQLVisitor implements Visitor {
 	@Override
 	public void visit(MissedPlay play) 
 	{
+		currentContext = play.getContextInfo();
 		this.missed = true;
 		this.currentPlayerID = play.getPlayer().getPlayerID();
 		play.getPlayType().accept(this);
 	}
 
 	@Override
-	public void visit(PlayType playType) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(PlayType playType) {}
 
 	@Override
-	public void visit(Block block) {
-		// TODO Auto-generated method stub
-		
+	public void visit(Block block) 
+	{
+		if(this.currentShotID != -1)
+		{
+			
+		}
+		else
+		{
+			System.out.println("Unable to find shot associated with block");
+			//TODO error on shot not being found
+		}
 	}
 
 	@Override
@@ -194,9 +209,51 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(Shot shot) {
-		// TODO Auto-generated method stub
+	public void visit(Shot shot) 
+	{
+		boolean threePointShot = shot.getShotType() instanceof ThreePointShot;
+		try 
+		{
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`shot` (`x`,`y`,`shot_made`," +
+					"`three_pointer`, `shot_type`) VALUES (?,?,?,?,?);");
+			stmt.setInt(1, shot.getX());
+			stmt.setInt(2, shot.getY());
+			stmt.setBoolean(3, !missed);
+			stmt.setBoolean(4, threePointShot);
+			stmt.setString(5, shot.getShotType().getDescription());
+			stmt.executeUpdate();
+		    
+		    rs = stmt.executeQuery("SELECT LAST_INSERT_ID()");
+
+		    if (rs.next()) 
+		    {
+		        this.currentShotID = rs.getInt(1);
+		    }
+		    else 
+		    {
+		    	//TODO throw an exception from here
+		    }
+		    
+		    stmt = conn.prepareStatement("INSERT INTO `nba2`.`shot_player` (`shot_id`,`player_id`)" +
+					"VALUES (?,?);");
+			stmt.setInt(1, this.currentShotID);
+			stmt.setInt(2, this.currentPlayerID);
+			stmt.executeUpdate();
+		    
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`shot_possession` (`shot_id`," +
+					"`possession_id`, `time_of_shot`) VALUES (?,?,?);");
+			stmt.setInt(1, this.currentShotID);
+			stmt.setInt(2, this.currentPossessionID);
+			stmt.setInt(3, getConvertedPlayTime(currentContext.getPlayID()));
+			stmt.executeUpdate();
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
 		
+		if (shot.getShotEnding().getAssist() != null)
+			shot.getShotEnding().getAssist().accept(this);
 	}
 
 	@Override
@@ -261,7 +318,7 @@ public class SQLVisitor implements Visitor {
 		
 		try 
 		{
-			stmt = conn.prepareStatement("INSERT INTO `nba`.`possession` VALUES (DEFAULT);");
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`possession` VALUES (DEFAULT);");
 			stmt.executeUpdate();
 		    
 		    rs = stmt.executeQuery("SELECT LAST_INSERT_ID()");
@@ -292,7 +349,6 @@ public class SQLVisitor implements Visitor {
 		} 
 		catch (SQLException e) 
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -301,6 +357,27 @@ public class SQLVisitor implements Visitor {
 			this.missed = false;
 			play.accept(this);
 		}
+	}
+	
+	private int convertStringTime(String time)
+	{
+		String[] timeParts = time.split(":");
+		String min = timeParts[0];
+		String tens = timeParts[1].substring(0,1);
+		String singles = timeParts[1].substring(1, 2);
+		return ((Integer.parseInt(min) * 60) + (Integer.parseInt(tens) * 10) +
+				Integer.parseInt(singles)) * 10;
+	}
+	
+	private String getPlayTime(int playID)
+	{
+		//TODO
+		return "moop";
+	}
+	
+	private int getConvertedPlayTime(int playID)
+	{
+		return convertStringTime(getPlayTime(playID));
 	}
 
 }
