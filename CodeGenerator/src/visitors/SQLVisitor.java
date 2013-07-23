@@ -42,7 +42,8 @@ public class SQLVisitor implements Visitor {
 	private String gameID;
 	private int currentPeriodID, currentPossessionID, 
 					currentShotID, currentFoulID, currentTechnicalID,
-					currentStealID, currentTurnoverID, currentPlayerID;
+					currentStealID, currentTurnoverID, currentPlayerID,
+					currentFreeThrowID;
 	private boolean missed;
 	private ContextInfo currentContext;
 	
@@ -113,6 +114,7 @@ public class SQLVisitor implements Visitor {
 		    	currentStealID = -1;
 		    	currentTurnoverID = -1;
 		    	currentPlayerID = -1;
+		    	currentFreeThrowID = -1;
 		    	p.accept(this);
 		    }
 		} 
@@ -200,9 +202,43 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(Ejection ejection) {
-		// TODO Auto-generated method stub
+	public void visit(Ejection ejection) 
+	{
+		int ejectionID = -1;
 		
+		try 
+		{
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`ejection` VALUES (DEFAULT);");
+			stmt.executeUpdate();
+			
+			rs = stmt.executeQuery("SELECT LAST_INSERT_ID()");
+
+		    if (rs.next()) 
+		    {
+		    	ejectionID = rs.getInt(1);
+		    }
+		    else 
+		    {
+		    	//TODO throw an exception from here
+		    }
+			
+		    stmt = conn.prepareStatement("INSERT INTO `nba2`.`ejection_player` (`ejection_id`,`player_id`)" +
+					"VALUES (?,?);");
+			stmt.setInt(1, ejectionID);
+			stmt.setInt(2, this.currentPlayerID);
+			stmt.executeUpdate();
+			
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`ejection_possession` (`ejection_id`,`possession_id`" +
+					"`time_of_ejection`) VALUES (?,?,?);");
+			stmt.setInt(1, ejectionID);
+			stmt.setInt(2, this.currentPossessionID);
+			stmt.setInt(3, getConvertedPlayTime(currentContext.getPlayID()));
+			stmt.executeUpdate();
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -224,9 +260,57 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(JumpBall jumpBall) {
-		// TODO Auto-generated method stub
+	public void visit(JumpBall jumpBall) 
+	{
+		int jumpBallID = -1;
 		
+		try 
+		{
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`jump_ball` VALUES (DEFAULT);");
+			stmt.executeUpdate();
+			
+			rs = stmt.executeQuery("SELECT LAST_INSERT_ID()");
+
+		    if (rs.next()) 
+		    {
+		    	jumpBallID = rs.getInt(1);
+		    }
+		    else 
+		    {
+		    	//TODO throw an exception from here
+		    }
+		    
+		    if (jumpBall.getEnding().getTippedTo() != null)
+		    {
+		    	stmt = conn.prepareStatement("INSERT INTO `nba2`.`jump_ball_players` (`jump_ball_id`," +
+		    			"`player_1_id`, `player_1_id`, `tipped_to_id`) VALUES (?,?,?,?);");
+				stmt.setInt(1, jumpBallID);
+				stmt.setInt(2, jumpBall.getPlayer1().getPlayerID());
+				stmt.setInt(3, jumpBall.getPlayer2().getPlayerID());
+				stmt.setInt(4, jumpBall.getEnding().getTippedTo().getPlayerID());
+				stmt.executeUpdate();
+		    }
+		    else
+		    {
+		    	stmt = conn.prepareStatement("INSERT INTO `nba2`.`jump_ball_players` (`jump_ball_id`," +
+		    			"`player_1_id`, `player_1_id`) VALUES (?,?,?);");
+				stmt.setInt(1, jumpBallID);
+				stmt.setInt(2, jumpBall.getPlayer1().getPlayerID());
+				stmt.setInt(3, jumpBall.getPlayer2().getPlayerID());
+				stmt.executeUpdate();
+		    }
+			
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`jump_ball_possession` (`jump_ball_id`,`possession_id`," +
+					"`time_of_jump`) VALUES (?,?,?);");
+			stmt.setInt(1, jumpBallID);
+			stmt.setInt(2, this.currentPossessionID);
+			stmt.setInt(3, getConvertedPlayTime(currentContext.getPlayID()));
+			stmt.executeUpdate();
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -236,10 +320,7 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(Review review) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visit(Review review) {}
 
 	@Override
 	public void visit(Shot shot) 

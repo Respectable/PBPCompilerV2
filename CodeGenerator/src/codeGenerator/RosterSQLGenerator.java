@@ -222,7 +222,7 @@ public class RosterSQLGenerator
 		{
 			System.out.println("Could not find player on 2nd pass: " 
 								+ player.getPlayerName());
-			player.setPlayerID(-2);
+			player.setPlayerID(-1);
 		}
 		else if (matchingPlayers.size() == 1)
 		{
@@ -243,7 +243,7 @@ public class RosterSQLGenerator
 		
 		if (role.equals(PlayRole.NEUTRAL))
 		{
-			player.setPlayerID(-2);
+			player.setPlayerID(-1);
 			System.out.println("Could not find player on 2nd pass: " 
 					+ player.getPlayerName() + ", Player on both teams");
 			return;
@@ -291,7 +291,7 @@ public class RosterSQLGenerator
 		{
 			System.out.println("Could not find player on 3rd pass: " 
 								+ player.getPlayerName());
-			player.setPlayerID(-2);
+			player.setPlayerID(-1);
 		}
 		else if (matchingPlayers.size() == 1)
 		{
@@ -302,7 +302,7 @@ public class RosterSQLGenerator
 		{
 			System.out.println("Could not narrow results on 3rd pass: " 
 					+ player.getPlayerName());
-			player.setPlayerID(-2);
+			player.setPlayerID(-1);
 		}
 	}
 	
