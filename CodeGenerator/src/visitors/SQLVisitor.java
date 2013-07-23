@@ -424,9 +424,45 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(Substitution sub) {
-		// TODO Auto-generated method stub
+	public void visit(Substitution sub) 
+	{
+		int subID = -1;
 		
+		try 
+		{
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`substitution` VALUES (DEFAULT);");
+			stmt.executeUpdate();
+			
+			rs = stmt.executeQuery("SELECT LAST_INSERT_ID()");
+
+		    if (rs.next()) 
+		    {
+		    	subID = rs.getInt(1);
+		    }
+		    else 
+		    {
+		    	//TODO throw an exception from here
+		    }
+		    
+		    
+		    stmt = conn.prepareStatement("INSERT INTO `nba2`.`substitution_players` (`jump_ball_id`," +
+		    			"`player_in_id`, `player_out_id`) VALUES (?,?,?);");
+			stmt.setInt(1, subID);
+			stmt.setInt(2, sub.getIn().getPlayerID());
+			stmt.setInt(3, sub.getOut().getPlayerID());
+			stmt.executeUpdate();
+		   
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`substitution_possession` (`substitution_id`,`possession_id`," +
+					"`time_of_sub`) VALUES (?,?,?);");
+			stmt.setInt(1, subID);
+			stmt.setInt(2, this.currentPossessionID);
+			stmt.setInt(3, getConvertedPlayTime(currentContext.getPlayID()));
+			stmt.executeUpdate();
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
