@@ -268,7 +268,7 @@ public class SQLVisitor implements Visitor {
 		    	//TODO throw an exception from here
 		    }
 		    
-		    stmt = conn.prepareStatement("INSERT INTO `nba2`.`foul_players` (`foul_id`,`player_id`)" +
+		    stmt = conn.prepareStatement("INSERT INTO `nba2`.`foul_player` (`foul_id`,`player_id`)" +
 					"VALUES (?,?);");
 			stmt.setInt(1, this.currentFoulID);
 			stmt.setInt(2, this.currentPlayerID);
@@ -310,7 +310,7 @@ public class SQLVisitor implements Visitor {
 		    	//TODO throw an exception from here
 		    }
 		    
-		    stmt = conn.prepareStatement("INSERT INTO `nba2`.`foul_players` (`foul_id`,`player_id`)" +
+		    stmt = conn.prepareStatement("INSERT INTO `nba2`.`foul_player` (`foul_id`,`player_id`)" +
 					"VALUES (?,?);");
 			stmt.setInt(1, this.currentFoulID);
 			stmt.setInt(2, foul.getPlayer1().getPlayerID());
