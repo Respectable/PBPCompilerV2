@@ -246,15 +246,93 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(Foul foul) {
-		// TODO Auto-generated method stub
-		
+	public void visit(Foul foul) 
+	{
+		try 
+		{
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`foul` (`foul_type`,`team_foul`," +
+					"`personal_foul`) VALUES (?,?);");
+			stmt.setString(1, foul.getFoulType().getFoulType());
+			stmt.setBoolean(2, foul.getFoulType().teamFoul());
+			stmt.setBoolean(3, foul.getFoulType().personalFoul());
+			stmt.executeUpdate();
+		    
+		    rs = stmt.executeQuery("SELECT LAST_INSERT_ID()");
+
+		    if (rs.next()) 
+		    {
+		        this.currentFoulID = rs.getInt(1);
+		    }
+		    else 
+		    {
+		    	//TODO throw an exception from here
+		    }
+		    
+		    stmt = conn.prepareStatement("INSERT INTO `nba2`.`foul_players` (`foul_id`,`player_id`)" +
+					"VALUES (?,?);");
+			stmt.setInt(1, this.currentFoulID);
+			stmt.setInt(2, this.currentPlayerID);
+			stmt.executeUpdate();
+		    
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`foul_possession` (`foul_id`," +
+					"`possession_id`, `time_of_foul`) VALUES (?,?,?);");
+			stmt.setInt(1, this.currentFoulID);
+			stmt.setInt(2, this.currentPossessionID);
+			stmt.setInt(3, getConvertedPlayTime(currentContext.getPlayID()));
+			stmt.executeUpdate();
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
-	public void visit(DoublePersonalFoul foul) {
-		// TODO Auto-generated method stub
-		
+	public void visit(DoublePersonalFoul foul) 
+	{
+		try 
+		{
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`foul` (`foul_type`,`team_foul`," +
+					"`personal_foul`) VALUES (?,?);");
+			stmt.setString(1, foul.getFoulType().getFoulType());
+			stmt.setBoolean(2, foul.getFoulType().teamFoul());
+			stmt.setBoolean(3, foul.getFoulType().personalFoul());
+			stmt.executeUpdate();
+		    
+		    rs = stmt.executeQuery("SELECT LAST_INSERT_ID()");
+
+		    if (rs.next()) 
+		    {
+		        this.currentFoulID = rs.getInt(1);
+		    }
+		    else 
+		    {
+		    	//TODO throw an exception from here
+		    }
+		    
+		    stmt = conn.prepareStatement("INSERT INTO `nba2`.`foul_players` (`foul_id`,`player_id`)" +
+					"VALUES (?,?);");
+			stmt.setInt(1, this.currentFoulID);
+			stmt.setInt(2, foul.getPlayer1().getPlayerID());
+			stmt.executeUpdate();
+			
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`foul_players` (`foul_id`,`player_id`)" +
+					"VALUES (?,?);");
+			stmt.setInt(1, this.currentFoulID);
+			stmt.setInt(2, foul.getPlayer2().getPlayerID());
+			stmt.executeUpdate();
+		    
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`foul_possession` (`foul_id`," +
+					"`possession_id`, `time_of_foul`) VALUES (?,?,?);");
+			stmt.setInt(1, this.currentFoulID);
+			stmt.setInt(2, this.currentPossessionID);
+			stmt.setInt(3, getConvertedPlayTime(currentContext.getPlayID()));
+			stmt.executeUpdate();
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
