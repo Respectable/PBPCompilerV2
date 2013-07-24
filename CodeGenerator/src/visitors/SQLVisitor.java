@@ -13,6 +13,7 @@ import jsonObjects.PBPJson;
 import nba.ContextInfo;
 import nba.Game;
 import nba.Period;
+import nba.PlayRole;
 import nba.Player;
 import nba.Possession;
 import nba.play.*;
@@ -43,13 +44,16 @@ public class SQLVisitor implements Visitor {
 	private int currentPeriodID, currentPossessionID, 
 					currentShotID, currentFoulID, currentTechnicalID,
 					currentStealID, currentTurnoverID, currentPlayerID,
-					currentFreeThrowID;
+					currentFreeThrowID, homeID, awayID;
 	private boolean missed;
 	private ContextInfo currentContext;
 	
-	public SQLVisitor(String path, String userName, String password, ArrayList<PBPJson> pbp)
+	public SQLVisitor(String path, String userName, String password, ArrayList<PBPJson> pbp,
+			int homeID, int awayID)
 	{
 		this.pbp = pbp;
+		this.homeID = homeID;
+		this.awayID = awayID;
 		Collections.sort(this.pbp, PBPJson.COMPARE_BY_PLAY_ID);
 		try 
 		{
@@ -484,9 +488,56 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(Timeout timeout) {
-		// TODO Auto-generated method stub
+	public void visit(Timeout timeout) 
+	{
+		int timeoutID = -1;
 		
+		try 
+		{
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`timeout` (`timeout_type`) " +
+					" VALUES (?);");
+			stmt.setString(1, timeout.getTimeoutType());
+			stmt.executeUpdate();
+			
+			rs = stmt.executeQuery("SELECT LAST_INSERT_ID()");
+
+		    if (rs.next()) 
+		    {
+		    	timeoutID = rs.getInt(1);
+		    }
+		    else 
+		    {
+		    	//TODO throw an exception from here
+		    }
+		    
+		    if (currentContext.getPlayRole().equals(PlayRole.HOME))
+		    {
+		    	stmt = conn.prepareStatement("INSERT INTO `nba2`.`timeout_team` (`timeout_id`," +
+		    			"`team_id`) VALUES (?,?);");
+		    	stmt.setInt(1, timeoutID);
+		    	stmt.setInt(2, this.homeID);
+		    	stmt.executeUpdate();
+		    }
+		    else if (currentContext.getPlayRole().equals(PlayRole.AWAY))
+		    {
+		    	stmt = conn.prepareStatement("INSERT INTO `nba2`.`timeout_team` (`timeout_id`," +
+		    			"`team_id`) VALUES (?,?);");
+		    	stmt.setInt(1, timeoutID);
+		    	stmt.setInt(2, this.awayID);
+		    	stmt.executeUpdate();
+		    }
+		    
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`timeout_possession` (`timeout_id`,`possession_id`," +
+					"`time_of_timeout`) VALUES (?,?,?);");
+			stmt.setInt(1, timeoutID);
+			stmt.setInt(2, this.currentPossessionID);
+			stmt.setInt(3, getConvertedPlayTime(currentContext.getPlayID()));
+			stmt.executeUpdate();
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -496,7 +547,8 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(Violation violation) {
+	public void visit(Violation violation) 
+	{
 		// TODO Auto-generated method stub
 		
 	}
