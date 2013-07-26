@@ -47,6 +47,7 @@ public class SQLVisitor implements Visitor {
 					currentFreeThrowID, homeID, awayID;
 	private boolean missed;
 	private ContextInfo currentContext;
+	private Possession currentPossession;
 	
 	public SQLVisitor(String path, String userName, String password, ArrayList<PBPJson> pbp,
 			int homeID, int awayID)
@@ -316,7 +317,7 @@ public class SQLVisitor implements Visitor {
 			stmt.setInt(2, foul.getPlayer1().getPlayerID());
 			stmt.executeUpdate();
 			
-			stmt = conn.prepareStatement("INSERT INTO `nba2`.`foul_players` (`foul_id`,`player_id`)" +
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`foul_player` (`foul_id`,`player_id`)" +
 					"VALUES (?,?);");
 			stmt.setInt(1, this.currentFoulID);
 			stmt.setInt(2, foul.getPlayer2().getPlayerID());
@@ -336,8 +337,8 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(FreeThrow freeThrow) {
-		// TODO Auto-generated method stub
+	public void visit(FreeThrow freeThrow) 
+	{
 		
 	}
 
@@ -396,9 +397,98 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(Rebound rebound) {
-		// TODO Auto-generated method stub
+	public void visit(Rebound rebound) 
+	{
+		int reboundID = -1;
+		boolean isDefensive = true;
 		
+		if (this.currentContext.getPlayRole().equals(PlayRole.HOME))
+		{
+			isDefensive = (this.homeID == this.currentPossession.getDefenseID());
+		}
+		else
+		{
+			isDefensive = (this.awayID == this.currentPossession.getDefenseID());
+		}
+		
+		if (this.currentFreeThrowID != -1)
+		{
+			try 
+			{
+				stmt = conn.prepareStatement("INSERT INTO `nba2`.`rebound` (`defensive_rebound`) " +
+						"VALUES (?);");
+				stmt.setBoolean(1, isDefensive);
+				stmt.executeUpdate();
+				
+				rs = stmt.executeQuery("SELECT LAST_INSERT_ID()");
+
+			    if (rs.next()) 
+			    {
+			    	reboundID = rs.getInt(1);
+			    }
+			    else 
+			    {
+			    	//TODO throw an exception from here
+			    }
+				
+			    stmt = conn.prepareStatement("INSERT INTO `nba2`.`rebound_player` (`rebound_id`,`player_id`)" +
+						"VALUES (?,?);");
+				stmt.setInt(1, reboundID);
+				stmt.setInt(2, this.currentPlayerID);
+				stmt.executeUpdate();
+				
+				stmt = conn.prepareStatement("INSERT INTO `nba2`.`rebound_free_throw` (`rebound_id`,`free_throw_id`)" +
+						"VALUES (?,?);");
+				stmt.setInt(1, reboundID);
+				stmt.setInt(2, this.currentFreeThrowID);
+				stmt.executeUpdate();
+			}
+			catch (SQLException e) 
+			{
+				e.printStackTrace();
+			}
+		}
+		else if (this.currentShotID != -1)
+		{
+			try 
+			{
+				stmt = conn.prepareStatement("INSERT INTO `nba2`.`rebound` (`defensive_rebound`) " +
+						"VALUES (?);");
+				stmt.setBoolean(1, isDefensive);
+				stmt.executeUpdate();
+				
+				rs = stmt.executeQuery("SELECT LAST_INSERT_ID()");
+
+			    if (rs.next()) 
+			    {
+			    	reboundID = rs.getInt(1);
+			    }
+			    else 
+			    {
+			    	//TODO throw an exception from here
+			    }
+				
+			    stmt = conn.prepareStatement("INSERT INTO `nba2`.`rebound_player` (`rebound_id`,`player_id`)" +
+						"VALUES (?,?);");
+				stmt.setInt(1, reboundID);
+				stmt.setInt(2, this.currentPlayerID);
+				stmt.executeUpdate();
+				
+				stmt = conn.prepareStatement("INSERT INTO `nba2`.`rebound_shot` (`rebound_id`,`shot_id`)" +
+						"VALUES (?,?);");
+				stmt.setInt(1, reboundID);
+				stmt.setInt(2, this.currentShotID);
+				stmt.executeUpdate();
+			}
+			catch (SQLException e) 
+			{
+				e.printStackTrace();
+			}
+		}
+		else
+		{
+			//TODO error, because there is no matching shot or FT
+		}
 	}
 
 	@Override
@@ -636,6 +726,7 @@ public class SQLVisitor implements Visitor {
 	{
 		ArrayList<Player> players = possession.getAwayPlayers();
 		players.addAll(possession.getHomePlayers());
+		this.currentPossession = possession;
 		
 		try 
 		{
