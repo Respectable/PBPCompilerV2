@@ -87,14 +87,14 @@ public class Compiler {
 				int homeID = boxScore.getGameSummary().getHomeID();
 				int awayID = boxScore.getGameSummary().getAwayID();
 				
-				RosterSQLGenerator rosters = new RosterSQLGenerator(homeID, awayID,
-						gameID, boxScore.getInactives(), boxScore.getPlayerStats(), pbp);
-				
-				OfficalSQLGenerator officals = new OfficalSQLGenerator(gameID, 
-						boxScore.getOfficals());
-				
 				GameSQLGenerator gameGen = new GameSQLGenerator(boxScore.getGameInfo(),
 						boxScore.getGameSummary());
+				
+				RosterSQLGenerator rosters = new RosterSQLGenerator(gameGen.getGameID(), homeID, awayID,
+						boxScore.getInactives(), boxScore.getPlayerStats(), pbp, gameID);
+				
+				OfficalSQLGenerator officals = new OfficalSQLGenerator(gameGen.getGameID(), 
+						boxScore.getOfficals());
 				
 				PlayerVisitor playerVisitor = new PlayerVisitor(rosters);
 				game.accept(playerVisitor);

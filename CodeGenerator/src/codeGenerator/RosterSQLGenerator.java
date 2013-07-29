@@ -33,11 +33,12 @@ public class RosterSQLGenerator
 								homeInactive, awayInactive,
 								homeDNP, awayDNP;
 	private int homeID, awayID;
-	private String gameID;
+	private int gameID;
+	private String nbaGameID;
 	private ArrayList<PBPJson> pbp;
 	
-	public RosterSQLGenerator(int homeID, int awayID, String gameID, ArrayList<InactiveJson> inactive,
-								ArrayList<PlayerStatsJson> players, ArrayList<PBPJson> pbp)
+	public RosterSQLGenerator(int homeID, int awayID, int gameID, ArrayList<InactiveJson> inactive,
+								ArrayList<PlayerStatsJson> players, ArrayList<PBPJson> pbp, String nbaGameID)
 	{
 		this.homeStarters = parseStarters(homeID, players);
 		this.homeBench = parseBench(homeID, players);
@@ -50,6 +51,7 @@ public class RosterSQLGenerator
 		this.homeID = homeID;
 		this.awayID = awayID;
 		this.gameID = gameID;
+		this.nbaGameID = nbaGameID;
 		this.pbp = pbp;
 		Collections.sort(this.pbp, PBPJson.COMPARE_BY_PLAY_ID);
 	}
@@ -610,7 +612,7 @@ public class RosterSQLGenerator
 			
 			for (Player player : homeStarters)
 			{
-				stmt.setString(1, this.gameID);
+				stmt.setInt(1, this.gameID);
 				stmt.setInt(2, this.homeID);
 				stmt.setInt(3, player.getPlayerID());
 				stmt.setBoolean(4, true);
@@ -619,7 +621,7 @@ public class RosterSQLGenerator
 			
 			for (Player player : homeBench)
 			{
-				stmt.setString(1, this.gameID);
+				stmt.setInt(1, this.gameID);
 				stmt.setInt(2, this.homeID);
 				stmt.setInt(3, player.getPlayerID());
 				stmt.setBoolean(4, true);
@@ -628,7 +630,7 @@ public class RosterSQLGenerator
 			
 			for (Player player : homeInactive)
 			{
-				stmt.setString(1, this.gameID);
+				stmt.setInt(1, this.gameID);
 				stmt.setInt(2, this.homeID);
 				stmt.setInt(3, player.getPlayerID());
 				stmt.setBoolean(4, false);
@@ -637,7 +639,7 @@ public class RosterSQLGenerator
 			
 			for (Player player : awayStarters)
 			{
-				stmt.setString(1, this.gameID);
+				stmt.setInt(1, this.gameID);
 				stmt.setInt(2, this.awayID);
 				stmt.setInt(3, player.getPlayerID());
 				stmt.setBoolean(4, true);
@@ -646,7 +648,7 @@ public class RosterSQLGenerator
 			
 			for (Player player : awayBench)
 			{
-				stmt.setString(1, this.gameID);
+				stmt.setInt(1, this.gameID);
 				stmt.setInt(2, this.awayID);
 				stmt.setInt(3, player.getPlayerID());
 				stmt.setBoolean(4, true);
@@ -655,7 +657,7 @@ public class RosterSQLGenerator
 			
 			for (Player player : awayInactive)
 			{
-				stmt.setString(1, this.gameID);
+				stmt.setInt(1, this.gameID);
 				stmt.setInt(2, this.awayID);
 				stmt.setInt(3, player.getPlayerID());
 				stmt.setBoolean(4, false);
@@ -703,7 +705,7 @@ public class RosterSQLGenerator
 			e.printStackTrace();
 		}
 		BufferedReader br = NBADownloader.downloadCustomBox(
-				gameID, startTime, endTime);
+				nbaGameID, startTime, endTime);
 		return BoxJson.getBoxScore(br).getPlayerStats();
 	}
 }

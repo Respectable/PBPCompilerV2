@@ -13,9 +13,9 @@ import jsonObjects.boxScoreObjects.OfficalJson;
 public class OfficalSQLGenerator 
 {
 	private ArrayList<OfficalJson> officals;
-	private String gameID;
+	private int gameID;
 	
-	public OfficalSQLGenerator(String gameID, ArrayList<OfficalJson> officals) 
+	public OfficalSQLGenerator(int gameID, ArrayList<OfficalJson> officals) 
 	{
 		this.gameID = gameID;
 		this.officals = officals;
@@ -36,7 +36,7 @@ public class OfficalSQLGenerator
 			
 			for (OfficalJson offical : this.officals)
 			{
-				stmt.setString(1, this.gameID);
+				stmt.setInt(1, this.gameID);
 				stmt.setInt(2, offical.getOfficalID());
 				stmt.executeUpdate();
 			}
