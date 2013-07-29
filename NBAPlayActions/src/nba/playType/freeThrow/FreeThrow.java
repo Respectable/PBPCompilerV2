@@ -49,6 +49,9 @@ public class FreeThrow extends PlayType
 	}
 	
 	public boolean madeFT() { return predicate.madeFT(); }
+	public int currentFTNumber() { return predicate.getCurrentNumber(); }
+	public int outOfFTNumber() { return predicate.getOutOf(); }
+	
 	
 	
 }

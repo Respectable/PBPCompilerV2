@@ -339,7 +339,89 @@ public class SQLVisitor implements Visitor {
 	@Override
 	public void visit(FreeThrow freeThrow) 
 	{
+		try
+		{
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`free_throw` " +
+					"(`made`, `current_num`, `out_of`) " +
+					"VALUES (?,?,?);");
+			stmt.setBoolean(1, freeThrow.madeFT());
+			stmt.setInt(2, freeThrow.currentFTNumber());
+			stmt.setInt(3, freeThrow.outOfFTNumber());
+			stmt.executeUpdate();
+			
+			rs = stmt.executeQuery("SELECT LAST_INSERT_ID()");
+
+		    if (rs.next()) 
+		    {
+		    	this.currentFreeThrowID = rs.getInt(1);
+		    }
+		    else 
+		    {
+		    	//TODO throw an exception from here
+		    }
+		    
+		    stmt = conn.prepareStatement("INSERT INTO `nba2`.`free_throw_player` (`free_throw_id`,`player_id`)" +
+					"VALUES (?,?);");
+			stmt.setInt(1, this.currentFreeThrowID);
+			stmt.setInt(2, this.currentPlayerID);
+			stmt.executeUpdate();
+			
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`free_throw_possession` (`free_throw_id`,`possession_id`," +
+					"`time_of_jump`) VALUES (?,?,?);");
+			stmt.setInt(1, this.currentFreeThrowID);
+			stmt.setInt(2, this.currentPossessionID);
+			stmt.setInt(3, getConvertedPlayTime(currentContext.getPlayID()));
+			stmt.executeUpdate();
+		}
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
 		
+		if (freeThrow.getFreeThrowType().equals("Technical"))
+		{
+			if (this.currentTechnicalID != -1)
+			{
+				try 
+				{
+					stmt = conn.prepareStatement("INSERT INTO `nba2`.`free_throw_technical` (`technical_id`,`free_throw_id`)" +
+							"VALUES (?,?);");
+					stmt.setInt(1, this.currentTechnicalID);
+					stmt.setInt(2, this.currentFreeThrowID);
+					stmt.executeUpdate();
+				}
+				catch (SQLException e) 
+				{
+					e.printStackTrace();
+				}
+			}
+			else
+			{
+				//TODO error, couldn't find technical
+			}
+		}
+		else
+		{
+			if (this.currentFoulID != -1)
+			{
+				try
+				{
+					stmt = conn.prepareStatement("INSERT INTO `nba2`.`free_throw_foul` (`foul_id`,`free_throw_id`)" +
+							"VALUES (?,?);");
+					stmt.setInt(1, this.currentFoulID);
+					stmt.setInt(2, this.currentFreeThrowID);
+					stmt.executeUpdate();
+				}
+				catch (SQLException e) 
+				{
+					e.printStackTrace();
+				}
+			}
+			else
+			{
+				//TODO error, couldn't find foul
+			}
+		}
 	}
 
 	@Override
