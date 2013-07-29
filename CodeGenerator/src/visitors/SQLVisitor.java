@@ -40,7 +40,7 @@ public class SQLVisitor implements Visitor {
 	private PreparedStatement stmt;
 	private ResultSet rs;
 	private ArrayList<PBPJson> pbp;
-	private String gameID;
+	private int gameID;
 	private int currentPeriodID, currentPossessionID, 
 					currentShotID, currentFoulID, currentTechnicalID,
 					currentStealID, currentTurnoverID, currentPlayerID,
@@ -50,11 +50,12 @@ public class SQLVisitor implements Visitor {
 	private Possession currentPossession;
 	
 	public SQLVisitor(String path, String userName, String password, ArrayList<PBPJson> pbp,
-			int homeID, int awayID)
+			int homeID, int awayID, int gameID)
 	{
 		this.pbp = pbp;
 		this.homeID = homeID;
 		this.awayID = awayID;
+		this.gameID = gameID;
 		Collections.sort(this.pbp, PBPJson.COMPARE_BY_PLAY_ID);
 		try 
 		{
@@ -77,7 +78,6 @@ public class SQLVisitor implements Visitor {
 	@Override
 	public void visit(Game game) 
 	{
-		this.gameID = pbp.get(0).getGameID();
 		for (Period p : game.getPeriods())
 		{
 			p.accept(this);
@@ -107,7 +107,7 @@ public class SQLVisitor implements Visitor {
 		    
 		    stmt = conn.prepareStatement("INSERT INTO `nba2`.`game_periods` (`game_id`,`period_id`)" +
 					"VALUES (?,?);");
-			stmt.setString(1, this.gameID);
+			stmt.setInt(1, this.gameID);
 			stmt.setInt(2, this.currentPeriodID);
 		    stmt.executeUpdate();
 		    
