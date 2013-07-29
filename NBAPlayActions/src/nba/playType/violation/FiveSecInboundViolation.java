@@ -6,4 +6,10 @@ public class FiveSecInboundViolation extends ViolationType
 	{
 		
 	}
+	
+	@Override
+	public String toString()
+	{
+		return "Five Second Inbound";
+	}
 }

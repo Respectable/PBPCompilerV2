@@ -799,8 +799,42 @@ public class SQLVisitor implements Visitor {
 	@Override
 	public void visit(Violation violation) 
 	{
-		// TODO Auto-generated method stub
+		int violationID = -1;
 		
+		try 
+		{
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`violation` VALUES (violation_type);");
+			stmt.setString(1, violation.getViolationType().toString());
+			stmt.executeUpdate();
+			
+			rs = stmt.executeQuery("SELECT LAST_INSERT_ID()");
+
+		    if (rs.next()) 
+		    {
+		    	violationID = rs.getInt(1);
+		    }
+		    else 
+		    {
+		    	//TODO throw an exception from here
+		    }
+			
+		    stmt = conn.prepareStatement("INSERT INTO `nba2`.`violation_player` (`violation_id`,`player_id`)" +
+					"VALUES (?,?);");
+			stmt.setInt(1, violationID);
+			stmt.setInt(2, this.currentPlayerID);
+			stmt.executeUpdate();
+			
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`violation_possession` (`violation_id`,`possession_id`" +
+					"`time_of_violation`) VALUES (?,?,?);");
+			stmt.setInt(1, violationID);
+			stmt.setInt(2, this.currentPossessionID);
+			stmt.setInt(3, getConvertedPlayTime(currentContext.getPlayID()));
+			stmt.executeUpdate();
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override

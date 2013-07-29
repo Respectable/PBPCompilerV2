@@ -6,4 +6,10 @@ public class DefGTViolation extends ViolationType
 	{
 		
 	}
+	
+	@Override
+	public String toString()
+	{
+		return "Defensive Goaltending";
+	}
 }

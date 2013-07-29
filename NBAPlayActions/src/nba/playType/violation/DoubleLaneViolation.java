@@ -6,4 +6,10 @@ public class DoubleLaneViolation extends ViolationType
 	{
 		
 	}
+	
+	@Override
+	public String toString()
+	{
+		return "Double Lane";
+	}
 }

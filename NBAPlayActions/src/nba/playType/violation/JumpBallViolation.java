@@ -6,4 +6,10 @@ public class JumpBallViolation extends ViolationType
 	{
 		
 	}
+	
+	@Override
+	public String toString()
+	{
+		return "Jump Ball";
+	}
 }

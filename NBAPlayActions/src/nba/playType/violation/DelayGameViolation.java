@@ -6,4 +6,10 @@ public class DelayGameViolation extends ViolationType
 	{
 		
 	}
+	
+	@Override
+	public String toString()
+	{
+		return "Delay of Game";
+	}
 }

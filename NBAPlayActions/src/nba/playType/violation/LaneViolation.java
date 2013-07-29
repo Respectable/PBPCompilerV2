@@ -6,4 +6,10 @@ public class LaneViolation extends ViolationType
 	{
 		
 	}
+	
+	@Override
+	public String toString()
+	{
+		return "Lane";
+	}
 }
