@@ -252,7 +252,7 @@ public class SQLVisitor implements Visitor {
 		try 
 		{
 			stmt = conn.prepareStatement("INSERT INTO `nba2`.`foul` (`foul_type`,`team_foul`," +
-					"`personal_foul`) VALUES (?,?);");
+					"`personal_foul`) VALUES (?,?,?);");
 			stmt.setString(1, foul.getFoulType().getFoulType());
 			stmt.setBoolean(2, foul.getFoulType().teamFoul());
 			stmt.setBoolean(3, foul.getFoulType().personalFoul());
@@ -294,7 +294,7 @@ public class SQLVisitor implements Visitor {
 		try 
 		{
 			stmt = conn.prepareStatement("INSERT INTO `nba2`.`foul` (`foul_type`,`team_foul`," +
-					"`personal_foul`) VALUES (?,?);");
+					"`personal_foul`) VALUES (?,?,?);");
 			stmt.setString(1, foul.getFoulType().getFoulType());
 			stmt.setBoolean(2, foul.getFoulType().teamFoul());
 			stmt.setBoolean(3, foul.getFoulType().personalFoul());
@@ -672,9 +672,52 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(Steal steal) {
-		// TODO Auto-generated method stub
-		
+	public void visit(Steal steal) 
+	{
+		try 
+		{
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`steal` VALUES (DEFAULT) ;");
+			stmt.executeUpdate();
+			
+			rs = stmt.executeQuery("SELECT LAST_INSERT_ID()");
+
+		    if (rs.next()) 
+		    {
+		    	this.currentStealID = rs.getInt(1);
+		    }
+		    else 
+		    {
+		    	//TODO throw an exception from here
+		    }
+			
+		    
+		    stmt = conn.prepareStatement("INSERT INTO `nba2`.`steal_player` (`steal_id`,`player_id`)" +
+		    		"VALUES (?,?);");
+		    stmt.setInt(1, this.currentStealID);
+		    stmt.setInt(2, this.currentPlayerID);
+		    stmt.executeUpdate();
+		    
+			
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`steal_possession` (`steal_id`,`possession_id`" +
+					"`time_of_turnover`) VALUES (?,?,?);");
+			stmt.setInt(1, this.currentStealID);
+			stmt.setInt(2, this.currentPossessionID);
+			stmt.setInt(3, getConvertedPlayTime(currentContext.getPlayID()));
+			stmt.executeUpdate();
+			
+			if(this.currentTurnoverID != -1)
+			{
+				stmt = conn.prepareStatement("INSERT INTO `nba2`.`steal_player` (`steal_id`,`turnover_id`)" +
+		    			"VALUES (?,?);");
+		    	stmt.setInt(1, this.currentStealID);
+		    	stmt.setInt(2, this.currentTurnoverID);
+		    	stmt.executeUpdate();
+			}
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -726,7 +769,7 @@ public class SQLVisitor implements Visitor {
 		
 		try 
 		{
-			stmt = conn.prepareStatement("INSERT INTO `nba2`.`technical_foul` VALUES (technical_foul_type);");
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`technical_foul` (technical_foul_type) VALUES (?);");
 			stmt.setString(1, technical.technicalType());
 			stmt.executeUpdate();
 			
@@ -767,7 +810,7 @@ public class SQLVisitor implements Visitor {
 		
 		try 
 		{
-			stmt = conn.prepareStatement("INSERT INTO `nba2`.`technical_foul` VALUES (technical_foul_type);");
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`technical_foul` (technical_foul_type) VALUES (?);");
 			stmt.setString(1, technical.technicalType());
 			stmt.executeUpdate();
 			
@@ -815,7 +858,7 @@ public class SQLVisitor implements Visitor {
 		
 		try 
 		{
-			stmt = conn.prepareStatement("INSERT INTO `nba2`.`technical_foul` VALUES (technical_foul_type);");
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`technical_foul` (technical_foul_type) VALUES (?);");
 			stmt.setString(1, technical.technicalType());
 			stmt.executeUpdate();
 			
@@ -903,9 +946,58 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(Turnover turnover) {
-		// TODO Auto-generated method stub
-		
+	public void visit(Turnover turnover) 
+	{
+		if (turnover.getTurnoverType().toString().equals("No Turnover"))
+		{
+			return;
+		}
+		try 
+		{
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`turnover` (turnover_type) VALUES (?);");
+			stmt.setString(1, turnover.getTurnoverType().toString());
+			stmt.executeUpdate();
+			
+			rs = stmt.executeQuery("SELECT LAST_INSERT_ID()");
+
+		    if (rs.next()) 
+		    {
+		    	this.currentTurnoverID = rs.getInt(1);
+		    }
+		    else 
+		    {
+		    	//TODO throw an exception from here
+		    }
+			
+		    if(turnover.playerTurnover())
+		    {
+		    	stmt = conn.prepareStatement("INSERT INTO `nba2`.`turnover_player` (`turnover_id`,`player_id`)" +
+		    			"VALUES (?,?);");
+		    	stmt.setInt(1, this.currentTurnoverID);
+		    	stmt.setInt(2, this.currentPlayerID);
+		    	stmt.executeUpdate();
+		    }
+			
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`turnover_possession` (`turnover_id`,`possession_id`" +
+					"`time_of_turnover`) VALUES (?,?,?);");
+			stmt.setInt(1, this.currentTurnoverID);
+			stmt.setInt(2, this.currentPossessionID);
+			stmt.setInt(3, getConvertedPlayTime(currentContext.getPlayID()));
+			stmt.executeUpdate();
+			
+			if(this.currentStealID != -1)
+			{
+				stmt = conn.prepareStatement("INSERT INTO `nba2`.`steal_player` (`steal_id`,`turnover_id`)" +
+		    			"VALUES (?,?);");
+		    	stmt.setInt(1, this.currentStealID);
+		    	stmt.setInt(2, this.currentTurnoverID);
+		    	stmt.executeUpdate();
+			}
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -915,7 +1007,7 @@ public class SQLVisitor implements Visitor {
 		
 		try 
 		{
-			stmt = conn.prepareStatement("INSERT INTO `nba2`.`violation` VALUES (violation_type);");
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`violation` (violation_type) VALUES (?);");
 			stmt.setString(1, violation.getViolationType().toString());
 			stmt.executeUpdate();
 			
