@@ -32,6 +32,10 @@ public class PlayerSQLGenerator
 			
 			while(rs.next())
 		    {
+				if (rs.getInt("player_id") == -1)
+				{
+					continue;
+				}
 		    	newPlayers.remove(Collections.binarySearch(newPlayers,
 		    			new PlayerJson(rs.getInt("player_id"), "", true, 0, 0), PlayerJson.COMPARE_BY_ID));
 		    }
