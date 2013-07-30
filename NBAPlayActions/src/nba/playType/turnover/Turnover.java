@@ -29,4 +29,7 @@ public class Turnover extends PlayType
 	@Override
 	public boolean terminatesPossession() { return true; }
 	
+	public boolean stolen() { return turnoverType.stealable(); }
+	public boolean playerTurnover() { return (ending instanceof PlayerTurnover); }
+	
 }
