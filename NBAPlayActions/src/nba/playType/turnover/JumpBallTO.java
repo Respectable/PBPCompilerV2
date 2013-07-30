@@ -7,4 +7,16 @@ public class JumpBallTO extends TurnoverType
 	{
 		
 	}
+	
+	@Override
+	public boolean stealable() 
+	{
+		return false;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "Jump Ball";
+	}
 }

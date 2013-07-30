@@ -10,5 +10,17 @@ public class SecViolationTO extends TurnoverType {
 	}
 	
 	public int getSeconds() { return seconds; }
+	
+	@Override
+	public boolean stealable() 
+	{
+		return false;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return seconds + "Second Turnover";
+	}
 
 }

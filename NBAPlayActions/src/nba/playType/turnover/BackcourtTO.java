@@ -7,4 +7,17 @@ public class BackcourtTO extends TurnoverType
 	{
 		
 	}
+
+	@Override
+	public boolean stealable() 
+	{
+		return false;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "Backcourt";
+	}
+
 }

@@ -7,4 +7,17 @@ public class DoubleDribbleTO extends TurnoverType
 	{
 		
 	}
+	
+	@Override
+	public boolean stealable() 
+	{
+		return false;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "Double Dribble";
+	}
+	
 }

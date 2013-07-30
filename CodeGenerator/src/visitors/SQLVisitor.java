@@ -995,6 +995,7 @@ public class SQLVisitor implements Visitor {
 		for(Play play : possession.getPossessionPlays())
 		{
 			this.missed = false;
+			currentPlayerID = -1;
 			play.accept(this);
 		}
 	}

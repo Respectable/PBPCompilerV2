@@ -7,4 +7,16 @@ public class PossLostBallTO extends TurnoverType
 	{
 		
 	}
+	
+	@Override
+	public boolean stealable() 
+	{
+		return true;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "Possession Lost Ball";
+	}
 }
