@@ -36,12 +36,12 @@ public class Compiler {
 		ArrayList<PlayerJson> players;
 		BufferedReader br = NBADownloader.downloadPlayerData(currentSeason);
 		players = PlayerJson.getPlayers(br);
-		//PlayerSQLGenerator.updatePlayers(players, dbPath, userName, password);
+		PlayerSQLGenerator.updatePlayers(players, dbPath, userName, password);
 		
 		ArrayList<TeamJson> teams;
 		br = NBADownloader.downloadTeamData();
 		teams = TeamJson.getTeams(br);
-		//TeamSQLGenerator.updateTeams(teams, dbPath, userName, password);
+		TeamSQLGenerator.updateTeams(teams, dbPath, userName, password);
 		
 		for(String s : args)
 		{
@@ -107,6 +107,14 @@ public class Compiler {
 				
 				UnitVisitor unitVisitor = new UnitVisitor(rosters);
 				game.accept(unitVisitor);
+				
+				gameGen.compile(dbPath, userName, password);
+				rosters.compile(dbPath, userName, password);
+				officals.compile(dbPath, userName, password);
+				
+				SQLVisitor sql = new SQLVisitor(dbPath, userName, password,
+						pbp, homeID, awayID, gameGen.getGameID());
+				game.accept(sql);
 				
 			}
 			catch(Exception e)
