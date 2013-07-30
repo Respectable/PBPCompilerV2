@@ -24,4 +24,7 @@ public class DoubleTechnical extends Technical
 		visitor.visit(this);
 	}
 	
+	@Override
+	public String technicalType() { return "Double"; }
+	
 }

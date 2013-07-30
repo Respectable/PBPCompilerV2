@@ -720,21 +720,133 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(Technical technical) {
-		// TODO Auto-generated method stub
+	public void visit(Technical technical) 
+	{
+		int technicalID = -1;
+		
+		try 
+		{
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`technical_foul` VALUES (technical_foul_type);");
+			stmt.setString(1, technical.technicalType());
+			stmt.executeUpdate();
+			
+			rs = stmt.executeQuery("SELECT LAST_INSERT_ID()");
+
+		    if (rs.next()) 
+		    {
+		    	technicalID = rs.getInt(1);
+		    }
+		    else 
+		    {
+		    	//TODO throw an exception from here
+		    }
+			
+		    stmt = conn.prepareStatement("INSERT INTO `nba2`.`technical_foul_player` (`technical_foul_id`,`player_id`)" +
+					"VALUES (?,?);");
+			stmt.setInt(1, technicalID);
+			stmt.setInt(2, this.currentPlayerID);
+			stmt.executeUpdate();
+			
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`technical_foul_possession` (`technical_foul_id`,`possession_id`" +
+					"`time_of_technical`) VALUES (?,?,?);");
+			stmt.setInt(1, technicalID);
+			stmt.setInt(2, this.currentPossessionID);
+			stmt.setInt(3, getConvertedPlayTime(currentContext.getPlayID()));
+			stmt.executeUpdate();
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void visit(DoubleTechnical technical) 
+	{
+		int technicalID = -1;
+		
+		try 
+		{
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`technical_foul` VALUES (technical_foul_type);");
+			stmt.setString(1, technical.technicalType());
+			stmt.executeUpdate();
+			
+			rs = stmt.executeQuery("SELECT LAST_INSERT_ID()");
+
+		    if (rs.next()) 
+		    {
+		    	technicalID = rs.getInt(1);
+		    }
+		    else 
+		    {
+		    	//TODO throw an exception from here
+		    }
+			
+		    stmt = conn.prepareStatement("INSERT INTO `nba2`.`technical_foul_player` (`technical_foul_id`,`player_id`)" +
+					"VALUES (?,?);");
+			stmt.setInt(1, technicalID);
+			stmt.setInt(2, technical.getPlayer1().getPlayerID());
+			stmt.executeUpdate();
+			
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`technical_foul_player` (`technical_foul_id`,`player_id`)" +
+					"VALUES (?,?);");
+			stmt.setInt(1, technicalID);
+			stmt.setInt(2, technical.getPlayer2().getPlayerID());
+			stmt.executeUpdate();
+			
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`technical_foul_possession` (`technical_foul_id`,`possession_id`" +
+					"`time_of_technical`) VALUES (?,?,?);");
+			stmt.setInt(1, technicalID);
+			stmt.setInt(2, this.currentPossessionID);
+			stmt.setInt(3, getConvertedPlayTime(currentContext.getPlayID()));
+			stmt.executeUpdate();
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
-	public void visit(DoubleTechnical technical) {
-		// TODO Auto-generated method stub
+	public void visit(TauntingTechnical technical) 
+	{
+		int technicalID = -1;
 		
-	}
+		try 
+		{
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`technical_foul` VALUES (technical_foul_type);");
+			stmt.setString(1, technical.technicalType());
+			stmt.executeUpdate();
+			
+			rs = stmt.executeQuery("SELECT LAST_INSERT_ID()");
 
-	@Override
-	public void visit(TauntingTechnical technical) {
-		// TODO Auto-generated method stub
-		
+		    if (rs.next()) 
+		    {
+		    	technicalID = rs.getInt(1);
+		    }
+		    else 
+		    {
+		    	//TODO throw an exception from here
+		    }
+			
+		    stmt = conn.prepareStatement("INSERT INTO `nba2`.`technical_foul_player` (`technical_foul_id`,`player_id`)" +
+					"VALUES (?,?);");
+			stmt.setInt(1, technicalID);
+			stmt.setInt(2, this.currentPlayerID);
+			stmt.executeUpdate();
+			
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`technical_foul_possession` (`technical_foul_id`,`possession_id`" +
+					"`time_of_technical`) VALUES (?,?,?);");
+			stmt.setInt(1, technicalID);
+			stmt.setInt(2, this.currentPossessionID);
+			stmt.setInt(3, getConvertedPlayTime(currentContext.getPlayID()));
+			stmt.executeUpdate();
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override

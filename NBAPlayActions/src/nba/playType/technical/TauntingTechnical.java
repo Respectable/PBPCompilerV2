@@ -14,4 +14,7 @@ public class TauntingTechnical extends Technical
 	{
 		visitor.visit(this);
 	}
+	
+	@Override
+	public String technicalType() { return "Taunting"; }
 }

@@ -31,4 +31,6 @@ public class Technical extends PlayType
 	@Override
 	public boolean terminatesPossession() { return false; }
 	
+	public String technicalType() { return ""; }
+	
 }
