@@ -233,7 +233,7 @@ public class SQLVisitor implements Visitor {
 			stmt.setInt(2, this.currentPlayerID);
 			stmt.executeUpdate();
 			
-			stmt = conn.prepareStatement("INSERT INTO `nba2`.`ejection_possession` (`ejection_id`,`possession_id`" +
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`ejection_possession` (`ejection_id`,`possession_id`," +
 					"`time_of_ejection`) VALUES (?,?,?);");
 			stmt.setInt(1, ejectionID);
 			stmt.setInt(2, this.currentPossessionID);
@@ -698,7 +698,7 @@ public class SQLVisitor implements Visitor {
 		    stmt.executeUpdate();
 		    
 			
-			stmt = conn.prepareStatement("INSERT INTO `nba2`.`steal_possession` (`steal_id`,`possession_id`" +
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`steal_possession` (`steal_id`,`possession_id`," +
 					"`time_of_turnover`) VALUES (?,?,?);");
 			stmt.setInt(1, this.currentStealID);
 			stmt.setInt(2, this.currentPossessionID);
@@ -790,7 +790,7 @@ public class SQLVisitor implements Visitor {
 			stmt.setInt(2, this.currentPlayerID);
 			stmt.executeUpdate();
 			
-			stmt = conn.prepareStatement("INSERT INTO `nba2`.`technical_foul_possession` (`technical_foul_id`,`possession_id`" +
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`technical_foul_possession` (`technical_foul_id`,`possession_id`," +
 					"`time_of_technical`) VALUES (?,?,?);");
 			stmt.setInt(1, technicalID);
 			stmt.setInt(2, this.currentPossessionID);
@@ -837,7 +837,7 @@ public class SQLVisitor implements Visitor {
 			stmt.setInt(2, technical.getPlayer2().getPlayerID());
 			stmt.executeUpdate();
 			
-			stmt = conn.prepareStatement("INSERT INTO `nba2`.`technical_foul_possession` (`technical_foul_id`,`possession_id`" +
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`technical_foul_possession` (`technical_foul_id`,`possession_id`," +
 					"`time_of_technical`) VALUES (?,?,?);");
 			stmt.setInt(1, technicalID);
 			stmt.setInt(2, this.currentPossessionID);
@@ -879,7 +879,7 @@ public class SQLVisitor implements Visitor {
 			stmt.setInt(2, this.currentPlayerID);
 			stmt.executeUpdate();
 			
-			stmt = conn.prepareStatement("INSERT INTO `nba2`.`technical_foul_possession` (`technical_foul_id`,`possession_id`" +
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`technical_foul_possession` (`technical_foul_id`,`possession_id`," +
 					"`time_of_technical`) VALUES (?,?,?);");
 			stmt.setInt(1, technicalID);
 			stmt.setInt(2, this.currentPossessionID);
@@ -978,7 +978,7 @@ public class SQLVisitor implements Visitor {
 		    	stmt.executeUpdate();
 		    }
 			
-			stmt = conn.prepareStatement("INSERT INTO `nba2`.`turnover_possession` (`turnover_id`,`possession_id`" +
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`turnover_possession` (`turnover_id`,`possession_id`," +
 					"`time_of_turnover`) VALUES (?,?,?);");
 			stmt.setInt(1, this.currentTurnoverID);
 			stmt.setInt(2, this.currentPossessionID);
@@ -1028,7 +1028,7 @@ public class SQLVisitor implements Visitor {
 			stmt.setInt(2, this.currentPlayerID);
 			stmt.executeUpdate();
 			
-			stmt = conn.prepareStatement("INSERT INTO `nba2`.`violation_possession` (`violation_id`,`possession_id`" +
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`violation_possession` (`violation_id`,`possession_id`," +
 					"`time_of_violation`) VALUES (?,?,?);");
 			stmt.setInt(1, violationID);
 			stmt.setInt(2, this.currentPossessionID);
