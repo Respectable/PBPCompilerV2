@@ -367,7 +367,7 @@ public class SQLVisitor implements Visitor {
 			stmt.executeUpdate();
 			
 			stmt = conn.prepareStatement("INSERT INTO `nba2`.`free_throw_possession` (`free_throw_id`,`possession_id`," +
-					"`time_of_jump`) VALUES (?,?,?);");
+					"`time_of_free_throw`) VALUES (?,?,?);");
 			stmt.setInt(1, this.currentFreeThrowID);
 			stmt.setInt(2, this.currentPossessionID);
 			stmt.setInt(3, getConvertedPlayTime(currentContext.getPlayID()));
