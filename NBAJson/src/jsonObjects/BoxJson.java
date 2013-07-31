@@ -14,7 +14,7 @@ public class BoxJson extends NBAJsonObject
 	private GameInfoJson gameInfo;
 	private GameSummaryJson gameSummary;
 	private ArrayList<InactiveJson> inactives;
-	private ArrayList<OfficalJson> officals;
+	private ArrayList<OfficialJson> officals;
 	private ArrayList<PlayerStatsJson> playerStats;
 	
 	public BoxJson() 
@@ -23,7 +23,7 @@ public class BoxJson extends NBAJsonObject
 	}
 	
 	public BoxJson(GameInfoJson gameInfo, GameSummaryJson gameSummary,
-			ArrayList<InactiveJson> inactives, ArrayList<OfficalJson> officals, 
+			ArrayList<InactiveJson> inactives, ArrayList<OfficialJson> officals, 
 			ArrayList<PlayerStatsJson> playerStats)
 	{
 		this.gameInfo = gameInfo;
@@ -36,7 +36,7 @@ public class BoxJson extends NBAJsonObject
 	public GameSummaryJson getGameSummary() { return gameSummary; }
 	public GameInfoJson getGameInfo() { return gameInfo; }
 	public ArrayList<InactiveJson> getInactives() { return inactives; }
-	public ArrayList<OfficalJson> getOfficals() { return officals; }
+	public ArrayList<OfficialJson> getOfficals() { return officals; }
 	public ArrayList<PlayerStatsJson> getPlayerStats() { return playerStats; }
 	
 	public static BoxJson parseBoxJson(String json)
@@ -44,13 +44,13 @@ public class BoxJson extends NBAJsonObject
 		GameSummaryJson gameSummary;
 		GameInfoJson gameInfo;
 		ArrayList<InactiveJson> inactive;
-		ArrayList<OfficalJson> officals;
+		ArrayList<OfficialJson> officals;
 		ArrayList<PlayerStatsJson> playerStats;
 		
 		gameSummary = GameSummaryJson.parseGameSummary(json);
 		gameInfo = GameInfoJson.parseGameInfo(json);
 		inactive = InactiveJson.parseInactive(json);
-		officals = OfficalJson.parseOfficals(json);
+		officals = OfficialJson.parseOfficals(json);
 		playerStats = PlayerStatsJson.parsePlayerStats(json);
 		
 		return new BoxJson(gameInfo, gameSummary, inactive, officals,

@@ -43,6 +43,8 @@ public class Compiler {
 		teams = TeamJson.getTeams(br);
 		TeamSQLGenerator.updateTeams(teams, dbPath, userName, password);
 		
+		
+		
 		for(String s : args)
 		{
 			String playText = "";
@@ -95,7 +97,7 @@ public class Compiler {
 				RosterSQLGenerator rosters = new RosterSQLGenerator(homeID, awayID, gameGen.getGameID(),
 						boxScore.getInactives(), boxScore.getPlayerStats(), pbp, gameID);
 				
-				OfficalSQLGenerator officals = new OfficalSQLGenerator(gameGen.getGameID(), 
+				OfficialSQLGenerator officials = new OfficialSQLGenerator(gameGen.getGameID(), 
 						boxScore.getOfficals());
 				
 				PlayerVisitor playerVisitor = new PlayerVisitor(rosters);
@@ -111,7 +113,7 @@ public class Compiler {
 				game.accept(unitVisitor);
 				
 				rosters.compile(dbPath, userName, password);
-				officals.compile(dbPath, userName, password);
+				officials.compile(dbPath, userName, password);
 				
 				SQLVisitor sql = new SQLVisitor(dbPath, userName, password,
 						pbp, homeID, awayID, gameGen.getGameID());

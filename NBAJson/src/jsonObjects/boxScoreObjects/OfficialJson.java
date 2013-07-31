@@ -10,17 +10,17 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class OfficalJson 
+public class OfficialJson 
 {
 	private int officalID;
 	private String firstName, lastName, jerseyNum;
 	
-	public OfficalJson()
+	public OfficialJson()
 	{
 		
 	}
 
-	public OfficalJson(int officalID, String firstName, String lastName,
+	public OfficialJson(int officalID, String firstName, String lastName,
 			String jerseyNum) 
 	{
 		this.officalID = officalID;
@@ -34,13 +34,13 @@ public class OfficalJson
 	public String getLastName() { return lastName; }
 	public String getJerseyNum() { return jerseyNum; }
 	
-	public static ArrayList<OfficalJson> parseOfficals(String json)
+	public static ArrayList<OfficialJson> parseOfficals(String json)
 	{
 		Gson gson = new Gson();
 		int officalID;
 		String firstName, lastName, jerseyNum;
 		JsonArray array, tempArray;
-		ArrayList<OfficalJson> officals = new ArrayList<OfficalJson>();
+		ArrayList<OfficialJson> officals = new ArrayList<OfficialJson>();
 		
 		array = preProcessJson(json);
 		
@@ -51,7 +51,7 @@ public class OfficalJson
 			firstName =  gson.fromJson(tempArray.get(1), String.class);
 			lastName =  gson.fromJson(tempArray.get(2), String.class);
 			jerseyNum =  gson.fromJson(tempArray.get(3), String.class);
-			officals.add(new OfficalJson(officalID, firstName, lastName, 
+			officals.add(new OfficialJson(officalID, firstName, lastName, 
 					jerseyNum));
 		}
 		
@@ -72,8 +72,8 @@ public class OfficalJson
 	}
 	
 	//Sort by id
-    public static Comparator<OfficalJson> COMPARE_BY_ID = new Comparator<OfficalJson>() {
-        public int compare(OfficalJson one, OfficalJson other) {
+    public static Comparator<OfficialJson> COMPARE_BY_ID = new Comparator<OfficialJson>() {
+        public int compare(OfficialJson one, OfficialJson other) {
             return Integer.compare(one.officalID , other.officalID);
         }
     };

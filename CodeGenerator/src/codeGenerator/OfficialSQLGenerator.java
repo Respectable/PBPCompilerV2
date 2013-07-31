@@ -8,14 +8,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import jsonObjects.boxScoreObjects.OfficalJson;
+import jsonObjects.boxScoreObjects.OfficialJson;
 
-public class OfficalSQLGenerator 
+public class OfficialSQLGenerator 
 {
-	private ArrayList<OfficalJson> officals;
+	private ArrayList<OfficialJson> officals;
 	private int gameID;
 	
-	public OfficalSQLGenerator(int gameID, ArrayList<OfficalJson> officals) 
+	public OfficialSQLGenerator(int gameID, ArrayList<OfficialJson> officals) 
 	{
 		this.gameID = gameID;
 		this.officals = officals;
@@ -34,7 +34,7 @@ public class OfficalSQLGenerator
 			stmt = conn.prepareStatement("INSERT INTO `nba2`.`game_officals` (`game_id`,`offical_id`)" +
 					"VALUES (?,?);");
 			
-			for (OfficalJson offical : this.officals)
+			for (OfficialJson offical : this.officals)
 			{
 				stmt.setInt(1, this.gameID);
 				stmt.setInt(2, offical.getOfficalID());
@@ -56,15 +56,15 @@ public class OfficalSQLGenerator
 		}
 	}
 	
-	public static void updateOfficals(ArrayList<OfficalJson> officals, String path,
+	public static void updateOfficals(ArrayList<OfficialJson> officals, String path,
 			String userName, String password)
 	{
 		Connection conn;
 		PreparedStatement stmt;
 		ResultSet rs;
 		
-		Collections.sort(officals, OfficalJson.COMPARE_BY_ID);
-		ArrayList<OfficalJson> newOfficals = new ArrayList<OfficalJson>(officals);
+		Collections.sort(officals, OfficialJson.COMPARE_BY_ID);
+		ArrayList<OfficialJson> newOfficals = new ArrayList<OfficialJson>(officals);
 		
 		try 
 		{
@@ -77,10 +77,10 @@ public class OfficalSQLGenerator
 			while(rs.next())
 		    {
 				newOfficals.remove(Collections.binarySearch(newOfficals,
-		    			new OfficalJson(rs.getInt("offical_id"), "", "", ""), OfficalJson.COMPARE_BY_ID));
+		    			new OfficialJson(rs.getInt("offical_id"), "", "", ""), OfficialJson.COMPARE_BY_ID));
 		    }
 			
-			for(OfficalJson offical : newOfficals)
+			for(OfficialJson offical : newOfficals)
 			{
 				stmt = conn.prepareStatement("INSERT INTO `nba2`.`offical` (`offical_id`,`first_name`,`last_name`," +
 						"`jersey_number`) VALUES (?,?,?,?);");
