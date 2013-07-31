@@ -82,7 +82,7 @@ public class OfficialSQLGenerator
 			
 			for(OfficialJson official : newOfficals)
 			{
-				stmt = conn.prepareStatement("INSERT INTO `nba2`.`official` (`offical_id`,`first_name`,`last_name`," +
+				stmt = conn.prepareStatement("INSERT INTO `nba2`.`official` (`official_id`,`first_name`,`last_name`," +
 						"`jersey_number`) VALUES (?,?,?,?);");
 			    stmt.setInt(1, official.getOfficialID());
 			    stmt.setString(2, official.getFirstName());
