@@ -31,7 +31,7 @@ public class OfficialSQLGenerator
 		{
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection(path,userName,password);
-			stmt = conn.prepareStatement("INSERT INTO `nba2`.`game_officials` (`game_id`,`offical_id`)" +
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`game_officials` (`game_id`,`official_id`)" +
 					"VALUES (?,?);");
 			
 			for (OfficialJson official : this.officials)
@@ -82,7 +82,7 @@ public class OfficialSQLGenerator
 			
 			for(OfficialJson official : newOfficals)
 			{
-				stmt = conn.prepareStatement("INSERT INTO `nba2`.`offical` (`official_id`,`first_name`,`last_name`," +
+				stmt = conn.prepareStatement("INSERT INTO `nba2`.`official` (`offical_id`,`first_name`,`last_name`," +
 						"`jersey_number`) VALUES (?,?,?,?);");
 			    stmt.setInt(1, official.getOfficialID());
 			    stmt.setString(2, official.getFirstName());
