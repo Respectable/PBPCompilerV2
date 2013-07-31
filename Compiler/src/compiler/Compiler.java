@@ -90,7 +90,9 @@ public class Compiler {
 				GameSQLGenerator gameGen = new GameSQLGenerator(boxScore.getGameInfo(),
 						boxScore.getGameSummary());
 				
-				RosterSQLGenerator rosters = new RosterSQLGenerator(gameGen.getGameID(), homeID, awayID,
+				gameGen.compile(dbPath, userName, password);
+				
+				RosterSQLGenerator rosters = new RosterSQLGenerator(homeID, awayID, gameGen.getGameID(),
 						boxScore.getInactives(), boxScore.getPlayerStats(), pbp, gameID);
 				
 				OfficalSQLGenerator officals = new OfficalSQLGenerator(gameGen.getGameID(), 
@@ -108,7 +110,6 @@ public class Compiler {
 				UnitVisitor unitVisitor = new UnitVisitor(rosters);
 				game.accept(unitVisitor);
 				
-				gameGen.compile(dbPath, userName, password);
 				rosters.compile(dbPath, userName, password);
 				officals.compile(dbPath, userName, password);
 				
