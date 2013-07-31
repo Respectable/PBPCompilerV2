@@ -127,19 +127,19 @@ public class GameSQLGenerator
 		return total;
 	}
 	
-	@SuppressWarnings("deprecation")
 	private int getSeasonID(String season, String path, String userName, String password)
 	{
 		Connection conn;
 		PreparedStatement stmt;
 		ResultSet rs;
 		int seasonID = -1;
-		java.sql.Date seasonStart, seasonEnd, startDate;
+		java.util.Date seasonStart, seasonEnd, startDate;
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		
 		try 
 		{
 			int startYear = Integer.parseInt(season.substring(0,4));
-			startDate = new java.sql.Date(startYear, 12, 31);
+			startDate = sdf.parse(startYear + "-12-31");
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection(path,userName,password);
 			stmt = conn.prepareStatement("SELECT * FROM `nba2`.`season`");
@@ -150,7 +150,8 @@ public class GameSQLGenerator
 		    	seasonStart = rs.getDate("start_date");
 		    	seasonEnd = rs.getDate("end_date");
 		    	
-		    	if (startDate.after(seasonStart) && startDate.before(seasonEnd))
+		    	if ((startDate.compareTo(seasonStart)>0) && 
+		    			(startDate.compareTo(seasonEnd)<0))
 		    	{
 		    		seasonID = rs.getInt("season_id");
 		    		break;
@@ -166,6 +167,10 @@ public class GameSQLGenerator
 			e.printStackTrace();
 		}
 		catch (SQLException e)
+		{
+			e.printStackTrace();
+		} 
+		catch (ParseException e) 
 		{
 			e.printStackTrace();
 		}
