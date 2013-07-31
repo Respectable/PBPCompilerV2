@@ -12,7 +12,7 @@ import com.google.gson.JsonParser;
 
 public class OfficialJson 
 {
-	private int officalID;
+	private int officialID;
 	private String firstName, lastName, jerseyNum;
 	
 	public OfficialJson()
@@ -23,13 +23,13 @@ public class OfficialJson
 	public OfficialJson(int officalID, String firstName, String lastName,
 			String jerseyNum) 
 	{
-		this.officalID = officalID;
+		this.officialID = officalID;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.jerseyNum = jerseyNum;
 	}
 
-	public int getOfficalID() { return officalID; }
+	public int getOfficialID() { return officialID; }
 	public String getFirstName() { return firstName; }
 	public String getLastName() { return lastName; }
 	public String getJerseyNum() { return jerseyNum; }
@@ -37,7 +37,7 @@ public class OfficialJson
 	public static ArrayList<OfficialJson> parseOfficals(String json)
 	{
 		Gson gson = new Gson();
-		int officalID;
+		int officialID;
 		String firstName, lastName, jerseyNum;
 		JsonArray array, tempArray;
 		ArrayList<OfficialJson> officals = new ArrayList<OfficialJson>();
@@ -47,11 +47,11 @@ public class OfficialJson
 		for (JsonElement element : array)
 		{
 			tempArray = element.getAsJsonArray();
-			officalID = gson.fromJson(tempArray.get(0), int.class);
+			officialID = gson.fromJson(tempArray.get(0), int.class);
 			firstName =  gson.fromJson(tempArray.get(1), String.class);
 			lastName =  gson.fromJson(tempArray.get(2), String.class);
 			jerseyNum =  gson.fromJson(tempArray.get(3), String.class);
-			officals.add(new OfficialJson(officalID, firstName, lastName, 
+			officals.add(new OfficialJson(officialID, firstName, lastName, 
 					jerseyNum));
 		}
 		
@@ -74,7 +74,7 @@ public class OfficialJson
 	//Sort by id
     public static Comparator<OfficialJson> COMPARE_BY_ID = new Comparator<OfficialJson>() {
         public int compare(OfficialJson one, OfficialJson other) {
-            return Integer.compare(one.officalID , other.officalID);
+            return Integer.compare(one.officialID , other.officialID);
         }
     };
 }

@@ -15,10 +15,10 @@ public class OfficialSQLGenerator
 	private ArrayList<OfficialJson> officials;
 	private int gameID;
 	
-	public OfficialSQLGenerator(int gameID, ArrayList<OfficialJson> officals) 
+	public OfficialSQLGenerator(int gameID, ArrayList<OfficialJson> officials) 
 	{
 		this.gameID = gameID;
-		this.officials = officals;
+		this.officials = officials;
 	}
 
 	public void compile(String path,
@@ -31,13 +31,13 @@ public class OfficialSQLGenerator
 		{
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection(path,userName,password);
-			stmt = conn.prepareStatement("INSERT INTO `nba2`.`game_officals` (`game_id`,`offical_id`)" +
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`game_officials` (`game_id`,`offical_id`)" +
 					"VALUES (?,?);");
 			
-			for (OfficialJson offical : this.officials)
+			for (OfficialJson official : this.officials)
 			{
 				stmt.setInt(1, this.gameID);
-				stmt.setInt(2, offical.getOfficalID());
+				stmt.setInt(2, official.getOfficialID());
 				stmt.executeUpdate();
 			}
 			
@@ -71,23 +71,23 @@ public class OfficialSQLGenerator
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection(path,userName,password);
 			
-			stmt = conn.prepareStatement("SELECT * FROM `nba2`.`offical`");
+			stmt = conn.prepareStatement("SELECT * FROM `nba2`.`official`");
 			rs = stmt.executeQuery();
 			
 			while(rs.next())
 		    {
 				newOfficals.remove(Collections.binarySearch(newOfficals,
-		    			new OfficialJson(rs.getInt("offical_id"), "", "", ""), OfficialJson.COMPARE_BY_ID));
+		    			new OfficialJson(rs.getInt("official_id"), "", "", ""), OfficialJson.COMPARE_BY_ID));
 		    }
 			
-			for(OfficialJson offical : newOfficals)
+			for(OfficialJson official : newOfficals)
 			{
-				stmt = conn.prepareStatement("INSERT INTO `nba2`.`offical` (`offical_id`,`first_name`,`last_name`," +
+				stmt = conn.prepareStatement("INSERT INTO `nba2`.`offical` (`official_id`,`first_name`,`last_name`," +
 						"`jersey_number`) VALUES (?,?,?,?);");
-			    stmt.setInt(1, offical.getOfficalID());
-			    stmt.setString(2, offical.getFirstName());
-			    stmt.setString(3, offical.getLastName());
-			    stmt.setString(4, offical.getJerseyNum());
+			    stmt.setInt(1, official.getOfficialID());
+			    stmt.setString(2, official.getFirstName());
+			    stmt.setString(3, official.getLastName());
+			    stmt.setString(4, official.getJerseyNum());
 			    stmt.executeUpdate();
 			}
 			
