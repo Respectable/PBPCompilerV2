@@ -62,7 +62,7 @@ public class GameSQLGenerator
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection(path,userName,password);
 			stmt = conn.prepareStatement("INSERT INTO `nba2`.`game` (`date_played`,`game_time`," +
-					"`attendance`, `broadcaster`,`game_id`) VALUES (?,?,?,?,?);");
+					"`attendance`, `broadcaster`,`nba_game_id`) VALUES (?,?,?,?,?);");
 			
 			
 			stmt.setDate(1, convertDate(convertedDate));
