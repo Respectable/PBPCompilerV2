@@ -123,7 +123,7 @@ public class GameSQLGenerator
 		int total;
 		
 		total = Integer.parseInt(time.substring(0, 1)) * 60;
-		total += Integer.parseInt(time.substring(2, 5));
+		total += Integer.parseInt(time.substring(2, 4));
 		return total;
 	}
 	
