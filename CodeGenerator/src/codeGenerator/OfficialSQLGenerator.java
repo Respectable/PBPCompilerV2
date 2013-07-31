@@ -12,13 +12,13 @@ import jsonObjects.boxScoreObjects.OfficialJson;
 
 public class OfficialSQLGenerator 
 {
-	private ArrayList<OfficialJson> officals;
+	private ArrayList<OfficialJson> officials;
 	private int gameID;
 	
 	public OfficialSQLGenerator(int gameID, ArrayList<OfficialJson> officals) 
 	{
 		this.gameID = gameID;
-		this.officals = officals;
+		this.officials = officals;
 	}
 
 	public void compile(String path,
@@ -34,7 +34,7 @@ public class OfficialSQLGenerator
 			stmt = conn.prepareStatement("INSERT INTO `nba2`.`game_officals` (`game_id`,`offical_id`)" +
 					"VALUES (?,?);");
 			
-			for (OfficialJson offical : this.officals)
+			for (OfficialJson offical : this.officials)
 			{
 				stmt.setInt(1, this.gameID);
 				stmt.setInt(2, offical.getOfficalID());
@@ -56,15 +56,15 @@ public class OfficialSQLGenerator
 		}
 	}
 	
-	public static void updateOfficals(ArrayList<OfficialJson> officals, String path,
+	public static void updateOfficials(ArrayList<OfficialJson> officials, String path,
 			String userName, String password)
 	{
 		Connection conn;
 		PreparedStatement stmt;
 		ResultSet rs;
 		
-		Collections.sort(officals, OfficialJson.COMPARE_BY_ID);
-		ArrayList<OfficialJson> newOfficals = new ArrayList<OfficialJson>(officals);
+		Collections.sort(officials, OfficialJson.COMPARE_BY_ID);
+		ArrayList<OfficialJson> newOfficals = new ArrayList<OfficialJson>(officials);
 		
 		try 
 		{
