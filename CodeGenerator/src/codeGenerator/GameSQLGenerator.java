@@ -142,7 +142,7 @@ public class GameSQLGenerator
 			startDate = new java.sql.Date(startYear, 12, 31);
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection(path,userName,password);
-			stmt = conn.prepareStatement("SELECT * FROM `nba`.`season`");
+			stmt = conn.prepareStatement("SELECT * FROM `nba2`.`season`");
 			rs = stmt.executeQuery();
 			
 			while(rs.next())
