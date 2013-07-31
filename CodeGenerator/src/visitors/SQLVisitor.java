@@ -699,7 +699,7 @@ public class SQLVisitor implements Visitor {
 		    
 			
 			stmt = conn.prepareStatement("INSERT INTO `nba2`.`steal_possession` (`steal_id`,`possession_id`," +
-					"`time_of_turnover`) VALUES (?,?,?);");
+					"`time_of_steal`) VALUES (?,?,?);");
 			stmt.setInt(1, this.currentStealID);
 			stmt.setInt(2, this.currentPossessionID);
 			stmt.setInt(3, getConvertedPlayTime(currentContext.getPlayID()));
@@ -987,7 +987,7 @@ public class SQLVisitor implements Visitor {
 			
 			if(this.currentStealID != -1)
 			{
-				stmt = conn.prepareStatement("INSERT INTO `nba2`.`steal_player` (`steal_id`,`turnover_id`)" +
+				stmt = conn.prepareStatement("INSERT INTO `nba2`.`steal_turnover` (`steal_id`,`turnover_id`)" +
 		    			"VALUES (?,?);");
 		    	stmt.setInt(1, this.currentStealID);
 		    	stmt.setInt(2, this.currentTurnoverID);
