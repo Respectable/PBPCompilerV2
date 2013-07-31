@@ -43,8 +43,6 @@ public class Compiler {
 		teams = TeamJson.getTeams(br);
 		TeamSQLGenerator.updateTeams(teams, dbPath, userName, password);
 		
-		
-		
 		for(String s : args)
 		{
 			String playText = "";
@@ -93,6 +91,8 @@ public class Compiler {
 						boxScore.getGameSummary());
 				
 				gameGen.compile(dbPath, userName, password);
+				
+				OfficialSQLGenerator.updateOfficials(boxScore.getOfficals(), dbPath, userName, password);
 				
 				RosterSQLGenerator rosters = new RosterSQLGenerator(homeID, awayID, gameGen.getGameID(),
 						boxScore.getInactives(), boxScore.getPlayerStats(), pbp, gameID);
