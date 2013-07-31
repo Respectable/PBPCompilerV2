@@ -448,7 +448,7 @@ public class SQLVisitor implements Visitor {
 		    if (jumpBall.getEnding().getTippedTo() != null)
 		    {
 		    	stmt = conn.prepareStatement("INSERT INTO `nba2`.`jump_ball_players` (`jump_ball_id`," +
-		    			"`player_1_id`, `player_1_id`, `tipped_to_id`) VALUES (?,?,?,?);");
+		    			"`player_1_id`, `player_2_id`, `tipped_to_id`) VALUES (?,?,?,?);");
 				stmt.setInt(1, jumpBallID);
 				stmt.setInt(2, jumpBall.getPlayer1().getPlayerID());
 				stmt.setInt(3, jumpBall.getPlayer2().getPlayerID());
@@ -458,7 +458,7 @@ public class SQLVisitor implements Visitor {
 		    else
 		    {
 		    	stmt = conn.prepareStatement("INSERT INTO `nba2`.`jump_ball_players` (`jump_ball_id`," +
-		    			"`player_1_id`, `player_1_id`) VALUES (?,?,?);");
+		    			"`player_1_id`, `player_2_id`) VALUES (?,?,?);");
 				stmt.setInt(1, jumpBallID);
 				stmt.setInt(2, jumpBall.getPlayer1().getPlayerID());
 				stmt.setInt(3, jumpBall.getPlayer2().getPlayerID());
