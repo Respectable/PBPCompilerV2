@@ -742,7 +742,7 @@ public class SQLVisitor implements Visitor {
 		    }
 		    
 		    
-		    stmt = conn.prepareStatement("INSERT INTO `nba2`.`substitution_players` (`jump_ball_id`," +
+		    stmt = conn.prepareStatement("INSERT INTO `nba2`.`substitution_players` (`substitution_id`," +
 		    			"`player_in_id`, `player_out_id`) VALUES (?,?,?);");
 			stmt.setInt(1, subID);
 			stmt.setInt(2, sub.getIn().getPlayerID());
