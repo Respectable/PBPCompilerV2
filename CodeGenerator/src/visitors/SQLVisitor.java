@@ -619,9 +619,9 @@ public class SQLVisitor implements Visitor {
 		{
 			e.printStackTrace();
 		}
-		
-		if (shot.getShotEnding().getAssist().getPlayer() != null)
-			shot.getShotEnding().getAssist().accept(this);
+		if (shot.getShotEnding().getAssist() != null)
+			if (shot.getShotEnding().getAssist().getPlayer() != null)
+				shot.getShotEnding().getAssist().accept(this);
 	}
 
 	@Override
