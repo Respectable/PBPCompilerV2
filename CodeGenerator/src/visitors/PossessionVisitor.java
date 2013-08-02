@@ -265,6 +265,10 @@ public class PossessionVisitor implements Visitor {
 				}
 			}
 		}
+		if(currentPossession.getPossessionPlays().size() > 0)
+		{
+			period.addPossession(currentPossession);
+		}
 	}
 
 	@Override
