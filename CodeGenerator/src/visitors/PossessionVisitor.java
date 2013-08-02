@@ -1,5 +1,10 @@
 package visitors;
 
+import java.util.ArrayList;
+
+import playChecker.PlayChecker;
+
+import jsonObjects.PBPJson;
 import codeGenerator.RosterSQLGenerator;
 import nba.*;
 import nba.play.*;
@@ -26,10 +31,12 @@ public class PossessionVisitor implements Visitor {
 	private RosterSQLGenerator rosters;
 	private Possession currentPossession;
 	private Play currentPlay;
+	private ArrayList<PBPJson> pbp;
 	
-	public PossessionVisitor(RosterSQLGenerator rosters)
+	public PossessionVisitor(RosterSQLGenerator rosters, ArrayList<PBPJson> pbp)
 	{
 		this.rosters = rosters;
+		this.pbp = pbp;
 	}
 	
 	private int getCurrentPlayTeam()
@@ -292,5 +299,35 @@ public class PossessionVisitor implements Visitor {
 
 	@Override
 	public void visit(Possession possession) {}
+	
+	private boolean checkForPlay(PlayChecker checker, int playID, Possession poss)
+	{
+		for (Play p : poss.getPossessionPlays())
+		{
+			if (p.getPlayID() == playID && checker.playTypeMatches(p));
+				return true;
+		}
+		
+		return false;
+	}
+	
+	private Play findPlay(ArrayList<Play> plays, int playID, PlayChecker checker)
+	{
+		for (Play p : plays)
+		{
+			if (p.getPlayID() == playID && checker.playTypeMatches(p));
+				return p;
+		}
+		
+		return null;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 
 }
