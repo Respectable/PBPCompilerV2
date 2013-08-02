@@ -1,10 +1,10 @@
 package visitors;
 
-import java.util.ArrayList;
+import java.util.ListIterator;
 
 import playChecker.PlayChecker;
+import playChecker.StealChecker;
 
-import jsonObjects.PBPJson;
 import codeGenerator.RosterSQLGenerator;
 import nba.*;
 import nba.play.*;
@@ -31,12 +31,10 @@ public class PossessionVisitor implements Visitor {
 	private RosterSQLGenerator rosters;
 	private Possession currentPossession;
 	private Play currentPlay;
-	private ArrayList<PBPJson> pbp;
 	
-	public PossessionVisitor(RosterSQLGenerator rosters, ArrayList<PBPJson> pbp)
+	public PossessionVisitor(RosterSQLGenerator rosters)
 	{
 		this.rosters = rosters;
-		this.pbp = pbp;
 	}
 	
 	private int getCurrentPlayTeam()
@@ -130,9 +128,11 @@ public class PossessionVisitor implements Visitor {
 		currentPossession = new Possession();
 		boolean madeShot = false;
 		boolean missedFirstFT = false;
+		ListIterator<Play> playIterator = period.getPlays().listIterator();
 		
-		for (Play p : period.getPlays())
+		while (playIterator.hasNext())
 		{
+			Play p = playIterator.next();
 			currentPlay = p;
 			
 			if (!currentPossession.teamsSet() && p.identifiesOffense())
@@ -152,9 +152,29 @@ public class PossessionVisitor implements Visitor {
 					else
 					{
 						currentPossession.addPlay(p);
-						period.addPossession(currentPossession);
 						madeShot = false;
 						missedFirstFT = false;
+						
+						if (p.getPlayType() instanceof Turnover)
+						{
+							if (!checkForPlay(new StealChecker(), p.getPlayID(), currentPossession))
+							{
+								if(playIterator.hasNext())
+								{
+									Play tempPlayer = playIterator.next();
+									if(checkSteal(tempPlayer, p.getPlayID(), new StealChecker()))
+									{
+										currentPossession.addPlay(tempPlayer);
+									}
+									else
+									{
+										playIterator.previous();
+									}
+								}
+							}
+						}
+						
+						period.addPossession(currentPossession);
 						currentPossession = new Possession();
 					}
 				}
@@ -204,8 +224,27 @@ public class PossessionVisitor implements Visitor {
 						missedFirstFT = false;
 						currentPossession.addPlay(p);
 						assignTeamRoles();
+						if (p.getPlayType() instanceof Turnover)
+						{
+							if (!checkForPlay(new StealChecker(), p.getPlayID(), currentPossession))
+							{
+								if(playIterator.hasNext())
+								{
+									Play tempPlayer = playIterator.next();
+									if(checkSteal(tempPlayer, p.getPlayID(), new StealChecker()))
+									{
+										currentPossession.addPlay(tempPlayer);
+									}
+									else
+									{
+										playIterator.previous();
+									}
+								}
+							}
+						}
 						period.addPossession(currentPossession);
 						currentPossession = new Possession();
+						
 					}
 					else
 					{
@@ -311,15 +350,12 @@ public class PossessionVisitor implements Visitor {
 		return false;
 	}
 	
-	private Play findPlay(ArrayList<Play> plays, int playID, PlayChecker checker)
+	private boolean checkSteal(Play play, int playID, PlayChecker checker)
 	{
-		for (Play p : plays)
-		{
-			if (p.getPlayID() == playID && checker.playTypeMatches(p));
-				return p;
-		}
+		if (play.getPlayID() == playID && checker.playTypeMatches(play))
+			return true;
 		
-		return null;
+		return false;
 	}
 	
 	
