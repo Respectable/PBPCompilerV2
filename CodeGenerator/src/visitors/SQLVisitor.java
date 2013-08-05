@@ -44,7 +44,7 @@ public class SQLVisitor implements Visitor {
 	private int currentPeriodID, currentPossessionID, 
 					currentShotID, currentFoulID, currentTechnicalID,
 					currentStealID, currentTurnoverID, currentPlayerID,
-					currentFreeThrowID, homeID, awayID;
+					currentFreeThrowID, currentBlockID, homeID, awayID;
 	private boolean missed;
 	private ContextInfo currentContext;
 	private Possession currentPossession;
@@ -120,6 +120,7 @@ public class SQLVisitor implements Visitor {
 		    	currentTurnoverID = -1;
 		    	currentPlayerID = -1;
 		    	currentFreeThrowID = -1;
+		    	currentBlockID = -1;
 		    	p.accept(this);
 		    }
 		} 
@@ -162,47 +163,41 @@ public class SQLVisitor implements Visitor {
 	@Override
 	public void visit(Block block) 
 	{
-		int blockID = -1;
 		
-		if(this.currentShotID != -1)
+		try 
 		{
-			try 
-			{
-				stmt = conn.prepareStatement("INSERT INTO `nba2`.`block` VALUES (DEFAULT);");
-				stmt.executeUpdate();
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`block` VALUES (DEFAULT);");
+			stmt.executeUpdate();
 				
-				rs = stmt.executeQuery("SELECT LAST_INSERT_ID()");
+			rs = stmt.executeQuery("SELECT LAST_INSERT_ID()");
 
-			    if (rs.next()) 
-			    {
-			    	blockID = rs.getInt(1);
-			    }
-			    else 
-			    {
-			    	//TODO throw an exception from here
-			    }
+			if (rs.next()) 
+			{
+				this.currentBlockID = rs.getInt(1);
+			}
+			else 
+			{
+			    //TODO throw an exception from here
+			}
 				
-			    stmt = conn.prepareStatement("INSERT INTO `nba2`.`block_player` (`block_id`,`player_id`)" +
-						"VALUES (?,?);");
-				stmt.setInt(1, blockID);
-				stmt.setInt(2, this.currentPlayerID);
-				stmt.executeUpdate();
+			stmt = conn.prepareStatement("INSERT INTO `nba2`.`block_player` (`block_id`,`player_id`)" +
+					"VALUES (?,?);");
+			stmt.setInt(1, this.currentBlockID);
+			stmt.setInt(2, this.currentPlayerID);
+			stmt.executeUpdate();
 				
+			if (this.currentShotID != -1)
+			{
 				stmt = conn.prepareStatement("INSERT INTO `nba2`.`block_shot` (`shot_id`,`block_id`)" +
 						"VALUES (?,?);");
 				stmt.setInt(1, this.currentShotID);
-				stmt.setInt(2, blockID);
+				stmt.setInt(2, this.currentBlockID);
 				stmt.executeUpdate();
-			} 
-			catch (SQLException e) 
-			{
-				e.printStackTrace();
 			}
-		}
-		else
+		} 
+		catch (SQLException e) 
 		{
-			System.out.println("Unable to find shot associated with block");
-			//TODO error on shot not being found
+			e.printStackTrace();
 		}
 	}
 
@@ -614,6 +609,15 @@ public class SQLVisitor implements Visitor {
 			stmt.setInt(2, this.currentPossessionID);
 			stmt.setInt(3, getConvertedPlayTime(currentContext.getPlayID()));
 			stmt.executeUpdate();
+			
+			if (this.currentBlockID != -1)
+			{
+				stmt = conn.prepareStatement("INSERT INTO `nba2`.`block_shot` (`shot_id`,`block_id`)" +
+						"VALUES (?,?);");
+				stmt.setInt(1, this.currentShotID);
+				stmt.setInt(2, this.currentBlockID);
+				stmt.executeUpdate();
+			}
 		} 
 		catch (SQLException e) 
 		{
