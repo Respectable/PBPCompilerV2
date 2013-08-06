@@ -30,9 +30,9 @@ public class DebugVisitor implements Visitor
 	}
 	
 	@Override
-	public void visit(ContextInfo contextInfo) {
-		// TODO Auto-generated method stub
-		
+	public void visit(ContextInfo contextInfo) 
+	{
+		System.out.print(contextInfo.getPlayRole());
 	}
 
 	@Override
@@ -61,141 +61,165 @@ public class DebugVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(Player player) {
-		// TODO Auto-generated method stub
+	public void visit(Player player) 
+	{
+		System.out.print(player.getPlayerName() + " ");
+	}
+
+	@Override
+	public void visit(Play play) 
+	{
+		System.out.println();
+		play.getPlayType().accept(this);
+		play.getContextInfo().accept(this);
+	}
+
+	@Override
+	public void visit(PlayerPlay play) 
+	{
+		System.out.println();
+		play.getPlayer().accept(this);
+		play.getPlayType().accept(this);
+		System.out.print(play.getContextInfo().getPlayRole());
+	}
+
+	@Override
+	public void visit(MissedPlay play) 
+	{
+		System.out.println("Missed ");
+		play.getPlayer().accept(this);
+		play.getPlayType().accept(this);
+		System.out.print(play.getContextInfo().getPlayRole());
+	}
+
+	@Override
+	public void visit(PlayType playType) {}
+
+	@Override
+	public void visit(Block block) 
+	{
+		System.out.print("Block ");
+	}
+
+	@Override
+	public void visit(Ejection ejection) 
+	{
+		System.out.print("Ejection ");
+	}
+
+	@Override
+	public void visit(Foul foul) 
+	{
+		System.out.print("Foul ");
+	}
+
+	@Override
+	public void visit(DoublePersonalFoul foul) 
+	{
+		System.out.print("Foul ");
+		foul.getPlayer1().accept(this);
+		System.out.print(", ");
+		foul.getPlayer2().accept(this);
 		
 	}
 
 	@Override
-	public void visit(Play play) {
-		// TODO Auto-generated method stub
-		
+	public void visit(FreeThrow freeThrow) 
+	{
+		System.out.print("Free Throw " + 
+				freeThrow.getPredicate().getCurrentNumber() + " out of " +
+				freeThrow.getPredicate().getOutOf());
 	}
 
 	@Override
-	public void visit(PlayerPlay play) {
-		// TODO Auto-generated method stub
-		
+	public void visit(JumpBall jumpBall) 
+	{
+		System.out.print("Jump Ball ");
+		jumpBall.getPlayer1().accept(this);
+		System.out.print(", ");
+		jumpBall.getPlayer2().accept(this);
 	}
 
 	@Override
-	public void visit(MissedPlay play) {
-		// TODO Auto-generated method stub
-		
+	public void visit(Rebound rebound) 
+	{
+		System.out.print("Rebound ");
 	}
 
 	@Override
-	public void visit(PlayType playType) {
-		// TODO Auto-generated method stub
-		
+	public void visit(Review review) 
+	{
+		System.out.print("Review ");
 	}
 
 	@Override
-	public void visit(Block block) {
-		// TODO Auto-generated method stub
-		
+	public void visit(Shot shot) 
+	{
+		System.out.print("Shot ");
+		if (shot.getShotEnding().getAssist() != null)
+			if (shot.getShotEnding().getAssist().getPlayer() != null)
+				shot.getShotEnding().getAssist().accept(this);
 	}
 
 	@Override
-	public void visit(Ejection ejection) {
-		// TODO Auto-generated method stub
-		
+	public void visit(Assist assist) 
+	{
+		System.out.print("Assist - ");
+		assist.getPlayer().accept(this);
 	}
 
 	@Override
-	public void visit(Foul foul) {
-		// TODO Auto-generated method stub
-		
+	public void visit(Steal steal) 
+	{
+		System.out.print("Steal ");
 	}
 
 	@Override
-	public void visit(DoublePersonalFoul foul) {
-		// TODO Auto-generated method stub
-		
+	public void visit(Substitution sub) 
+	{
+		System.out.print("Sub - In: ");
+		sub.getIn().accept(this);
+		System.out.print("Sub - Out: ");
+		sub.getOut().accept(this);
 	}
 
 	@Override
-	public void visit(FreeThrow freeThrow) {
-		// TODO Auto-generated method stub
-		
+	public void visit(Technical technical) 
+	{
+		System.out.print("Technical ");
 	}
 
 	@Override
-	public void visit(JumpBall jumpBall) {
-		// TODO Auto-generated method stub
-		
+	public void visit(DoubleTechnical technical) 
+	{
+		System.out.print("Technical ");
+		technical.getPlayer1().accept(this);
+		System.out.print(", ");
+		technical.getPlayer2().accept(this);
 	}
 
 	@Override
-	public void visit(Rebound rebound) {
-		// TODO Auto-generated method stub
-		
+	public void visit(TauntingTechnical technical) 
+	{
+		System.out.print("Technical ");
 	}
 
 	@Override
-	public void visit(Review review) {
-		// TODO Auto-generated method stub
-		
+	public void visit(Timeout timeout) 
+	{
+		System.out.print("Timeout ");
 	}
 
 	@Override
-	public void visit(Shot shot) {
-		// TODO Auto-generated method stub
-		
+	public void visit(Turnover turnover) 
+	{
+		System.out.print("Turnover ");
 	}
 
 	@Override
-	public void visit(Assist assist) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visit(Steal steal) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visit(Substitution sub) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visit(Technical technical) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visit(DoubleTechnical technical) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visit(TauntingTechnical technical) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visit(Timeout timeout) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visit(Turnover turnover) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visit(Violation violation) {
-		// TODO Auto-generated method stub
-		
+	public void visit(Violation violation) 
+	{
+		System.out.print("Violation ");
 	}
 
 	@Override
@@ -206,7 +230,22 @@ public class DebugVisitor implements Visitor
 		System.out.println("Possession " + possessionCounter + ":------------------------------------------");
 		System.out.println();
 		System.out.println("Plays:");
-		
+		for (Play p : possession.getPossessionPlays())
+		{
+			p.accept(this);
+		}
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~");
+		System.out.println("Home Players:");
+		for (Player p : possession.getHomePlayers())
+		{
+			p.accept(this);
+		}
+		System.out.println();
+		System.out.println("Away Players:");
+		for (Player p : possession.getAwayPlayers())
+		{
+			p.accept(this);
+		}
 	}
 
 }
