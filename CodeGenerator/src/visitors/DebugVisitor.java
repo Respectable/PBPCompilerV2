@@ -32,7 +32,7 @@ public class DebugVisitor implements Visitor
 	@Override
 	public void visit(ContextInfo contextInfo) 
 	{
-		System.out.print(contextInfo.getPlayRole());
+		System.out.println(contextInfo.getPlayRole());
 	}
 
 	@Override
