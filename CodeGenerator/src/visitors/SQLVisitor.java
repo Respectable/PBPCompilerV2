@@ -564,7 +564,7 @@ public class SQLVisitor implements Visitor {
 		}
 		else
 		{
-			//TODO error, because there is no matching shot or FT
+			System.out.println("Could not find shot or free throw associated with rebound");
 		}
 	}
 
