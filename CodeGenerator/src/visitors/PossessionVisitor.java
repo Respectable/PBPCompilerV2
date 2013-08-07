@@ -347,7 +347,7 @@ public class PossessionVisitor implements Visitor {
 	{
 		for (Play p : poss.getPossessionPlays())
 		{
-			if (p.getPlayID() == playID && checker.playTypeMatches(p));
+			if ((p.getPlayID() == playID) && checker.playTypeMatches(p))
 				return true;
 		}
 		
