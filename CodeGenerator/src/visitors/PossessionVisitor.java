@@ -140,8 +140,10 @@ public class PossessionVisitor implements Visitor {
 				assignTeamRoles();
 			}
 			
+			//no shot has been made in possession
 			if (!madeShot)
 			{
+				//current play is one that terminates possession
 				if (p.getPlayType().terminatesPossession())
 				{
 					if ((p.getPlayType() instanceof Rebound) && missedFirstFT)
@@ -178,6 +180,7 @@ public class PossessionVisitor implements Visitor {
 						currentPossession = new Possession();
 					}
 				}
+				//current play does not terminate possession
 				else
 				{
 					if((p.getPlayType() instanceof Shot))
@@ -195,6 +198,7 @@ public class PossessionVisitor implements Visitor {
 					currentPossession.addPlay(p);
 				}
 			}
+			//shot has been made in possession
 			else
 			{
 				//made shot, next play continues possession
@@ -258,7 +262,7 @@ public class PossessionVisitor implements Visitor {
 						currentPossession = new Possession();
 						
 					}
-					//made shot, next play does not terminate possession (nor continue)
+					//made shot, next play does not terminate a possession (nor continue)
 					else
 					{
 						period.addPossession(currentPossession);
