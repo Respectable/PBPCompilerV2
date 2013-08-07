@@ -197,6 +197,7 @@ public class PossessionVisitor implements Visitor {
 			}
 			else
 			{
+				//made shot, next play continues possession
 				if (PossessionContinuation())
 				{
 					if((p.getPlayType() instanceof FreeThrow))
@@ -211,11 +212,22 @@ public class PossessionVisitor implements Visitor {
 				}
 				else
 				{
+					//made shot, missed first free throw
 					if ((p.getPlayType() instanceof Rebound) && missedFirstFT)
 					{
 						currentPossession.addPlay(p);
 						missedFirstFT = false;
 					}
+					//made shot, missed last free throw
+					else if (p.getPlayType() instanceof Rebound)
+					{
+						currentPossession.addPlay(p);
+						madeShot = false;
+						missedFirstFT = false;
+						period.addPossession(currentPossession);
+						currentPossession = new Possession();
+					}
+					//made shot, next play terminates possession
 					else if (p.getPlayType().terminatesPossession())
 					{
 						period.addPossession(currentPossession);
@@ -246,6 +258,7 @@ public class PossessionVisitor implements Visitor {
 						currentPossession = new Possession();
 						
 					}
+					//made shot, next play does not terminate possession (nor continue)
 					else
 					{
 						period.addPossession(currentPossession);
