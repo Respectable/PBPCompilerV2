@@ -32,7 +32,7 @@ public class DebugVisitor implements Visitor
 	@Override
 	public void visit(ContextInfo contextInfo) 
 	{
-		System.out.println(contextInfo.getPlayRole());
+		System.out.print(contextInfo.getPlayRole());
 	}
 
 	@Override
@@ -86,7 +86,8 @@ public class DebugVisitor implements Visitor
 	@Override
 	public void visit(MissedPlay play) 
 	{
-		System.out.println("Missed ");
+		System.out.println();
+		System.out.print("Missed ");
 		play.getPlayer().accept(this);
 		play.getPlayType().accept(this);
 		System.out.print(play.getContextInfo().getPlayRole());
@@ -227,24 +228,33 @@ public class DebugVisitor implements Visitor
 	{
 		this.possessionCounter++;
 		
+		System.out.println();
 		System.out.println("Possession " + possessionCounter + ":------------------------------------------");
 		System.out.println();
 		System.out.println("Plays:");
+		
 		for (Play p : possession.getPossessionPlays())
 		{
 			p.accept(this);
 		}
+		
+		System.out.println();
 		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~");
 		System.out.println("Home Players:");
+		
 		for (Player p : possession.getHomePlayers())
 		{
 			p.accept(this);
+			System.out.println();
 		}
+		
 		System.out.println();
 		System.out.println("Away Players:");
+		
 		for (Player p : possession.getAwayPlayers())
 		{
 			p.accept(this);
+			System.out.println();
 		}
 	}
 
