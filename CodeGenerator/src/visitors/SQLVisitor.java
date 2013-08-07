@@ -711,7 +711,7 @@ public class SQLVisitor implements Visitor {
 			
 			if(this.currentTurnoverID != -1)
 			{
-				stmt = conn.prepareStatement("INSERT INTO `nba2`.`steal_player` (`steal_id`,`turnover_id`)" +
+				stmt = conn.prepareStatement("INSERT INTO `nba2`.`steal_turnover` (`steal_id`,`turnover_id`)" +
 		    			"VALUES (?,?);");
 		    	stmt.setInt(1, this.currentStealID);
 		    	stmt.setInt(2, this.currentTurnoverID);
