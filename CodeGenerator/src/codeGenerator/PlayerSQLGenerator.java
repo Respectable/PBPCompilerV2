@@ -36,8 +36,12 @@ public class PlayerSQLGenerator
 				{
 					continue;
 				}
-		    	newPlayers.remove(Collections.binarySearch(newPlayers,
-		    			new PlayerJson(rs.getInt("player_id"), "", true, 0, 0), PlayerJson.COMPARE_BY_ID));
+				int index = Collections.binarySearch(newPlayers,
+		    			new PlayerJson(rs.getInt("player_id"), "", true, 0, 0), PlayerJson.COMPARE_BY_ID);
+				if (index > -1)
+				{
+					newPlayers.remove(index);
+				}
 		    }
 			
 			for(PlayerJson player : newPlayers)

@@ -76,8 +76,12 @@ public class OfficialSQLGenerator
 			
 			while(rs.next())
 		    {
-				newOfficals.remove(Collections.binarySearch(newOfficals,
-		    			new OfficialJson(rs.getInt("official_id"), "", "", ""), OfficialJson.COMPARE_BY_ID));
+				int index = Collections.binarySearch(newOfficals,
+		    			new OfficialJson(rs.getInt("official_id"), "", "", ""), OfficialJson.COMPARE_BY_ID);
+				if (index > -1)
+				{
+					newOfficals.remove(index);
+				}
 		    }
 			
 			for(OfficialJson official : newOfficals)
