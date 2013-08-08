@@ -12,7 +12,7 @@ import com.google.gson.JsonParser;
 public class PlayerStatsJson 
 {
 	private int teamID, playerID, reb, ast, stl, blk, to, pf, pts, fga, fta;
-	private String teamAbbr, playerName, startPosition, comment;
+	private String teamAbbr, playerName, startPosition, comment, gameID;
 	
 	public PlayerStatsJson()
 	{
@@ -22,7 +22,7 @@ public class PlayerStatsJson
 	public PlayerStatsJson(int teamID, int playerID, String teamAbbr,
 			String playerName, String startPosition, String comment,
 			int reb, int ast, int stl, int blk, int to, int pf, int pts,
-			int fga, int fta) 
+			int fga, int fta, String gameID) 
 	{
 		this.teamID = teamID;
 		this.playerID = playerID;
@@ -39,6 +39,7 @@ public class PlayerStatsJson
 		this.pts = pts;
 		this.fga = fga;
 		this.fta = fta;
+		this.gameID = gameID;
 	}
 
 	public int getTeamID() { return teamID; }
@@ -46,7 +47,8 @@ public class PlayerStatsJson
 	public String getTeamAbbr() { return teamAbbr; }
 	public String getPlayerName() { return playerName; }
 	public String getStartPosition() { return startPosition; }
-	public String getComment() {return comment; }
+	public String getComment() { return comment; }
+	public String getGameID() { return gameID; }
 	public int getReb() { return reb; }
 	public int getAst() { return ast; }
 	public int getStl() { return stl; }
@@ -61,7 +63,7 @@ public class PlayerStatsJson
 	{
 		Gson gson = new Gson();
 		int teamID, playerID, reb, ast, stl, blk, to, pf, pts, fga, fta;
-		String teamAbbr, playerName, startPosition, comment;
+		String teamAbbr, playerName, startPosition, comment, gameID;
 		JsonArray array, tempArray;
 		ArrayList<PlayerStatsJson> players = new ArrayList<PlayerStatsJson>();
 		
@@ -70,6 +72,7 @@ public class PlayerStatsJson
 		for (JsonElement element : array)
 		{
 			tempArray = element.getAsJsonArray();
+			gameID = gson.fromJson(tempArray.get(0), String.class);
 			teamID = gson.fromJson(tempArray.get(1), int.class);
 			playerID = gson.fromJson(tempArray.get(4), int.class);
 			teamAbbr =  gson.fromJson(tempArray.get(2), String.class);
@@ -103,7 +106,7 @@ public class PlayerStatsJson
 			}
 			players.add(new PlayerStatsJson(teamID, playerID, teamAbbr, 
 					playerName, startPosition, comment, reb, ast, stl,
-					blk, to, pf, pts, fga, fta));
+					blk, to, pf, pts, fga, fta, gameID));
 		}
 		
 		return players;
