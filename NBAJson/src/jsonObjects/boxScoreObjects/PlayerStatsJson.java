@@ -11,7 +11,8 @@ import com.google.gson.JsonParser;
 
 public class PlayerStatsJson 
 {
-	private int teamID, playerID, reb, ast, stl, blk, to, pf, pts, fga, fta;
+	private int teamID, playerID, reb, ast, stl, blk, to, pf, pts, fga, fta,
+					fgm, ftm, oReb, dReb;
 	private String teamAbbr, playerName, startPosition, comment, gameID;
 	
 	public PlayerStatsJson()
@@ -22,7 +23,8 @@ public class PlayerStatsJson
 	public PlayerStatsJson(int teamID, int playerID, String teamAbbr,
 			String playerName, String startPosition, String comment,
 			int reb, int ast, int stl, int blk, int to, int pf, int pts,
-			int fga, int fta, String gameID) 
+			int fga, int fta, int fgm, int ftm, int oReb, int dReb, 
+			String gameID) 
 	{
 		this.teamID = teamID;
 		this.playerID = playerID;
@@ -40,6 +42,10 @@ public class PlayerStatsJson
 		this.fga = fga;
 		this.fta = fta;
 		this.gameID = gameID;
+		this.fgm = fgm;
+		this.ftm = ftm;
+		this.oReb = oReb;
+		this.dReb = dReb;
 	}
 
 	public int getTeamID() { return teamID; }
@@ -58,11 +64,16 @@ public class PlayerStatsJson
 	public int getPts() { return pts; }
 	public int getFga() { return fga; }
 	public int getFta() { return fta; }
+	public int getFgm() { return fgm; }
+	public int getFtm() { return ftm; }
+	public int getOReb() { return oReb; }
+	public int getDReb() { return dReb; }
 
 	public static ArrayList<PlayerStatsJson> parsePlayerStats(String json)
 	{
 		Gson gson = new Gson();
-		int teamID, playerID, reb, ast, stl, blk, to, pf, pts, fga, fta;
+		int teamID, playerID, reb, ast, stl, blk, to, pf, pts, fga, fta, fgm, ftm,
+				oReb, dReb;
 		String teamAbbr, playerName, startPosition, comment, gameID;
 		JsonArray array, tempArray;
 		ArrayList<PlayerStatsJson> players = new ArrayList<PlayerStatsJson>();
@@ -81,8 +92,12 @@ public class PlayerStatsJson
 			comment =  gson.fromJson(tempArray.get(7), String.class);
 			if (tempArray.get(10) != JsonNull.INSTANCE)
 			{
+				fgm = gson.fromJson(tempArray.get(9), int.class);
 				fga = gson.fromJson(tempArray.get(10), int.class);
+				ftm = gson.fromJson(tempArray.get(16), int.class);
 				fta = gson.fromJson(tempArray.get(16), int.class);
+				oReb = gson.fromJson(tempArray.get(18), int.class);
+				dReb = gson.fromJson(tempArray.get(19), int.class);
 				reb = gson.fromJson(tempArray.get(20), int.class);
 				ast = gson.fromJson(tempArray.get(21), int.class);
 				stl = gson.fromJson(tempArray.get(22), int.class);
@@ -94,8 +109,12 @@ public class PlayerStatsJson
 			}
 			else
 			{
+				fgm = 0;
 				fga = 0;
+				ftm = 0;
 				fta = 0;
+				oReb = 0;
+				dReb = 0;
 				reb = 0;
 				ast = 0;
 				stl = 0;
@@ -106,7 +125,7 @@ public class PlayerStatsJson
 			}
 			players.add(new PlayerStatsJson(teamID, playerID, teamAbbr, 
 					playerName, startPosition, comment, reb, ast, stl,
-					blk, to, pf, pts, fga, fta, gameID));
+					blk, to, pf, pts, fga, fta, fgm, ftm, oReb, dReb, gameID));
 		}
 		
 		return players;
