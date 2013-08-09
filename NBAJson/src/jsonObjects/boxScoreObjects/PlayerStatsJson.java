@@ -94,7 +94,7 @@ public class PlayerStatsJson
 			{
 				fgm = gson.fromJson(tempArray.get(9), int.class);
 				fga = gson.fromJson(tempArray.get(10), int.class);
-				ftm = gson.fromJson(tempArray.get(16), int.class);
+				ftm = gson.fromJson(tempArray.get(15), int.class);
 				fta = gson.fromJson(tempArray.get(16), int.class);
 				oReb = gson.fromJson(tempArray.get(18), int.class);
 				dReb = gson.fromJson(tempArray.get(19), int.class);
