@@ -197,10 +197,10 @@ public class RosterSQLGenerator
 		
 		startTime = convertStringTime(relevantPlay.getGameTime());
 		startTime += addPeriodTime(relevantPlay.getPeriod());
-		startTime -= 5;
+		startTime -= 10;
 		endTime = convertStringTime(relevantPlay.getGameTime());
 		endTime += addPeriodTime(relevantPlay.getPeriod());
-		endTime += 5;
+		endTime += 10;
 		
 		pbpData = downloadCustomBoxScore(startTime, endTime);
 		
