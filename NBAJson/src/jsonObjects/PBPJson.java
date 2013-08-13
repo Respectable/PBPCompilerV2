@@ -172,11 +172,28 @@ public class PBPJson extends NBAJsonObject
 		
 		return pbpString;
 	}
+	
+	private static int convertStringTime(String time)
+	{
+		String[] timeParts = time.split(":");
+		String min = timeParts[0];
+		String tens = timeParts[1].substring(0,1);
+		String singles = timeParts[1].substring(1, 2);
+		return 7200 - ((Integer.parseInt(min) * 60) + (Integer.parseInt(tens) * 10) +
+				Integer.parseInt(singles)) * 10;
+	}
 
 	//Sort by play_id
     public static Comparator<PBPJson> COMPARE_BY_PLAY_ID = new Comparator<PBPJson>() {
         public int compare(PBPJson one, PBPJson other) {
             return Integer.compare(one.getEventNum(), other.getEventNum());
+        }
+    };
+    
+    public static Comparator<PBPJson> COMPARE_BY_GAME_TIME = new Comparator<PBPJson>() {
+        public int compare(PBPJson one, PBPJson other) {
+            return Integer.compare(convertStringTime(one.getGameTime()), 
+            		convertStringTime(other.getGameTime()));
         }
     };
 }
