@@ -1,5 +1,9 @@
 package visitors;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
+import jsonObjects.PBPJson;
 import codeGenerator.RosterSQLGenerator;
 import nba.*;
 import nba.play.*;
@@ -26,11 +30,15 @@ public class PlayerVisitor implements Visitor
 	private RosterSQLGenerator rosters;
 	private PlayerVisitorState state;
 	private PlayRole currentTeam;
-	private Play currentPlay;
+	private Period currentPeriod;
+	private Play currentPlay, nextActivePlay;
+	private ArrayList<PBPJson> pbp;
 	
-	public PlayerVisitor(RosterSQLGenerator rosters)
+	public PlayerVisitor(RosterSQLGenerator rosters, ArrayList<PBPJson> pbp)
 	{
 		this.rosters = rosters;
+		this.pbp = pbp;
+		Collections.sort(this.pbp, PBPJson.COMPARE_BY_GAME_TIME);
 	}
 	
 	private void changeState(Play play)
@@ -118,6 +126,7 @@ public class PlayerVisitor implements Visitor
 	@Override
 	public void visit(Period period) 
 	{
+		this.currentPeriod = period;
 		for(Play p : period.getPlays())
 		{
 			changeState(p);
@@ -137,8 +146,12 @@ public class PlayerVisitor implements Visitor
 			break;
 		case PLAYERREBOUND: case PLAYERTURNOVER: case PLAYERVIOLATION:
 		case SHOT: case PLAYERFOUL: case FREETHROW: case PLAYERTECH:
-		case EJECTION: case SUB: case BLOCK: case STEAL:
+		case EJECTION: case BLOCK: case STEAL:
 			rosters.setPlayer(player, currentPlay, currentTeam);
+			break;
+		case SUB:
+			nextActivePlay = getNextPlay(currentPlay.getPlayID());
+			rosters.setPlayer(player, currentPlay, currentTeam, nextActivePlay);
 			break;
 		case TEAMREBOUND: case TEAMTURNOVER: case TEAMVIOLATION:
 		case TIMEOUT: case TEAMFOUL: case TEAMTECH:
@@ -267,6 +280,45 @@ public class PlayerVisitor implements Visitor
 
 	@Override
 	public void visit(Possession possession) {}
+	
+	private Play getNextPlay(int playID)
+	{
+		PBPJson nextPlay = new PBPJson();
+		PBPJson currentPlay = new PBPJson();
+		currentPlay.setEventNum(playID);
+		
+		int index = Collections.binarySearch(this.pbp, currentPlay, 
+				PBPJson.COMPARE_BY_PLAY_ID);
+		
+		if (index == -1)
+		{
+			System.out.println("Play: " + playID + 
+					" Play not found.");
+			System.exit(-1);
+		}
+		else
+		{
+			currentPlay = this.pbp.get(index);
+		}
+		
+		for (PBPJson play : this.pbp)
+		{
+			if (play.getConvertedStringTime() > currentPlay.getConvertedStringTime())
+			{
+				nextPlay = play;
+			}
+		}
+		
+		for (Play play : this.currentPeriod.getPlays())
+		{
+			if (play.getPlayID() == nextPlay.getEventNum())
+			{
+				return play;
+			}
+		}
+		
+		return null;
+	}
 
 	
 
