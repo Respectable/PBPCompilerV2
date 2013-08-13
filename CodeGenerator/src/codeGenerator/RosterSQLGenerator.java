@@ -167,6 +167,42 @@ public class RosterSQLGenerator
 		}
 	}
 	
+	public void setPlayer(Player player, Play currentPlay, PlayRole role,
+							Play nextActivePlay)
+	{
+		ArrayList<Player> tempPlayers, matchingPlayers;
+		
+		if (role.equals(PlayRole.HOME))
+		{
+			tempPlayers = new ArrayList<Player>(getHomeActive());
+		}
+		else if (role.equals(PlayRole.AWAY))
+		{
+			tempPlayers = new ArrayList<Player>(getAwayActive());
+		}
+		else
+		{
+			tempPlayers = new ArrayList<Player>(getActive());
+		}
+		
+		matchingPlayers = getMatchingPlayers(tempPlayers, player);
+		
+		if (matchingPlayers.size() < 1)
+		{
+			System.out.println("Could not find player: " + player.getPlayerName());
+			player.setPlayerID(-1);
+		}
+		else if (matchingPlayers.size() == 1)
+		{
+			player.setPlayerID(matchingPlayers.get(0).getPlayerID());
+			player.setPlayerName(matchingPlayers.get(0).getPlayerName());
+		}
+		else
+		{
+			duplicateSearch(player, currentPlay, role, nextActivePlay);
+		}
+	}
+	
 	public boolean searchHomePlayers(Player player)
 	{
 		return getHomeActive().contains(player);
@@ -237,6 +273,72 @@ public class RosterSQLGenerator
 		}
 	}
 	
+	private void duplicateSearch(Player player, Play currentPlay, PlayRole role,
+									Play nextActivePlay)
+	{
+		int index, startTime, endTime;
+		PBPJson relevantPlay = new PBPJson();
+		ArrayList<PlayerStatsJson> pbpData;
+		ArrayList<Player> possiblePlayers, matchingPlayers;
+		
+		relevantPlay.setEventNum(currentPlay.getPlayID());
+		index = Collections.binarySearch(this.pbp, relevantPlay, 
+				PBPJson.COMPARE_BY_PLAY_ID);
+		
+		if (index == -1)
+		{
+			System.out.println("Game: " + this.gameID + " " +
+					"Play: " + currentPlay.getPlayID() + 
+					" Play not found.");
+			System.exit(-1);
+		}
+		else
+		{
+			relevantPlay = this.pbp.get(index);
+		}
+		
+		startTime = convertStringTime(relevantPlay.getGameTime());
+		startTime += addPeriodTime(relevantPlay.getPeriod());
+		startTime -= 10;
+		endTime = convertStringTime(relevantPlay.getGameTime());
+		endTime += addPeriodTime(relevantPlay.getPeriod());
+		endTime += 10;
+		
+		pbpData = downloadCustomBoxScore(startTime, endTime);
+		
+		if (role.equals(PlayRole.HOME))
+		{
+			possiblePlayers = parseTeam(homeID, pbpData);
+		}
+		else if (role.equals(PlayRole.AWAY))
+		{
+			possiblePlayers = parseTeam(awayID, pbpData);
+		}
+		else
+		{
+			possiblePlayers = parseTeam(homeID, pbpData);
+			possiblePlayers.addAll(parseTeam(awayID, pbpData));
+		}
+		
+		matchingPlayers = getMatchingPlayers(possiblePlayers, player);
+		
+		if (matchingPlayers.size() < 1)
+		{
+			System.out.println("Could not find player on 2nd pass: " 
+								+ player.getPlayerName());
+			player.setPlayerID(-1);
+		}
+		else if (matchingPlayers.size() == 1)
+		{
+			player.setPlayerID(matchingPlayers.get(0).getPlayerID());
+			player.setPlayerName(matchingPlayers.get(0).getPlayerName());
+		}
+		else
+		{
+			parsePlayData(player, currentPlay, role, pbpData, nextActivePlay);
+		}
+	}
+	
 	private void parsePlayData(Player player, Play currentPlay, PlayRole role,
 								ArrayList<PlayerStatsJson> pbpData)
 	{
@@ -304,6 +406,77 @@ public class RosterSQLGenerator
 		{
 			System.out.println("Could not narrow results on 3rd pass: " 
 					+ player.getPlayerName());
+			player.setPlayerID(-1);
+		}
+	}
+	
+	private void parsePlayData(Player player, Play currentPlay, PlayRole role,
+			ArrayList<PlayerStatsJson> pbpData, Play nextActivePlay)
+	{
+		ArrayList<Player> possiblePlayers, matchingPlayers;
+		int teamID;
+		
+		if (role.equals(PlayRole.NEUTRAL))
+		{
+			player.setPlayerID(-1);
+			System.out.println("Could not find player on 2nd pass: " 
+			+ player.getPlayerName() + ", Player on both teams");
+			return;
+		}
+		
+		if (role.equals(PlayRole.HOME))
+			teamID = homeID;
+		else
+			teamID = awayID;
+		
+		possiblePlayers = new ArrayList<Player>();
+		
+		if (currentPlay.getPlayType() instanceof Rebound)
+		{
+			possiblePlayers = parseReb(teamID, pbpData);
+		}
+		else if (currentPlay.getPlayType() instanceof Turnover)
+		{
+			possiblePlayers = parseTO(teamID, pbpData);
+		}
+		else if (currentPlay.getPlayType() instanceof Shot)
+		{
+			possiblePlayers = parseShot(teamID, pbpData);
+		}
+		else if (currentPlay.getPlayType() instanceof Foul)
+		{
+			possiblePlayers = parsePF(teamID, pbpData);
+		}
+		else if (currentPlay.getPlayType() instanceof FreeThrow)
+		{
+			possiblePlayers = parseFT(teamID, pbpData);
+		}
+		else if (currentPlay.getPlayType() instanceof Steal)
+		{
+			possiblePlayers = parseStl(teamID, pbpData);
+		}
+		else if (currentPlay.getPlayType() instanceof Block)
+		{
+			possiblePlayers = parseBlk(teamID, pbpData);
+		}
+		
+		matchingPlayers = getMatchingPlayers(possiblePlayers, player);
+		
+		if (matchingPlayers.size() < 1)
+		{
+			System.out.println("Could not find player on 3rd pass: " 
+						+ player.getPlayerName());
+			player.setPlayerID(-1);
+		}
+		else if (matchingPlayers.size() == 1)
+		{
+			player.setPlayerID(matchingPlayers.get(0).getPlayerID());
+			player.setPlayerName(matchingPlayers.get(0).getPlayerName());
+		}
+		else
+		{
+			System.out.println("Could not narrow results on 3rd pass: " 
+			+ player.getPlayerName());
 			player.setPlayerID(-1);
 		}
 	}
