@@ -22,6 +22,7 @@ import nba.playType.turnover.Turnover;
 import nbaDownloader.NBADownloader;
 import nba.playType.block.*;
 import nba.playType.steal.*;
+import nba.playType.substitution.Substitution;
 
 import nba.PlayRole;
 import nba.Player;
@@ -279,8 +280,12 @@ public class RosterSQLGenerator
 		int index, startTime, endTime;
 		PBPJson relevantPlay = new PBPJson();
 		ArrayList<PlayerStatsJson> pbpData;
-		ArrayList<Player> possiblePlayers, matchingPlayers;
+		ArrayList<Player> playersOnFloor, playersOnBench, matchingPlayers;
+		Substitution sub = (Substitution)currentPlay.getPlayType();
 		
+		playersOnFloor = new ArrayList<Player>();
+		playersOnBench = new ArrayList<Player>();
+		matchingPlayers = new ArrayList<Player>();
 		relevantPlay.setEventNum(currentPlay.getPlayID());
 		index = Collections.binarySearch(this.pbp, relevantPlay, 
 				PBPJson.COMPARE_BY_PLAY_ID);
@@ -308,19 +313,33 @@ public class RosterSQLGenerator
 		
 		if (role.equals(PlayRole.HOME))
 		{
-			possiblePlayers = parseTeam(homeID, pbpData);
+			playersOnFloor = parseTeam(homeID, pbpData);
+			playersOnBench = new ArrayList<Player>(getHomeActive());
+			playersOnBench.removeAll(playersOnFloor);
 		}
 		else if (role.equals(PlayRole.AWAY))
 		{
-			possiblePlayers = parseTeam(awayID, pbpData);
+			playersOnFloor = parseTeam(awayID, pbpData);
+			playersOnBench = new ArrayList<Player>(getAwayActive());
+			playersOnBench.removeAll(playersOnFloor);
 		}
 		else
 		{
-			possiblePlayers = parseTeam(homeID, pbpData);
-			possiblePlayers.addAll(parseTeam(awayID, pbpData));
+			//TODO error, no neutral sub
 		}
 		
-		matchingPlayers = getMatchingPlayers(possiblePlayers, player);
+		if (sub.getIn().equals(player))
+		{
+			matchingPlayers = getMatchingPlayers(playersOnBench, player);
+		}
+		else if (sub.getOut().equals(player))
+		{
+			matchingPlayers = getMatchingPlayers(playersOnFloor, player);
+		}
+		else
+		{
+			//TODO error, player not found
+		}
 		
 		if (matchingPlayers.size() < 1)
 		{
