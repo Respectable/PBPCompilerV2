@@ -192,6 +192,19 @@ public class PBPJson extends NBAJsonObject
 		return 7200 - ((Integer.parseInt(min) * 60) + (Integer.parseInt(tens) * 10) +
 				Integer.parseInt(singles)) * 10;
 	}
+	
+	private static int addPeriodTime(int period)
+	{
+		if (period < 5)
+		{
+			return (period - 1) * (12 * 60 * 10);
+		}
+		else
+		{
+			return ((period - 5) * (5 * 60 * 10)) +
+					((period - 1) * (12 * 60 * 10));
+		}
+	}
 
 	//Sort by play_id
     public static Comparator<PBPJson> COMPARE_BY_PLAY_ID = new Comparator<PBPJson>() {
@@ -202,8 +215,8 @@ public class PBPJson extends NBAJsonObject
     
     public static Comparator<PBPJson> COMPARE_BY_GAME_TIME = new Comparator<PBPJson>() {
         public int compare(PBPJson one, PBPJson other) {
-            return Integer.compare(convertStringTime(one.getGameTime()), 
-            		convertStringTime(other.getGameTime()));
+            return Integer.compare(convertStringTime(one.getGameTime()) + addPeriodTime(one.getPeriod()), 
+            		convertStringTime(other.getGameTime()) + addPeriodTime(other.getPeriod()));
         }
     };
 }
