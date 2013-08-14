@@ -863,7 +863,15 @@ public class RosterSQLGenerator
 	
 	private int addPeriodTime(int period)
 	{
-		return (period - 1) * (12 * 60 * 10);
+		if (period < 5)
+		{
+			return (period - 1) * (12 * 60 * 10);
+		}
+		else
+		{
+			return ((period - 4) * (5 * 60 * 10)) +
+					((period - 1) * (12 * 60 * 10));
+		}
 	}
 	
 	private ArrayList<PlayerStatsJson> downloadCustomBoxScore(int startTime,
