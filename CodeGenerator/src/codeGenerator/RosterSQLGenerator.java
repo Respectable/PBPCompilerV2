@@ -53,7 +53,7 @@ public class RosterSQLGenerator
 		this.awayID = awayID;
 		this.gameID = gameID;
 		this.nbaGameID = nbaGameID;
-		this.pbp = pbp;
+		this.pbp = new ArrayList<PBPJson>(pbp);
 		Collections.sort(this.pbp, PBPJson.COMPARE_BY_PLAY_ID);
 	}
 
