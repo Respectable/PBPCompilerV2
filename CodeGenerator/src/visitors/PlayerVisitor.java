@@ -286,7 +286,7 @@ public class PlayerVisitor implements Visitor
 		currentPlay.setEventNum(playID);
 		
 		int index = Collections.binarySearch(this.pbp, currentPlay, 
-				PBPJson.COMPARE_BY_GAME_TIME);
+				PBPJson.COMPARE_BY_PLAY_ID); //this does in fact, need to be a play_id comparator
 		
 		if (index < 0)
 		{
