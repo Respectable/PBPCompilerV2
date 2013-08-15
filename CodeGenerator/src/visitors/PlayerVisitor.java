@@ -37,7 +37,7 @@ public class PlayerVisitor implements Visitor
 	public PlayerVisitor(RosterSQLGenerator rosters, ArrayList<PBPJson> pbp)
 	{
 		this.rosters = rosters;
-		this.pbp = pbp;
+		this.pbp = new ArrayList<PBPJson>(pbp);
 		Collections.sort(this.pbp, PBPJson.COMPARE_BY_GAME_TIME);
 	}
 	
