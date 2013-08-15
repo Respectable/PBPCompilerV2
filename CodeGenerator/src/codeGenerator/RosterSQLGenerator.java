@@ -169,7 +169,7 @@ public class RosterSQLGenerator
 	}
 	
 	public void setPlayer(Player player, Play currentPlay, PlayRole role,
-							Play nextActivePlay)
+							PBPJson nextActivePlay)
 	{
 		ArrayList<Player> tempPlayers, matchingPlayers;
 		
@@ -275,7 +275,7 @@ public class RosterSQLGenerator
 	}
 	
 	private void duplicateSearch(Player player, Play currentPlay, PlayRole role,
-									Play nextActivePlay)
+							PBPJson nextActivePlay)
 	{
 		int index, startTime, endTime;
 		PBPJson relevantPlay = new PBPJson();
@@ -430,56 +430,66 @@ public class RosterSQLGenerator
 	}
 	
 	private void parsePlayData(Player player, Play currentPlay, PlayRole role,
-			ArrayList<PlayerStatsJson> pbpData, Play nextActivePlay)
+			ArrayList<PlayerStatsJson> pbpData, PBPJson nextActivePlay)
 	{
-		ArrayList<Player> possiblePlayers, matchingPlayers;
-		int teamID;
+		ArrayList<Player> playersOnFloorBefore, playersOnBenchBefore,
+			playersOnFloorAfter, playersOnBenchAfter, matchingPlayers;
+		ArrayList<PlayerStatsJson> pbpDataFollowing;
+		int startTime, endTime;
+		Substitution sub = (Substitution)currentPlay.getPlayType();
 		
-		if (role.equals(PlayRole.NEUTRAL))
-		{
-			player.setPlayerID(-1);
-			System.out.println("Could not find player on 2nd pass: " 
-			+ player.getPlayerName() + ", Player on both teams");
-			return;
-		}
+		playersOnFloorBefore = new ArrayList<Player>();
+		playersOnBenchBefore = new ArrayList<Player>();
+		playersOnFloorAfter = new ArrayList<Player>();
+		playersOnBenchAfter = new ArrayList<Player>();
+		matchingPlayers = new ArrayList<Player>();
+		
+		startTime = convertStringTime(nextActivePlay.getGameTime());
+		startTime += addPeriodTime(nextActivePlay.getPeriod());
+		startTime -= 10;
+		endTime = convertStringTime(nextActivePlay.getGameTime());
+		endTime += addPeriodTime(nextActivePlay.getPeriod());
+		endTime += 10;
+		
+		pbpDataFollowing = downloadCustomBoxScore(startTime, endTime);
 		
 		if (role.equals(PlayRole.HOME))
-			teamID = homeID;
+		{
+			playersOnFloorBefore = parseTeam(homeID, pbpData);
+			playersOnBenchBefore = new ArrayList<Player>(getHomeActive());
+			playersOnBenchBefore.removeAll(playersOnFloorBefore);
+			playersOnFloorAfter = parseTeam(homeID, pbpDataFollowing);
+			playersOnBenchAfter = new ArrayList<Player>(getHomeActive());
+			playersOnBenchAfter.removeAll(playersOnFloorAfter);
+		}
+		else if (role.equals(PlayRole.AWAY))
+		{
+			playersOnFloorBefore = parseTeam(awayID, pbpData);
+			playersOnBenchBefore = new ArrayList<Player>(getAwayActive());
+			playersOnBenchBefore.removeAll(playersOnFloorBefore);
+			playersOnFloorAfter = parseTeam(awayID, pbpDataFollowing);
+			playersOnBenchAfter = new ArrayList<Player>(getHomeActive());
+			playersOnBenchAfter.removeAll(playersOnFloorAfter);
+		}
 		else
-			teamID = awayID;
-		
-		possiblePlayers = new ArrayList<Player>();
-		
-		if (currentPlay.getPlayType() instanceof Rebound)
 		{
-			possiblePlayers = parseReb(teamID, pbpData);
-		}
-		else if (currentPlay.getPlayType() instanceof Turnover)
-		{
-			possiblePlayers = parseTO(teamID, pbpData);
-		}
-		else if (currentPlay.getPlayType() instanceof Shot)
-		{
-			possiblePlayers = parseShot(teamID, pbpData);
-		}
-		else if (currentPlay.getPlayType() instanceof Foul)
-		{
-			possiblePlayers = parsePF(teamID, pbpData);
-		}
-		else if (currentPlay.getPlayType() instanceof FreeThrow)
-		{
-			possiblePlayers = parseFT(teamID, pbpData);
-		}
-		else if (currentPlay.getPlayType() instanceof Steal)
-		{
-			possiblePlayers = parseStl(teamID, pbpData);
-		}
-		else if (currentPlay.getPlayType() instanceof Block)
-		{
-			possiblePlayers = parseBlk(teamID, pbpData);
+			//TODO error, no neutral sub
 		}
 		
-		matchingPlayers = getMatchingPlayers(possiblePlayers, player);
+		if (sub.getIn().equals(player))
+		{
+			playersOnFloorAfter.removeAll(playersOnFloorBefore);
+			matchingPlayers = getMatchingPlayers(playersOnFloorAfter, player);
+		}
+		else if (sub.getOut().equals(player))
+		{
+			playersOnBenchAfter.removeAll(playersOnBenchBefore);
+			matchingPlayers = getMatchingPlayers(playersOnBenchAfter, player);
+		}
+		else
+		{
+			//TODO error, player not found
+		}
 		
 		if (matchingPlayers.size() < 1)
 		{
