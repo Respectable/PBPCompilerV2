@@ -32,13 +32,15 @@ public class PlayerVisitor implements Visitor
 	private PlayRole currentTeam;
 	private Play currentPlay;
 	private PBPJson nextActivePlay;
-	private ArrayList<PBPJson> pbp;
+	private ArrayList<PBPJson> timeSortedPBP, idSortedPBP;
 	
 	public PlayerVisitor(RosterSQLGenerator rosters, ArrayList<PBPJson> pbp)
 	{
 		this.rosters = rosters;
-		this.pbp = new ArrayList<PBPJson>(pbp);
-		Collections.sort(this.pbp, PBPJson.COMPARE_BY_GAME_TIME);
+		this.timeSortedPBP = new ArrayList<PBPJson>(pbp);
+		this.idSortedPBP = new ArrayList<PBPJson>(pbp);
+		Collections.sort(this.timeSortedPBP, PBPJson.COMPARE_BY_GAME_TIME);
+		Collections.sort(this.idSortedPBP, PBPJson.COMPARE_BY_PLAY_ID);
 	}
 	
 	private void changeState(Play play)
@@ -285,7 +287,7 @@ public class PlayerVisitor implements Visitor
 		PBPJson currentPlay = new PBPJson();
 		currentPlay.setEventNum(playID);
 		
-		int index = Collections.binarySearch(this.pbp, currentPlay, 
+		int index = Collections.binarySearch(this.idSortedPBP, currentPlay, 
 				PBPJson.COMPARE_BY_PLAY_ID); //this does in fact, need to be a play_id comparator
 		
 		if (index < 0)
@@ -296,10 +298,10 @@ public class PlayerVisitor implements Visitor
 		}
 		else
 		{
-			currentPlay = this.pbp.get(index);
+			currentPlay = this.idSortedPBP.get(index);
 		}
 		
-		for (PBPJson play : this.pbp)
+		for (PBPJson play : this.timeSortedPBP)
 		{
 			if (play.getConvertedStringTime() > currentPlay.getConvertedStringTime())
 			{
