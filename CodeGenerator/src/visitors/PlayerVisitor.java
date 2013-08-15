@@ -30,8 +30,8 @@ public class PlayerVisitor implements Visitor
 	private RosterSQLGenerator rosters;
 	private PlayerVisitorState state;
 	private PlayRole currentTeam;
-	private Period currentPeriod;
-	private Play currentPlay, nextActivePlay;
+	private Play currentPlay;
+	private PBPJson nextActivePlay;
 	private ArrayList<PBPJson> pbp;
 	
 	public PlayerVisitor(RosterSQLGenerator rosters, ArrayList<PBPJson> pbp)
@@ -126,7 +126,6 @@ public class PlayerVisitor implements Visitor
 	@Override
 	public void visit(Period period) 
 	{
-		this.currentPeriod = period;
 		for(Play p : period.getPlays())
 		{
 			changeState(p);
@@ -281,9 +280,8 @@ public class PlayerVisitor implements Visitor
 	@Override
 	public void visit(Possession possession) {}
 	
-	private Play getNextPlay(int playID)
+	private PBPJson getNextPlay(int playID)
 	{
-		PBPJson nextPlay = new PBPJson();
 		PBPJson currentPlay = new PBPJson();
 		currentPlay.setEventNum(playID);
 		
@@ -304,14 +302,6 @@ public class PlayerVisitor implements Visitor
 		for (PBPJson play : this.pbp)
 		{
 			if (play.getConvertedStringTime() > currentPlay.getConvertedStringTime())
-			{
-				nextPlay = play;
-			}
-		}
-		
-		for (Play play : this.currentPeriod.getPlays())
-		{
-			if (play.getPlayID() == nextPlay.getEventNum())
 			{
 				return play;
 			}
