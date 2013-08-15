@@ -173,7 +173,7 @@ public class PBPJson extends NBAJsonObject
 		return pbpString;
 	}
 	
-	private static int convertStringTime(String time)
+	private static int convertStringTime(String time, PBPJson currentPlay)
 	{
 		String[] timeParts = time.split(":");
 		String min = timeParts[0];
@@ -215,8 +215,8 @@ public class PBPJson extends NBAJsonObject
     
     public static Comparator<PBPJson> COMPARE_BY_GAME_TIME = new Comparator<PBPJson>() {
         public int compare(PBPJson one, PBPJson other) {
-            return Integer.compare(convertStringTime(one.getGameTime()) + addPeriodTime(one.getPeriod()), 
-            		convertStringTime(other.getGameTime()) + addPeriodTime(other.getPeriod()));
+            return Integer.compare(convertStringTime(one.getGameTime(), one) + addPeriodTime(one.getPeriod()), 
+            		convertStringTime(other.getGameTime(), other) + addPeriodTime(other.getPeriod()));
         }
     };
 }
