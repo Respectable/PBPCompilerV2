@@ -31,7 +31,7 @@ public class PlayerVisitor implements Visitor
 	private PlayerVisitorState state;
 	private PlayRole currentTeam;
 	private Play currentPlay;
-	private PBPJson nextActivePlay;
+	private PBPJson nextActivePlay, previousActivePlay;
 	private ArrayList<PBPJson> timeSortedPBP, idSortedPBP;
 	
 	public PlayerVisitor(RosterSQLGenerator rosters, ArrayList<PBPJson> pbp)
@@ -152,7 +152,9 @@ public class PlayerVisitor implements Visitor
 			break;
 		case SUB:
 			nextActivePlay = getNextPlay(currentPlay.getPlayID());
-			rosters.setPlayer(player, currentPlay, currentTeam, nextActivePlay);
+			previousActivePlay = getPreviousPlay(currentPlay.getPlayID());
+			rosters.setPlayer(player, currentPlay, currentTeam, nextActivePlay,
+					previousActivePlay);
 			break;
 		case TEAMREBOUND: case TEAMTURNOVER: case TEAMVIOLATION:
 		case TIMEOUT: case TEAMFOUL: case TEAMTECH:
@@ -310,6 +312,39 @@ public class PlayerVisitor implements Visitor
 		}
 		
 		return null;
+	}
+	
+	private PBPJson getPreviousPlay(int playID)
+	{
+		PBPJson currentPlay = new PBPJson();
+		ArrayList<PBPJson> tempPlays = new ArrayList<PBPJson>();
+		currentPlay.setEventNum(playID);
+		
+		int index = Collections.binarySearch(this.idSortedPBP, currentPlay, 
+				PBPJson.COMPARE_BY_PLAY_ID); //this does in fact, need to be a play_id comparator
+		
+		if (index < 0)
+		{
+			System.out.println("Play: " + playID + 
+					" Play not found.");
+			System.exit(-1);
+		}
+		else
+		{
+			currentPlay = this.idSortedPBP.get(index);
+		}
+		
+		for (PBPJson play : this.timeSortedPBP)
+		{
+			if (play.getConvertedStringTime() < currentPlay.getConvertedStringTime())
+			{
+				tempPlays.add(play);
+			}
+		}
+		
+		Collections.sort(tempPlays, PBPJson.COMPARE_BY_GAME_TIME);
+		
+		return tempPlays.get(tempPlays.size() - 1);
 	}
 
 	
