@@ -169,7 +169,7 @@ public class RosterSQLGenerator
 	}
 	
 	public void setPlayer(Player player, Play currentPlay, PlayRole role,
-							PBPJson nextActivePlay)
+							PBPJson nextActivePlay, PBPJson previousActivePlay)
 	{
 		ArrayList<Player> tempPlayers, matchingPlayers;
 		
@@ -200,7 +200,7 @@ public class RosterSQLGenerator
 		}
 		else
 		{
-			duplicateSearch(player, currentPlay, role, nextActivePlay);
+			duplicateSearch(player, currentPlay, role, nextActivePlay, previousActivePlay);
 		}
 	}
 	
@@ -275,7 +275,7 @@ public class RosterSQLGenerator
 	}
 	
 	private void duplicateSearch(Player player, Play currentPlay, PlayRole role,
-							PBPJson nextActivePlay)
+							PBPJson nextActivePlay, PBPJson previousActivePlay)
 	{
 		int index, startTime, endTime;
 		PBPJson relevantPlay = new PBPJson();
@@ -328,17 +328,35 @@ public class RosterSQLGenerator
 			//TODO error, no neutral sub
 		}
 		
-		if (sub.getIn().equals(player))
+		if (playersOnFloor.size() == 5)
 		{
-			matchingPlayers = getMatchingPlayers(playersOnBench, player);
+			if (sub.getIn().equals(player))
+			{
+				matchingPlayers = getMatchingPlayers(playersOnBench, player);
+			}
+			else if (sub.getOut().equals(player))
+			{
+				matchingPlayers = getMatchingPlayers(playersOnFloor, player);
+			}
+			else
+			{
+				//TODO error, player not found
+			}
 		}
-		else if (sub.getOut().equals(player))
+		else if (playersOnFloor.size() > 5)
 		{
-			matchingPlayers = getMatchingPlayers(playersOnFloor, player);
+			if (sub.getIn().equals(player) | sub.getOut().equals(player))
+			{
+				matchingPlayers = getMatchingPlayers(playersOnFloor, player);
+			}
+			else
+			{
+				//TODO error, player not found
+			}
 		}
 		else
 		{
-			//TODO error, player not found
+			//TODO less than 5 players on floor
 		}
 		
 		if (matchingPlayers.size() < 1)
@@ -354,7 +372,8 @@ public class RosterSQLGenerator
 		}
 		else
 		{
-			parsePlayData(player, currentPlay, role, pbpData, nextActivePlay);
+			parsePlayData(player, currentPlay, role, pbpData, nextActivePlay,
+					previousActivePlay);
 		}
 	}
 	
@@ -430,18 +449,22 @@ public class RosterSQLGenerator
 	}
 	
 	private void parsePlayData(Player player, Play currentPlay, PlayRole role,
-			ArrayList<PlayerStatsJson> pbpData, PBPJson nextActivePlay)
+			ArrayList<PlayerStatsJson> pbpData, PBPJson nextActivePlay,
+			PBPJson previousActivePlay)
 	{
-		ArrayList<Player> playersOnFloorBefore, playersOnBenchBefore,
-			playersOnFloorAfter, playersOnBenchAfter, matchingPlayers;
-		ArrayList<PlayerStatsJson> pbpDataFollowing;
+		ArrayList<Player> playersOnFloorCurrent, playersOnBenchCurrent,
+			playersOnFloorAfter, playersOnBenchAfter, playersOnBenchPrior,
+			playersOnFloorPrior, matchingPlayers;
+		ArrayList<PlayerStatsJson> pbpDataFollowing, pbpDataPrior;
 		int startTime, endTime;
 		Substitution sub = (Substitution)currentPlay.getPlayType();
 		
-		playersOnFloorBefore = new ArrayList<Player>();
-		playersOnBenchBefore = new ArrayList<Player>();
+		playersOnFloorCurrent = new ArrayList<Player>();
+		playersOnBenchCurrent = new ArrayList<Player>();
 		playersOnFloorAfter = new ArrayList<Player>();
 		playersOnBenchAfter = new ArrayList<Player>();
+		playersOnFloorPrior = new ArrayList<Player>();
+		playersOnBenchPrior = new ArrayList<Player>();
 		matchingPlayers = new ArrayList<Player>();
 		
 		startTime = convertStringTime(nextActivePlay.getGameTime());
@@ -453,42 +476,81 @@ public class RosterSQLGenerator
 		
 		pbpDataFollowing = downloadCustomBoxScore(startTime, endTime);
 		
+		startTime = convertStringTime(previousActivePlay.getGameTime());
+		startTime += addPeriodTime(previousActivePlay.getPeriod());
+		startTime -= 10;
+		endTime = convertStringTime(previousActivePlay.getGameTime());
+		endTime += addPeriodTime(previousActivePlay.getPeriod());
+		endTime += 10;
+		
+		pbpDataPrior = downloadCustomBoxScore(startTime, endTime);
+		
 		if (role.equals(PlayRole.HOME))
 		{
-			playersOnFloorBefore = parseTeam(homeID, pbpData);
-			playersOnBenchBefore = new ArrayList<Player>(getHomeActive());
-			playersOnBenchBefore.removeAll(playersOnFloorBefore);
+			playersOnFloorCurrent = parseTeam(homeID, pbpData);
+			playersOnBenchCurrent = new ArrayList<Player>(getHomeActive());
+			playersOnBenchCurrent.removeAll(playersOnFloorCurrent);
 			playersOnFloorAfter = parseTeam(homeID, pbpDataFollowing);
 			playersOnBenchAfter = new ArrayList<Player>(getHomeActive());
 			playersOnBenchAfter.removeAll(playersOnFloorAfter);
+			playersOnFloorPrior = parseTeam(homeID, pbpDataPrior);
+			playersOnBenchPrior = new ArrayList<Player>(getHomeActive());
+			playersOnBenchPrior.removeAll(playersOnFloorPrior);
 		}
 		else if (role.equals(PlayRole.AWAY))
 		{
-			playersOnFloorBefore = parseTeam(awayID, pbpData);
-			playersOnBenchBefore = new ArrayList<Player>(getAwayActive());
-			playersOnBenchBefore.removeAll(playersOnFloorBefore);
+			playersOnFloorCurrent = parseTeam(awayID, pbpData);
+			playersOnBenchCurrent = new ArrayList<Player>(getAwayActive());
+			playersOnBenchCurrent.removeAll(playersOnFloorCurrent);
 			playersOnFloorAfter = parseTeam(awayID, pbpDataFollowing);
 			playersOnBenchAfter = new ArrayList<Player>(getHomeActive());
 			playersOnBenchAfter.removeAll(playersOnFloorAfter);
+			playersOnFloorPrior = parseTeam(awayID, pbpDataPrior);
+			playersOnBenchPrior = new ArrayList<Player>(getHomeActive());
+			playersOnBenchPrior.removeAll(playersOnFloorPrior);
 		}
 		else
 		{
 			//TODO error, no neutral sub
 		}
 		
-		if (sub.getIn().equals(player))
+		if (playersOnFloorCurrent.size() == 5)
 		{
-			playersOnFloorAfter.removeAll(playersOnFloorBefore);
-			matchingPlayers = getMatchingPlayers(playersOnFloorAfter, player);
+			if (sub.getIn().equals(player))
+			{
+				playersOnFloorAfter.removeAll(playersOnFloorCurrent);
+				matchingPlayers = getMatchingPlayers(playersOnFloorAfter, player);
+			}
+			else if (sub.getOut().equals(player))
+			{
+				playersOnBenchAfter.removeAll(playersOnBenchCurrent);
+				matchingPlayers = getMatchingPlayers(playersOnBenchAfter, player);
+			}
+			else
+			{
+				//TODO error, player not found
+			}
 		}
-		else if (sub.getOut().equals(player))
+		else if (playersOnFloorCurrent.size() > 5)
 		{
-			playersOnBenchAfter.removeAll(playersOnBenchBefore);
-			matchingPlayers = getMatchingPlayers(playersOnBenchAfter, player);
+			if (sub.getIn().equals(player))
+			{
+				playersOnFloorCurrent.removeAll(playersOnFloorPrior);
+				matchingPlayers = getMatchingPlayers(playersOnFloorCurrent, player);
+			}
+			else if (sub.getOut().equals(player))
+			{
+				playersOnBenchAfter.removeAll(playersOnBenchCurrent);
+				matchingPlayers = getMatchingPlayers(playersOnBenchAfter, player);
+			}
+			else
+			{
+				//TODO error, player not found
+			}
 		}
 		else
 		{
-			//TODO error, player not found
+			//TODO, less than 5 players on floor
 		}
 		
 		if (matchingPlayers.size() < 1)
