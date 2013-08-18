@@ -142,10 +142,6 @@ public class PlayerVisitor implements Visitor
 	@Override
 	public void visit(Player player) 
 	{
-		if (currentPlay.getPlayID() == 424)
-		{
-			int x = 1;
-		}
 		switch (state)
 		{
 		case JUMPBALL: case DOUBLEFOUL: case DOUBLETECH: 
