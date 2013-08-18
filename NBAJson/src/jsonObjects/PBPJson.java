@@ -27,7 +27,7 @@ public class PBPJson extends NBAJsonObject
 		this.awayDesc = "";
 		this.score = "";
 		this.margin = "";
-		this.eventNum = 0;
+		this.eventNum = -1;
 		this.eventMsgType = 0;
 		this.eventMsgActionType = 0;
 		this.period = 0;
