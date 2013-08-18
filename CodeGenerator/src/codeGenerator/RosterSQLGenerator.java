@@ -133,7 +133,8 @@ public class RosterSQLGenerator
 		return matchingPlayers;
 	}
 	
-	public void setPlayer(Player player, Play currentPlay, PlayRole role)
+	public void setPlayer(Player player, Play currentPlay, PlayRole role,
+			boolean isAssist)
 	{
 		ArrayList<Player> tempPlayers, matchingPlayers;
 		
@@ -164,7 +165,7 @@ public class RosterSQLGenerator
 		}
 		else
 		{
-			duplicateSearch(player, currentPlay, role);
+			duplicateSearch(player, currentPlay, role, isAssist);
 		}
 	}
 	
@@ -209,7 +210,8 @@ public class RosterSQLGenerator
 		return getHomeActive().contains(player);
 	}
 	
-	private void duplicateSearch(Player player, Play currentPlay, PlayRole role)
+	private void duplicateSearch(Player player, Play currentPlay, PlayRole role, 
+			boolean isAssist)
 	{
 		int index, startTime, endTime;
 		PBPJson relevantPlay = new PBPJson();
@@ -270,7 +272,7 @@ public class RosterSQLGenerator
 		}
 		else
 		{
-			parsePlayData(player, currentPlay, role, pbpData);
+			parsePlayData(player, currentPlay, role, pbpData, isAssist);
 		}
 	}
 	
@@ -378,7 +380,7 @@ public class RosterSQLGenerator
 	}
 	
 	private void parsePlayData(Player player, Play currentPlay, PlayRole role,
-								ArrayList<PlayerStatsJson> pbpData)
+								ArrayList<PlayerStatsJson> pbpData, boolean isAssist)
 	{
 		ArrayList<Player> possiblePlayers, matchingPlayers;
 		int teamID;
@@ -408,7 +410,14 @@ public class RosterSQLGenerator
 		}
 		else if (currentPlay.getPlayType() instanceof Shot)
 		{
-			possiblePlayers = parseShot(teamID, pbpData);
+			if (isAssist)
+			{
+				possiblePlayers = parseAst(teamID, pbpData);
+			}
+			else
+			{
+				possiblePlayers = parseShot(teamID, pbpData);
+			}
 		}
 		else if (currentPlay.getPlayType() instanceof Foul)
 		{
@@ -747,6 +756,16 @@ public class RosterSQLGenerator
 		}
 	}
 	
+	public class CheckAst implements PlayerParser<PlayerStatsJson>
+	{
+		@Override
+		public boolean check(int teamID, PlayerStatsJson player) 
+		{
+			return player.getTeamID() == teamID &&
+					player.getAst() > 0;
+		}
+	}
+	
 	public class CheckInactive implements PlayerParser<InactiveJson>
 	{
 		@Override
@@ -853,6 +872,12 @@ public class RosterSQLGenerator
 			ArrayList<PlayerStatsJson> players)
 	{
 		return parsePlayers(teamID, players, new CheckBlk());
+	}
+	
+	private ArrayList<Player> parseAst(int teamID,
+			ArrayList<PlayerStatsJson> players)
+	{
+		return parsePlayers(teamID, players, new CheckAst());
 	}
 	
 	private ArrayList<Player> parseInactive(int teamID,

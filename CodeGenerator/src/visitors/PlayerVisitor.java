@@ -33,6 +33,7 @@ public class PlayerVisitor implements Visitor
 	private Play currentPlay;
 	private PBPJson nextActivePlay, previousActivePlay;
 	private ArrayList<PBPJson> timeSortedPBP, idSortedPBP;
+	private boolean isAssist;
 	
 	public PlayerVisitor(RosterSQLGenerator rosters, ArrayList<PBPJson> pbp)
 	{
@@ -132,6 +133,7 @@ public class PlayerVisitor implements Visitor
 		{
 			changeState(p);
 			currentPlay = p;
+			this.isAssist = false;
 			this.currentTeam = p.getContextInfo().getPlayRole();
 			p.accept(this);
 		}
@@ -140,15 +142,19 @@ public class PlayerVisitor implements Visitor
 	@Override
 	public void visit(Player player) 
 	{
+		if (currentPlay.getPlayID() == 424)
+		{
+			int x = 1;
+		}
 		switch (state)
 		{
 		case JUMPBALL: case DOUBLEFOUL: case DOUBLETECH: 
-			rosters.setPlayer(player, currentPlay, PlayRole.NEUTRAL);
+			rosters.setPlayer(player, currentPlay, PlayRole.NEUTRAL, false);
 			break;
 		case PLAYERREBOUND: case PLAYERTURNOVER: case PLAYERVIOLATION:
 		case SHOT: case PLAYERFOUL: case FREETHROW: case PLAYERTECH:
 		case EJECTION: case BLOCK: case STEAL:
-			rosters.setPlayer(player, currentPlay, currentTeam);
+			rosters.setPlayer(player, currentPlay, currentTeam, isAssist);
 			break;
 		case SUB:
 			nextActivePlay = getNextPlay(currentPlay.getPlayID());
@@ -225,7 +231,10 @@ public class PlayerVisitor implements Visitor
 	public void visit(Shot shot) 
 	{
 		if (shot.getShotEnding().getAssist() != null)
+		{
+			this.isAssist = true;
 			shot.getShotEnding().getAssist().accept(this);
+		}
 	}
 
 	@Override
