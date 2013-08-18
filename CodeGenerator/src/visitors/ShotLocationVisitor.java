@@ -115,7 +115,7 @@ public class ShotLocationVisitor implements Visitor {
 		dummy.setPlayID(currentPlay.getPlayID());
 		int index = Collections.binarySearch(possibleShots, dummy, 
 				ShotJson.COMPARE_BY_PLAY_ID);
-		if (index == -1)
+		if (index < 0)
 		{
 			System.out.println("Game: " + pbp.get(0).getGameID() + " " +
 					"Play: " + currentPlay.getPlayID() + 
