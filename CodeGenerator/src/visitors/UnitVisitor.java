@@ -123,14 +123,22 @@ public class UnitVisitor implements Visitor
 	@Override
 	public void visit(Play play) 
 	{
-		play.getPlayType().accept(this);
+		if (!(play.getPlayType() instanceof Technical) &&
+				!(play.getPlayType() instanceof Ejection))
+		{
+			play.getPlayType().accept(this);
+		}
 	}
 
 	@Override
 	public void visit(PlayerPlay play) 
 	{
-		play.getPlayer().accept(this);
-		play.getPlayType().accept(this);
+		if (!(play.getPlayType() instanceof Technical) &&
+				!(play.getPlayType() instanceof Ejection))
+		{
+			play.getPlayer().accept(this);
+			play.getPlayType().accept(this);
+		}
 	}
 
 	@Override
