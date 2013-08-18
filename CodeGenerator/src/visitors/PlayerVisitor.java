@@ -40,6 +40,8 @@ public class PlayerVisitor implements Visitor
 		this.rosters = rosters;
 		this.timeSortedPBP = new ArrayList<PBPJson>(pbp);
 		this.idSortedPBP = new ArrayList<PBPJson>(pbp);
+		this.nextActivePlay = new PBPJson();
+		this.previousActivePlay = new PBPJson();
 		Collections.sort(this.timeSortedPBP, PBPJson.COMPARE_BY_GAME_TIME);
 		Collections.sort(this.idSortedPBP, PBPJson.COMPARE_BY_PLAY_ID);
 	}
