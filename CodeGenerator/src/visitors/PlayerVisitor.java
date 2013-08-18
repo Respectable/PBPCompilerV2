@@ -142,6 +142,8 @@ public class PlayerVisitor implements Visitor
 	@Override
 	public void visit(Player player) 
 	{
+		if (currentPlay.getPlayID() == nextActivePlay.getEventNum())
+			rosters.resetSubbedPlayers();
 		switch (state)
 		{
 		case JUMPBALL: case DOUBLEFOUL: case DOUBLETECH: 

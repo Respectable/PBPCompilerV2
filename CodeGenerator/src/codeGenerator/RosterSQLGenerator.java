@@ -37,6 +37,7 @@ public class RosterSQLGenerator
 	private int gameID;
 	private String nbaGameID;
 	private ArrayList<PBPJson> pbp;
+	private ArrayList<Player> subbedPlayers;
 	
 	public RosterSQLGenerator(int homeID, int awayID, int gameID, ArrayList<InactiveJson> inactive,
 								ArrayList<PlayerStatsJson> players, ArrayList<PBPJson> pbp, String nbaGameID)
@@ -54,6 +55,7 @@ public class RosterSQLGenerator
 		this.gameID = gameID;
 		this.nbaGameID = nbaGameID;
 		this.pbp = new ArrayList<PBPJson>(pbp);
+		this.subbedPlayers = new ArrayList<Player>();
 		Collections.sort(this.pbp, PBPJson.COMPARE_BY_PLAY_ID);
 	}
 
@@ -67,6 +69,12 @@ public class RosterSQLGenerator
 	public ArrayList<Player> getAwayDNP() { return awayDNP; }
 	public int getHomeID() { return this.homeID; }
 	public int getAwayID() { return this.awayID; }
+	public ArrayList<Player> getSubbedPlayers() { return subbedPlayers; }
+	
+	public void resetSubbedPlayers()
+	{
+		this.subbedPlayers = new ArrayList<Player>();
+	}
 	
 	public ArrayList<Player> getHomeTeam()
 	{
@@ -575,9 +583,10 @@ public class RosterSQLGenerator
 		}
 		else
 		{
-			System.out.println("Could not narrow results on 3rd pass: " 
-			+ player.getPlayerName());
-			player.setPlayerID(-1);
+			matchingPlayers.removeAll(this.subbedPlayers);
+			player.setPlayerID(matchingPlayers.get(0).getPlayerID());
+			player.setPlayerName(matchingPlayers.get(0).getPlayerName());
+			this.subbedPlayers.add(matchingPlayers.get(0));
 		}
 	}
 	
