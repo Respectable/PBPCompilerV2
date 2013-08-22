@@ -520,15 +520,24 @@ public class RosterSQLGenerator
 			playersOnBenchCurrent = new ArrayList<Player>(getAwayActive());
 			playersOnBenchCurrent.removeAll(playersOnFloorCurrent);
 			playersOnFloorAfter = parseTeam(awayID, pbpDataFollowing);
-			playersOnBenchAfter = new ArrayList<Player>(getHomeActive());
+			playersOnBenchAfter = new ArrayList<Player>(getAwayActive());
 			playersOnBenchAfter.removeAll(playersOnFloorAfter);
 			playersOnFloorPrior = parseTeam(awayID, pbpDataPrior);
-			playersOnBenchPrior = new ArrayList<Player>(getHomeActive());
+			playersOnBenchPrior = new ArrayList<Player>(getAwayActive());
 			playersOnBenchPrior.removeAll(playersOnFloorPrior);
 		}
 		else
 		{
 			//TODO error, no neutral sub
+		}
+		
+		if (previousActivePlay.getPeriod() != nextActivePlay.getPeriod())
+		{
+			//because plays take place over different periods, the lineup is not guaranteed
+			matchingPlayers = getMatchingPlayers(playersOnFloorCurrent, player);
+			player.setPlayerID(matchingPlayers.get(0).getPlayerID());
+			player.setPlayerName(matchingPlayers.get(0).getPlayerName());
+			return;
 		}
 		
 		if (playersOnFloorCurrent.size() == 5)
