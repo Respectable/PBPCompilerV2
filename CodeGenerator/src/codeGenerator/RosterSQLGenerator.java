@@ -245,6 +245,10 @@ public class RosterSQLGenerator
 		startTime = convertStringTime(relevantPlay.getGameTime());
 		startTime += addPeriodTime(relevantPlay.getPeriod());
 		startTime -= 10;
+		if (startTime == -10)
+		{
+			startTime = 0;
+		}
 		endTime = convertStringTime(relevantPlay.getGameTime());
 		endTime += addPeriodTime(relevantPlay.getPeriod());
 		endTime += 10;
@@ -315,6 +319,10 @@ public class RosterSQLGenerator
 		startTime = convertStringTime(relevantPlay.getGameTime());
 		startTime += addPeriodTime(relevantPlay.getPeriod());
 		startTime -= 10;
+		if (startTime == -10)
+		{
+			startTime = 0;
+		}
 		endTime = convertStringTime(relevantPlay.getGameTime());
 		endTime += addPeriodTime(relevantPlay.getPeriod());
 		endTime += 10;
@@ -357,7 +365,9 @@ public class RosterSQLGenerator
 		{
 			if (sub.getIn().equals(player) | sub.getOut().equals(player))
 			{
-				matchingPlayers = getMatchingPlayers(playersOnFloor, player);
+				parsePlayData(player, currentPlay, role, pbpData, nextActivePlay,
+						previousActivePlay);
+				return;
 			}
 			else
 			{
@@ -487,6 +497,10 @@ public class RosterSQLGenerator
 		startTime = convertStringTime(nextActivePlay.getGameTime());
 		startTime += addPeriodTime(nextActivePlay.getPeriod());
 		startTime -= 10;
+		if (startTime == -10)
+		{
+			startTime = 0;
+		}
 		endTime = convertStringTime(nextActivePlay.getGameTime());
 		endTime += addPeriodTime(nextActivePlay.getPeriod());
 		endTime += 10;
@@ -496,6 +510,10 @@ public class RosterSQLGenerator
 		startTime = convertStringTime(previousActivePlay.getGameTime());
 		startTime += addPeriodTime(previousActivePlay.getPeriod());
 		startTime -= 10;
+		if (startTime == -10)
+		{
+			startTime = 0;
+		}
 		endTime = convertStringTime(previousActivePlay.getGameTime());
 		endTime += addPeriodTime(previousActivePlay.getPeriod());
 		endTime += 10;
@@ -561,8 +579,8 @@ public class RosterSQLGenerator
 		{
 			if (sub.getIn().equals(player))
 			{
-				playersOnFloorCurrent.removeAll(playersOnFloorPrior);
-				matchingPlayers = getMatchingPlayers(playersOnFloorCurrent, player);
+				playersOnFloorAfter.removeAll(playersOnFloorPrior);
+				matchingPlayers = getMatchingPlayers(playersOnFloorAfter, player);
 			}
 			else if (sub.getOut().equals(player))
 			{

@@ -250,6 +250,10 @@ public class PlayerVisitor implements Visitor
 	@Override
 	public void visit(Substitution sub) 
 	{
+		if (this.currentPlay.getPlayID() == 313)
+		{
+			int x = 1;
+		}
 		sub.getIn().accept(this);
 		sub.getOut().accept(this);
 	}
@@ -314,7 +318,8 @@ public class PlayerVisitor implements Visitor
 		
 		for (PBPJson play : this.timeSortedPBP)
 		{
-			if (play.getConvertedStringTime() > currentPlay.getConvertedStringTime())
+			if ((play.getConvertedStringTime() > currentPlay.getConvertedStringTime() + 20) &&
+					!play.getGameTime().equals("0:00"))
 			{
 				return play;
 			}
@@ -345,7 +350,8 @@ public class PlayerVisitor implements Visitor
 		
 		for (PBPJson play : this.timeSortedPBP)
 		{
-			if (play.getConvertedStringTime() < currentPlay.getConvertedStringTime())
+			if ((play.getConvertedStringTime() < currentPlay.getConvertedStringTime() - 20) &&
+					!play.getGameTime().equals("0:00"))
 			{
 				tempPlays.add(play);
 			}
