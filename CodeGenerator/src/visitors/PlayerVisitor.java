@@ -300,6 +300,7 @@ public class PlayerVisitor implements Visitor
 	private PBPJson getNextPlay(int playID)
 	{
 		PBPJson currentPlay = new PBPJson();
+		PBPJson notFoundPlay = new PBPJson();
 		currentPlay.setEventNum(playID);
 		
 		int index = Collections.binarySearch(this.idSortedPBP, currentPlay, 
@@ -325,7 +326,7 @@ public class PlayerVisitor implements Visitor
 			}
 		}
 		
-		return null;
+		return notFoundPlay;
 	}
 	
 	private PBPJson getPreviousPlay(int playID)
