@@ -552,6 +552,7 @@ public class RosterSQLGenerator
 		if (previousActivePlay.getPeriod() != nextActivePlay.getPeriod())
 		{
 			//because plays take place over different periods, the lineup is not guaranteed
+			playersOnFloorCurrent.addAll(playersOnBenchCurrent);
 			matchingPlayers = getMatchingPlayers(playersOnFloorCurrent, player);
 			player.setPlayerID(matchingPlayers.get(0).getPlayerID());
 			player.setPlayerName(matchingPlayers.get(0).getPlayerName());

@@ -290,9 +290,10 @@ public class SQLVisitor implements Visitor {
 		{
 			stmt = conn.prepareStatement("INSERT INTO `nba2`.`foul` (`foul_type`,`team_foul`," +
 					"`personal_foul`) VALUES (?,?,?);");
-			stmt.setString(1, foul.getFoulType().getFoulType());
-			stmt.setBoolean(2, foul.getFoulType().teamFoul());
-			stmt.setBoolean(3, foul.getFoulType().personalFoul());
+			
+			stmt.setString(1, "Double Personal");
+			stmt.setBoolean(2, false);
+			stmt.setBoolean(3, true);
 			stmt.executeUpdate();
 		    
 		    rs = stmt.executeQuery("SELECT LAST_INSERT_ID()");
