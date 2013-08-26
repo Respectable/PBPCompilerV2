@@ -107,13 +107,12 @@ public class RosterSQLGenerator
 		for (Player player : tempHome)
 		{
 			matchedPlayers = getMatchingPlayers(tempHome, player);
-			if(matchedPlayers.size() > 0)
+			if(matchedPlayers.size() > 1)
 			{
 				for(Player p : matchedPlayers)
 				{
 					if (!matchingPlayers.contains(p))
 					{
-						if(!p.equals(player))
 							matchingPlayers.add(p);
 					}
 						
@@ -134,13 +133,12 @@ public class RosterSQLGenerator
 		for (Player player : tempHome)
 		{
 			matchedPlayers = getMatchingPlayers(tempHome, player);
-			if(matchedPlayers.size() > 0)
+			if(matchedPlayers.size() > 1)
 			{
 				for(Player p : matchedPlayers)
 				{
 					if (!matchingPlayers.contains(p))
 					{
-						if(!p.equals(player))
 							matchingPlayers.add(p);
 					}
 						
@@ -161,13 +159,12 @@ public class RosterSQLGenerator
 		for (Player player : tempHome)
 		{
 			matchedPlayers = getMatchingPlayers(tempHome, player);
-			if(matchedPlayers.size() > 0)
+			if(matchedPlayers.size() > 1)
 			{
 				for(Player p : matchedPlayers)
 				{
 					if (!matchingPlayers.contains(p))
 					{
-						if(!p.equals(player))
 							matchingPlayers.add(p);
 					}
 						
@@ -186,15 +183,16 @@ public class RosterSQLGenerator
 		String[] playerNameArray;
 		Player tempPlayer = new Player("Dummy", -1);
 		ArrayList<Player> matchingPlayers = new ArrayList<Player>();
+		ArrayList<Player> tempPossiblePlayers = new ArrayList<Player>(possiblePlayers);
 		
 		playerNameArray = cleanPlayerName(player.getPlayerName());
 		
 		while(tempPlayer != null)
 		{
-			tempPlayer = searchPlayerText(possiblePlayers, playerNameArray);
+			tempPlayer = searchPlayerText(tempPossiblePlayers, playerNameArray);
 			if(tempPlayer != null)
 			{
-				possiblePlayers.remove(tempPlayer);
+				tempPossiblePlayers.remove(tempPlayer);
 				matchingPlayers.add(tempPlayer);
 			}
 		}
