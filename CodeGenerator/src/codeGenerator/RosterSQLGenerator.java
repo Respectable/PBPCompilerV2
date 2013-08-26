@@ -112,7 +112,11 @@ public class RosterSQLGenerator
 				for(Player p : matchedPlayers)
 				{
 					if (!matchingPlayers.contains(p))
-						matchingPlayers.add(p);
+					{
+						if(!p.equals(player))
+							matchingPlayers.add(p);
+					}
+						
 				}
 				if (!matchingPlayers.contains(player))
 					matchingPlayers.add(player);
@@ -135,7 +139,11 @@ public class RosterSQLGenerator
 				for(Player p : matchedPlayers)
 				{
 					if (!matchingPlayers.contains(p))
-						matchingPlayers.add(p);
+					{
+						if(!p.equals(player))
+							matchingPlayers.add(p);
+					}
+						
 				}
 				if (!matchingPlayers.contains(player))
 					matchingPlayers.add(player);
@@ -158,7 +166,11 @@ public class RosterSQLGenerator
 				for(Player p : matchedPlayers)
 				{
 					if (!matchingPlayers.contains(p))
-						matchingPlayers.add(p);
+					{
+						if(!p.equals(player))
+							matchingPlayers.add(p);
+					}
+						
 				}
 				if (!matchingPlayers.contains(player))
 					matchingPlayers.add(player);
