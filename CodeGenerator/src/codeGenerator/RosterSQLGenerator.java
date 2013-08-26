@@ -106,13 +106,16 @@ public class RosterSQLGenerator
 		ArrayList<Player> matchingPlayers = new ArrayList<Player>();
 		for (Player player : tempHome)
 		{
-			tempHome.remove(player);
 			matchedPlayers = getMatchingPlayers(tempHome, player);
 			if(matchedPlayers.size() > 0)
 			{
-				matchingPlayers.addAll(matchedPlayers);
-				matchingPlayers.add(player);
-				tempHome.removeAll(matchedPlayers);
+				for(Player p : matchedPlayers)
+				{
+					if (!matchingPlayers.contains(p))
+						matchingPlayers.add(p);
+				}
+				if (!matchingPlayers.contains(player))
+					matchingPlayers.add(player);
 			}
 		}
 		
@@ -121,18 +124,21 @@ public class RosterSQLGenerator
 	
 	private ArrayList<Player> findMatchingAwayPlayers()
 	{
-		ArrayList<Player> tempAway = new ArrayList<Player>(this.getAwayActive());
+		ArrayList<Player> tempHome = new ArrayList<Player>(this.getAwayActive());
 		ArrayList<Player> matchedPlayers = new ArrayList<Player>();
 		ArrayList<Player> matchingPlayers = new ArrayList<Player>();
-		for (Player player : tempAway)
+		for (Player player : tempHome)
 		{
-			tempAway.remove(player);
-			matchedPlayers = getMatchingPlayers(tempAway, player);
+			matchedPlayers = getMatchingPlayers(tempHome, player);
 			if(matchedPlayers.size() > 0)
 			{
-				matchingPlayers.addAll(matchedPlayers);
-				matchingPlayers.add(player);
-				tempAway.removeAll(matchedPlayers);
+				for(Player p : matchedPlayers)
+				{
+					if (!matchingPlayers.contains(p))
+						matchingPlayers.add(p);
+				}
+				if (!matchingPlayers.contains(player))
+					matchingPlayers.add(player);
 			}
 		}
 		
