@@ -102,11 +102,14 @@ public class RosterSQLGenerator
 	private ArrayList<Player> findMatchingHomePlayers()
 	{
 		ArrayList<Player> tempHome = new ArrayList<Player>(this.getHomeActive());
+		Player tempPlayer = new Player("", -1);
 		ArrayList<Player> matchedPlayers = new ArrayList<Player>();
 		ArrayList<Player> matchingPlayers = new ArrayList<Player>();
 		for (Player player : tempHome)
 		{
-			matchedPlayers = getMatchingPlayers(tempHome, player);
+			String[] nameParts = player.getPlayerName().split(" ");
+			tempPlayer.setPlayerName(nameParts[nameParts.length - 1]);
+			matchedPlayers = getMatchingPlayers(tempHome, tempPlayer);
 			if(matchedPlayers.size() > 1)
 			{
 				for(Player p : matchedPlayers)
@@ -128,11 +131,14 @@ public class RosterSQLGenerator
 	private ArrayList<Player> findMatchingAwayPlayers()
 	{
 		ArrayList<Player> tempHome = new ArrayList<Player>(this.getAwayActive());
+		Player tempPlayer = new Player("", -1);
 		ArrayList<Player> matchedPlayers = new ArrayList<Player>();
 		ArrayList<Player> matchingPlayers = new ArrayList<Player>();
 		for (Player player : tempHome)
 		{
-			matchedPlayers = getMatchingPlayers(tempHome, player);
+			String[] nameParts = player.getPlayerName().split(" ");
+			tempPlayer.setPlayerName(nameParts[nameParts.length - 1]);
+			matchedPlayers = getMatchingPlayers(tempHome, tempPlayer);
 			if(matchedPlayers.size() > 1)
 			{
 				for(Player p : matchedPlayers)
@@ -154,11 +160,14 @@ public class RosterSQLGenerator
 	private ArrayList<Player> findMatchingPlayers()
 	{
 		ArrayList<Player> tempHome = new ArrayList<Player>(this.getActive());
+		Player tempPlayer = new Player("", -1);
 		ArrayList<Player> matchedPlayers = new ArrayList<Player>();
 		ArrayList<Player> matchingPlayers = new ArrayList<Player>();
 		for (Player player : tempHome)
 		{
-			matchedPlayers = getMatchingPlayers(tempHome, player);
+			String[] nameParts = player.getPlayerName().split(" ");
+			tempPlayer.setPlayerName(nameParts[nameParts.length - 1]);
+			matchedPlayers = getMatchingPlayers(tempHome, tempPlayer);
 			if(matchedPlayers.size() > 1)
 			{
 				for(Player p : matchedPlayers)
