@@ -30,9 +30,9 @@ import visitor.Visitor;
 public abstract class PlayerVisitor implements Visitor
 {
 
-	private RosterSQLGenerator rosters;
-	private Player currentPlayer;
-	private ContextInfo currentContext;
+	protected RosterSQLGenerator rosters;
+	protected Player currentPlayer;
+	protected ContextInfo currentContext;
 	
 	public PlayerVisitor(RosterSQLGenerator rosters)
 	{
