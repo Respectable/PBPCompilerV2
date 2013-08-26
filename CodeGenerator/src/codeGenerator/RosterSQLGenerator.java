@@ -147,18 +147,21 @@ public class RosterSQLGenerator
 	
 	private ArrayList<Player> findMatchingPlayers()
 	{
-		ArrayList<Player> temp = new ArrayList<Player>(this.getActive());
+		ArrayList<Player> tempHome = new ArrayList<Player>(this.getActive());
 		ArrayList<Player> matchedPlayers = new ArrayList<Player>();
 		ArrayList<Player> matchingPlayers = new ArrayList<Player>();
-		for (Player player : temp)
+		for (Player player : tempHome)
 		{
-			temp.remove(player);
-			matchedPlayers = getMatchingPlayers(temp, player);
+			matchedPlayers = getMatchingPlayers(tempHome, player);
 			if(matchedPlayers.size() > 0)
 			{
-				matchingPlayers.addAll(matchedPlayers);
-				matchingPlayers.add(player);
-				temp.removeAll(matchedPlayers);
+				for(Player p : matchedPlayers)
+				{
+					if (!matchingPlayers.contains(p))
+						matchingPlayers.add(p);
+				}
+				if (!matchingPlayers.contains(player))
+					matchingPlayers.add(player);
 			}
 		}
 		
