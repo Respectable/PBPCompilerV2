@@ -253,7 +253,6 @@ public class SubstitutionPlayerVisitor implements Visitor
 		{
 			System.out.println("Unable to find player " + player.getPlayerName() +
 					" on 2nd pass");
-			System.exit(-1);
 		}
 		else if (matchingPlayers.size() == 1)
 		{
@@ -270,14 +269,13 @@ public class SubstitutionPlayerVisitor implements Visitor
 	
 	private void setOutgoingPlayer(Player player)
 	{
-		ArrayList<Player> matchingPlayers;
+		ArrayList<Player> matchingPlayers; 
 		matchingPlayers = RosterSQLGenerator.getMatchingPlayers(playersOnFloor, player);
 		
 		if(matchingPlayers.size() < 1)
 		{
 			System.out.println("Unable to find player " + player.getPlayerName() +
 					" on 2nd pass");
-			System.exit(-1);
 		}
 		else if (matchingPlayers.size() == 1)
 		{
@@ -287,8 +285,11 @@ public class SubstitutionPlayerVisitor implements Visitor
 		}
 		else
 		{
+			//because we can't be sure what matching player remains on court, all must
+			//be removed
 			System.out.println("Unable narrow down player " + player.getPlayerName() +
 					" on 2nd pass");
+			playersOnFloor.removeAll(matchingPlayers);
 		}
 	}
 

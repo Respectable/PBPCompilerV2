@@ -29,19 +29,19 @@ import nbaDownloader.NBADownloader;
 import codeGenerator.PlayerParser;
 import codeGenerator.RosterSQLGenerator;
 
-public class TalliedDuplicatePlayerVistor extends PlayerVisitor 
+public class TalliedDuplicatePlayerVisitor extends PlayerVisitor 
 {
 
 	private ArrayList<PBPJson> pbp;
 	private int homeID, awayID;
 	private PlayerParser<PlayerStatsJson> currentFilter;
 	
-	public TalliedDuplicatePlayerVistor(RosterSQLGenerator rosters) 
+	public TalliedDuplicatePlayerVisitor(RosterSQLGenerator rosters) 
 	{
 		super(rosters);
 	}
 	
-	public TalliedDuplicatePlayerVistor(RosterSQLGenerator rosters, ArrayList<PBPJson> pbp,
+	public TalliedDuplicatePlayerVisitor(RosterSQLGenerator rosters, ArrayList<PBPJson> pbp,
 			int homeID, int awayID) 
 	{
 		this(rosters);
@@ -171,8 +171,17 @@ public class TalliedDuplicatePlayerVistor extends PlayerVisitor
 		boxScorePlayers = new ArrayList<Player>();
 		
 		relevantPlay.setEventNum(currentContext.getPlayID());
-		index = Collections.binarySearch(this.pbp, relevantPlay, 
+		
+		index = -1;
+		try
+		{
+			index = Collections.binarySearch(this.pbp, relevantPlay, 
 				PBPJson.COMPARE_BY_PLAY_ID);
+		}
+		catch (Exception e)
+		{
+			
+		}
 		
 		if (index < 0)
 		{
@@ -214,7 +223,7 @@ public class TalliedDuplicatePlayerVistor extends PlayerVisitor
 		
 		if (matchingPlayers.size() < 1)
 		{
-			System.out.println("Could not find player on 2nd pass: " 
+			System.out.println("Could not find through box score on 2nd pass: " 
 								+ player.getPlayerName());
 			player.setPlayerID(-1);
 		}
@@ -258,7 +267,7 @@ public class TalliedDuplicatePlayerVistor extends PlayerVisitor
 		}
 		else
 		{
-			System.out.println("Could not narrow results on 3rd pass: " 
+			System.out.println("Could not narrow results through box score on 3rd pass: " 
 			+ player.getPlayerName());
 			player.setPlayerID(-1);
 		}
