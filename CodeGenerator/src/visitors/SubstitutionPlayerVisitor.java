@@ -1,7 +1,9 @@
 package visitors;
 
 import java.util.ArrayList;
+import java.util.ListIterator;
 
+import visitor.Visitable;
 import visitor.Visitor;
 
 import nba.ContextInfo;
@@ -42,11 +44,13 @@ public class SubstitutionPlayerVisitor implements Visitor
 	private Player currentPlayPlayer;
 	private PlayRole currentRole;
 	private ArrayList<Player> playersOnFloor;
+	private boolean reversed;
 	
 	public SubstitutionPlayerVisitor(RosterSQLGenerator rosters) 
 	{
 		this.rosters = rosters;
 		this.playersOnFloor = new ArrayList<Player>();
+		this.reversed = false;
 	}
 
 	@Override
@@ -56,36 +60,28 @@ public class SubstitutionPlayerVisitor implements Visitor
 	public void visit(Game game) 
 	{
 		currentRole = PlayRole.HOME;
-		//for (Player p : rosters.gethomeMatching())
-		//{
-			//currentSearchPlayer = p;
-			for (Period per : game.getPeriods())
-			{
-				per.accept(this);
-			}
-		//}
+		VisitEach(game.getPeriods());
 		
 		currentRole = PlayRole.AWAY;
-		//for (Player p : rosters.getawayMatching())
-		//{
-			//currentSearchPlayer = p;
-			for (Period per : game.getPeriods())
-			{
-				per.accept(this);
-			}
-		//}
+		VisitEach(game.getPeriods());
+		
+		//go through game's plays in reverse
+		reversed = true;
+		currentRole = PlayRole.HOME;
+		VisitEachInReverse(game.getPeriods());
+		
+		currentRole = PlayRole.AWAY;
+		VisitEachInReverse(game.getPeriods());
 	}
 
 	@Override
 	public void visit(Period period) 
 	{
 		this.playersOnFloor = new ArrayList<Player>();
-		for (Play p : period.getPlays())
-		{
-			if (p.getContextInfo().getPlayRole() == PlayRole.NEUTRAL ||
-					p.getContextInfo().getPlayRole() == this.currentRole)
-			p.accept(this);
-		}
+		if (!this.reversed)
+			VisitEach(period.getPlays());
+		else
+			VisitEachInReverse(period.getPlays());
 	}
 
 	@Override
@@ -94,21 +90,37 @@ public class SubstitutionPlayerVisitor implements Visitor
 	@Override
 	public void visit(Play play) 
 	{
-		play.getPlayType().accept(this);
+		if (play.getContextInfo().getPlayRole() == PlayRole.NEUTRAL ||
+				play.getContextInfo().getPlayRole() == this.currentRole)
+			play.getPlayType().accept(this);
+		else
+			return;
 	}
 
 	@Override
 	public void visit(PlayerPlay play) 
 	{
-		currentPlayPlayer = play.getPlayer();
-		play.getPlayType().accept(this);
+		if (play.getContextInfo().getPlayRole() == PlayRole.NEUTRAL ||
+				play.getContextInfo().getPlayRole() == this.currentRole)
+		{
+			currentPlayPlayer = play.getPlayer();
+			play.getPlayType().accept(this);
+		}
+		else
+			return;
 	}
 
 	@Override
 	public void visit(MissedPlay play) 
 	{
-		currentPlayPlayer = play.getPlayer();
-		play.getPlayType().accept(this);
+		if (play.getContextInfo().getPlayRole() == PlayRole.NEUTRAL ||
+				play.getContextInfo().getPlayRole() == this.currentRole)
+		{
+			currentPlayPlayer = play.getPlayer();
+			play.getPlayType().accept(this);
+		}
+		else
+			return;
 	}
 
 	@Override
@@ -176,22 +188,48 @@ public class SubstitutionPlayerVisitor implements Visitor
 	@Override
 	public void visit(Substitution sub) 
 	{
-		if (sub.getOut().getPlayerID() == -1)
+		if(!this.reversed)
 		{
-			setOutgoingPlayer(sub.getOut());
+			if (sub.getOut().getPlayerID() == -1)
+			{
+				setOutgoingPlayer(sub.getOut());
+			}
+			else
+			{
+				playersOnFloor.remove(sub.getOut());
+			}
+			
+			if (sub.getIn().getPlayerID() == -1)
+			{
+				setIncomingPlayer(sub.getIn());
+			}
+			else
+			{
+				addPlayerOnFloor(sub.getIn());
+			}
 		}
 		else
 		{
-			playersOnFloor.remove(sub.getOut());
-		}
-		
-		if (sub.getIn().getPlayerID() == -1)
-		{
-			setIncomingPlayer(sub.getIn());
-		}
-		else
-		{
-			addPlayerOnFloor(sub.getIn());
+			//because game is being visited in reverse, outgoing players are
+			// now incoming and vice versa
+			if (sub.getOut().getPlayerID() == -1)
+			{
+				setIncomingPlayer(sub.getOut());
+			}
+			else
+			{
+				addPlayerOnFloor(sub.getIn());
+				
+			}
+			
+			if (sub.getIn().getPlayerID() == -1)
+			{
+				setOutgoingPlayer(sub.getIn());
+			}
+			else
+			{
+				playersOnFloor.remove(sub.getOut());
+			}
 		}
 	}
 
@@ -290,6 +328,25 @@ public class SubstitutionPlayerVisitor implements Visitor
 			System.out.println("Unable narrow down player " + player.getPlayerName() +
 					" on 2nd pass");
 			playersOnFloor.removeAll(matchingPlayers);
+		}
+	}
+	
+	private void VisitEach(ArrayList<? extends Visitable> list)
+	{
+		ListIterator<? extends Visitable> listIterator = list.listIterator();
+		while(listIterator.hasNext())
+		{
+			listIterator.next().accept(this);
+		}
+	}
+	
+	private void VisitEachInReverse(ArrayList<? extends Visitable> list)
+	{
+		ListIterator<? extends Visitable> reverseIterator = 
+				list.listIterator(list.size() - 1);
+		while(reverseIterator.hasPrevious())
+		{
+			reverseIterator.previous().accept(this);
 		}
 	}
 
