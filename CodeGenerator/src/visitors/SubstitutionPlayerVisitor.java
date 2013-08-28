@@ -212,24 +212,26 @@ public class SubstitutionPlayerVisitor implements Visitor
 		{
 			//because game is being visited in reverse, outgoing players are
 			// now incoming and vice versa
-			if (sub.getOut().getPlayerID() == -1)
-			{
-				setIncomingPlayer(sub.getOut());
-			}
-			else
-			{
-				addPlayerOnFloor(sub.getIn());
-				
-			}
-			
 			if (sub.getIn().getPlayerID() == -1)
 			{
 				setOutgoingPlayer(sub.getIn());
 			}
 			else
 			{
-				playersOnFloor.remove(sub.getOut());
+				playersOnFloor.remove(sub.getIn());
 			}
+			
+			if (sub.getOut().getPlayerID() == -1)
+			{
+				setIncomingPlayer(sub.getOut());
+			}
+			else
+			{
+				addPlayerOnFloor(sub.getOut());
+				
+			}
+			
+			
 		}
 	}
 
@@ -343,7 +345,7 @@ public class SubstitutionPlayerVisitor implements Visitor
 	private void VisitEachInReverse(ArrayList<? extends Visitable> list)
 	{
 		ListIterator<? extends Visitable> reverseIterator = 
-				list.listIterator(list.size() - 1);
+				list.listIterator(list.size());
 		while(reverseIterator.hasPrevious())
 		{
 			reverseIterator.previous().accept(this);
