@@ -179,8 +179,16 @@ public class PBPJson extends NBAJsonObject
 		String min = timeParts[0];
 		String tens = timeParts[1].substring(0,1);
 		String singles = timeParts[1].substring(1, 2);
-		return (7200 - ((Integer.parseInt(min) * 60) + (Integer.parseInt(tens) * 10) +
+		if (currentPlay.getPeriod() < 5)
+		{
+			return (7200 - ((Integer.parseInt(min) * 60) + (Integer.parseInt(tens) * 10) +
 				Integer.parseInt(singles)) * 10) + addPeriodTime(currentPlay.getPeriod());
+		}
+		else
+		{
+			return (3000 - ((Integer.parseInt(min) * 60) + (Integer.parseInt(tens) * 10) +
+					Integer.parseInt(singles)) * 10) + addPeriodTime(currentPlay.getPeriod());
+		}
 	}
 	
 	public int getConvertedStringTime()
@@ -189,8 +197,16 @@ public class PBPJson extends NBAJsonObject
 		String min = timeParts[0];
 		String tens = timeParts[1].substring(0,1);
 		String singles = timeParts[1].substring(1, 2);
-		return (7200 - ((Integer.parseInt(min) * 60) + (Integer.parseInt(tens) * 10) +
+		if (this.period < 5)
+		{
+			return (7200 - ((Integer.parseInt(min) * 60) + (Integer.parseInt(tens) * 10) +
 				Integer.parseInt(singles)) * 10) + addPeriodTime(this.period);
+		}
+		else
+		{
+			return (3000 - ((Integer.parseInt(min) * 60) + (Integer.parseInt(tens) * 10) +
+					Integer.parseInt(singles)) * 10) + addPeriodTime(this.period);
+		}
 	}
 	
 	private static int addPeriodTime(int period)
@@ -202,7 +218,7 @@ public class PBPJson extends NBAJsonObject
 		else
 		{
 			return ((period - 5) * (5 * 60 * 10)) +
-					((period - 1) * (12 * 60 * 10));
+					(4 * (12 * 60 * 10));
 		}
 	}
 
