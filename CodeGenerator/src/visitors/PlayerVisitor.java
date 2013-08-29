@@ -71,10 +71,6 @@ public abstract class PlayerVisitor implements Visitor
 	{
 		currentContext = play.getContextInfo();
 		currentPlayer = new Player("", -1);
-		if (currentContext.getPlayID() == 227)
-		{
-			int x = 1;
-		}
 		play.getPlayType().accept(this);
 	}
 
@@ -82,10 +78,6 @@ public abstract class PlayerVisitor implements Visitor
 	public void visit(PlayerPlay play) 
 	{
 		currentContext = play.getContextInfo();
-		if (currentContext.getPlayID() == 227)
-		{
-			int x = 1;
-		}
 		currentPlayer = play.getPlayer();
 		play.getPlayType().accept(this);
 	}
@@ -94,10 +86,6 @@ public abstract class PlayerVisitor implements Visitor
 	public void visit(MissedPlay play) 
 	{
 		currentContext = play.getContextInfo();
-		if (currentContext.getPlayID() == 227)
-		{
-			int x = 1;
-		}
 		currentPlayer = play.getPlayer();
 		play.getPlayType().accept(this);
 	}
@@ -142,10 +130,6 @@ public abstract class PlayerVisitor implements Visitor
 		else
 		{
 			//TODO error, no neutral foul
-		}
-		if (currentPlayer.getPlayerID() == 1713)
-		{
-			int x = 1;
 		}
 	}
 

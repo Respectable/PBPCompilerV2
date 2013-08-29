@@ -243,7 +243,7 @@ public class TalliedDuplicatePlayerVisitor extends PlayerVisitor
 		ArrayList<Player> possiblePlayers, matchingPlayers;
 		int teamID;
 		
-		if (currentContext.equals(PlayRole.HOME))
+		if (currentContext.getPlayRole() == (PlayRole.HOME))
 			teamID = homeID;
 		else
 			teamID = awayID;
