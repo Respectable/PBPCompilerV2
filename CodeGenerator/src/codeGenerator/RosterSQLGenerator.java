@@ -209,6 +209,29 @@ public class RosterSQLGenerator
 		return matchingPlayers;
 	}
 	
+	public static boolean possiblePlayerMatch(Player searchingFor, Player searched)
+	{
+		String[] playerNameArray;
+		Player tempPlayer = new Player("Dummy", -1);
+		ArrayList<Player> matchingPlayers = new ArrayList<Player>();
+		ArrayList<Player> tempPossiblePlayers = new ArrayList<Player>();
+		tempPossiblePlayers.add(searched);
+		
+		playerNameArray = cleanPlayerName(searchingFor.getPlayerName());
+		
+		while(tempPlayer != null)
+		{
+			tempPlayer = searchPlayerText(tempPossiblePlayers, playerNameArray);
+			if(tempPlayer != null)
+			{
+				tempPossiblePlayers.remove(tempPlayer);
+				matchingPlayers.add(tempPlayer);
+			}
+		}
+		
+		return matchingPlayers.size() > 0;
+	}
+	
 	public boolean searchHomePlayers(Player player)
 	{
 		return getHomeActive().contains(player);

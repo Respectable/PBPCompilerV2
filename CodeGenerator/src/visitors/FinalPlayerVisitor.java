@@ -3,9 +3,7 @@ package visitors;
 import java.util.ArrayList;
 import java.util.ListIterator;
 
-import visitor.Visitable;
-import visitor.Visitor;
-
+import codeGenerator.RosterSQLGenerator;
 import nba.ContextInfo;
 import nba.Game;
 import nba.Period;
@@ -34,21 +32,23 @@ import nba.playType.technical.Technical;
 import nba.playType.timeout.Timeout;
 import nba.playType.turnover.Turnover;
 import nba.playType.violation.Violation;
-import codeGenerator.RosterSQLGenerator;
+import visitor.Visitable;
+import visitor.Visitor;
 
-public class SubstitutionPlayerVisitor implements Visitor
+public class FinalPlayerVisitor implements Visitor 
 {
-
 	protected RosterSQLGenerator rosters;
 	protected Player currentPlayPlayer;
 	protected PlayRole currentRole;
 	protected ArrayList<Player> playersOnFloor;
 	protected boolean reversed;
+	protected ArrayList<Substitution> pendingSubs;
 	
-	public SubstitutionPlayerVisitor(RosterSQLGenerator rosters) 
+	public FinalPlayerVisitor(RosterSQLGenerator rosters) 
 	{
 		this.rosters = rosters;
 		this.playersOnFloor = new ArrayList<Player>();
+		this.pendingSubs = new ArrayList<Substitution>();
 		this.reversed = false;
 	}
 
@@ -77,6 +77,7 @@ public class SubstitutionPlayerVisitor implements Visitor
 	public void visit(Period period) 
 	{
 		this.playersOnFloor = new ArrayList<Player>();
+		this.pendingSubs = new ArrayList<Substitution>();
 		if (!this.reversed)
 			VisitEach(period.getPlays());
 		else
@@ -187,51 +188,9 @@ public class SubstitutionPlayerVisitor implements Visitor
 	@Override
 	public void visit(Substitution sub) 
 	{
-		if(!this.reversed)
-		{
-			if (sub.getOut().getPlayerID() == -1)
-			{
-				setOutgoingPlayer(sub.getOut());
-			}
-			else
-			{
-				playersOnFloor.remove(sub.getOut());
-			}
-			
-			if (sub.getIn().getPlayerID() == -1)
-			{
-				setIncomingPlayer(sub.getIn());
-			}
-			else
-			{
-				addPlayerOnFloor(sub.getIn());
-			}
-		}
-		else
-		{
-			//because game is being visited in reverse, outgoing players are
-			// now incoming and vice versa
-			if (sub.getIn().getPlayerID() == -1)
-			{
-				setOutgoingPlayer(sub.getIn());
-			}
-			else
-			{
-				playersOnFloor.remove(sub.getIn());
-			}
-			
-			if (sub.getOut().getPlayerID() == -1)
-			{
-				setIncomingPlayer(sub.getOut());
-			}
-			else
-			{
-				addPlayerOnFloor(sub.getOut());
-				
-			}
-			
-			
-		}
+		//TODO removal of pending subs once related sub is visited
+		if (sub.getOut().getPlayerID() == -1 || sub.getIn().getPlayerID() == -1)
+			pendingSubs.add(sub);
 	}
 
 	@Override
@@ -275,61 +234,21 @@ public class SubstitutionPlayerVisitor implements Visitor
 		}
 	}
 	
-	protected void setIncomingPlayer(Player player)
+	protected boolean pendingSubsHasPlayer(Player player)
 	{
-		ArrayList<Player> playersOnBench;
-		ArrayList<Player> matchingPlayers;
+		if (this.pendingSubs.size() < 1)
+			return false;
 		
-		if (this.currentRole == PlayRole.HOME)
-			playersOnBench = rosters.getHomeActive();
-		else
-			playersOnBench = rosters.getAwayActive();
+		for (Substitution sub : this.pendingSubs)
+		{
+			if (RosterSQLGenerator.possiblePlayerMatch(player, sub.getIn()) ||
+					RosterSQLGenerator.possiblePlayerMatch(player, sub.getOut()))
+			{
+				return true;
+			}
+		}
 		
-		playersOnBench.removeAll(this.playersOnFloor);
-		matchingPlayers = RosterSQLGenerator.getMatchingPlayers(playersOnBench, player);
-		
-		if(matchingPlayers.size() < 1)
-		{
-			System.out.println("Unable to find player " + player.getPlayerName() +
-					" on 2nd pass");
-		}
-		else if (matchingPlayers.size() == 1)
-		{
-			player.setPlayerID(matchingPlayers.get(0).getPlayerID());
-			player.setPlayerName(matchingPlayers.get(0).getPlayerName());
-			addPlayerOnFloor(player);
-		}
-		else
-		{
-			System.out.println("Unable narrow down player " + player.getPlayerName() +
-					" on 2nd pass");
-		}
-	}
-	
-	protected void setOutgoingPlayer(Player player)
-	{
-		ArrayList<Player> matchingPlayers; 
-		matchingPlayers = RosterSQLGenerator.getMatchingPlayers(playersOnFloor, player);
-		
-		if(matchingPlayers.size() < 1)
-		{
-			System.out.println("Unable to find player " + player.getPlayerName() +
-					" on 2nd pass");
-		}
-		else if (matchingPlayers.size() == 1)
-		{
-			player.setPlayerID(matchingPlayers.get(0).getPlayerID());
-			player.setPlayerName(matchingPlayers.get(0).getPlayerName());
-			playersOnFloor.remove(player);
-		}
-		else
-		{
-			//because we can't be sure what matching player remains on court, all must
-			//be removed
-			System.out.println("Unable narrow down player " + player.getPlayerName() +
-					" on 2nd pass");
-			playersOnFloor.removeAll(matchingPlayers);
-		}
+		return false;
 	}
 	
 	protected void VisitEach(ArrayList<? extends Visitable> list)
@@ -350,5 +269,4 @@ public class SubstitutionPlayerVisitor implements Visitor
 			reverseIterator.previous().accept(this);
 		}
 	}
-
 }

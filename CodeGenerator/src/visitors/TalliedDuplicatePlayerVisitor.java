@@ -362,7 +362,7 @@ public class TalliedDuplicatePlayerVisitor extends PlayerVisitor
 		}
 	}
 	
-	private ArrayList<Player> parsePlayers(int teamID, 
+	public static ArrayList<Player> parsePlayers(int teamID, 
 			ArrayList<PlayerStatsJson> players, 
 			PlayerParser<PlayerStatsJson> playerParser)
 	{
