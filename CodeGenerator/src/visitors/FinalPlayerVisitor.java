@@ -129,6 +129,27 @@ public class FinalPlayerVisitor implements Visitor
 	@Override
 	public void visit(Block block) 
 	{
+		for (Substitution s : this.pendingSubs)
+		{
+			if (s.getIn().getPlayerID() == -1)
+			{
+				if(RosterSQLGenerator.possiblePlayerMatch(s.getIn(), this.currentPlayPlayer))
+				{
+					s.getIn().setPlayerID(this.currentPlayPlayer.getPlayerID());
+					s.getIn().setPlayerName(this.currentPlayPlayer.getPlayerName());
+					this.pendingSubs.remove(s);
+				}
+			}
+			if (s.getOut().getPlayerID() == -1)
+			{
+				if(RosterSQLGenerator.possiblePlayerMatch(s.getOut(), this.currentPlayPlayer))
+				{
+					s.getOut().setPlayerID(this.currentPlayPlayer.getPlayerID());
+					s.getOut().setPlayerName(this.currentPlayPlayer.getPlayerName());
+					this.pendingSubs.remove(s);
+				}
+			}
+		}
 		addPlayerOnFloor(this.currentPlayPlayer);
 	}
 
@@ -138,6 +159,27 @@ public class FinalPlayerVisitor implements Visitor
 	@Override
 	public void visit(Foul foul) 
 	{
+		for (Substitution s : this.pendingSubs)
+		{
+			if (s.getIn().getPlayerID() == -1)
+			{
+				if(RosterSQLGenerator.possiblePlayerMatch(s.getIn(), this.currentPlayPlayer))
+				{
+					s.getIn().setPlayerID(this.currentPlayPlayer.getPlayerID());
+					s.getIn().setPlayerName(this.currentPlayPlayer.getPlayerName());
+					this.pendingSubs.remove(s);
+				}
+			}
+			if (s.getOut().getPlayerID() == -1)
+			{
+				if(RosterSQLGenerator.possiblePlayerMatch(s.getOut(), this.currentPlayPlayer))
+				{
+					s.getOut().setPlayerID(this.currentPlayPlayer.getPlayerID());
+					s.getOut().setPlayerName(this.currentPlayPlayer.getPlayerName());
+					this.pendingSubs.remove(s);
+				}
+			}
+		}
 		addPlayerOnFloor(this.currentPlayPlayer);
 	}
 
@@ -147,6 +189,27 @@ public class FinalPlayerVisitor implements Visitor
 	@Override
 	public void visit(FreeThrow freeThrow) 
 	{
+		for (Substitution s : this.pendingSubs)
+		{
+			if (s.getIn().getPlayerID() == -1)
+			{
+				if(RosterSQLGenerator.possiblePlayerMatch(s.getIn(), this.currentPlayPlayer))
+				{
+					s.getIn().setPlayerID(this.currentPlayPlayer.getPlayerID());
+					s.getIn().setPlayerName(this.currentPlayPlayer.getPlayerName());
+					this.pendingSubs.remove(s);
+				}
+			}
+			if (s.getOut().getPlayerID() == -1)
+			{
+				if(RosterSQLGenerator.possiblePlayerMatch(s.getOut(), this.currentPlayPlayer))
+				{
+					s.getOut().setPlayerID(this.currentPlayPlayer.getPlayerID());
+					s.getOut().setPlayerName(this.currentPlayPlayer.getPlayerName());
+					this.pendingSubs.remove(s);
+				}
+			}
+		}
 		addPlayerOnFloor(this.currentPlayPlayer);
 	}
 
@@ -156,6 +219,27 @@ public class FinalPlayerVisitor implements Visitor
 	@Override
 	public void visit(Rebound rebound) 
 	{
+		for (Substitution s : this.pendingSubs)
+		{
+			if (s.getIn().getPlayerID() == -1)
+			{
+				if(RosterSQLGenerator.possiblePlayerMatch(s.getIn(), this.currentPlayPlayer))
+				{
+					s.getIn().setPlayerID(this.currentPlayPlayer.getPlayerID());
+					s.getIn().setPlayerName(this.currentPlayPlayer.getPlayerName());
+					this.pendingSubs.remove(s);
+				}
+			}
+			if (s.getOut().getPlayerID() == -1)
+			{
+				if(RosterSQLGenerator.possiblePlayerMatch(s.getOut(), this.currentPlayPlayer))
+				{
+					s.getOut().setPlayerID(this.currentPlayPlayer.getPlayerID());
+					s.getOut().setPlayerName(this.currentPlayPlayer.getPlayerName());
+					this.pendingSubs.remove(s);
+				}
+			}
+		}
 		addPlayerOnFloor(this.currentPlayPlayer);
 	}
 
@@ -165,6 +249,27 @@ public class FinalPlayerVisitor implements Visitor
 	@Override
 	public void visit(Shot shot) 
 	{
+		for (Substitution s : this.pendingSubs)
+		{
+			if (s.getIn().getPlayerID() == -1)
+			{
+				if(RosterSQLGenerator.possiblePlayerMatch(s.getIn(), this.currentPlayPlayer))
+				{
+					s.getIn().setPlayerID(this.currentPlayPlayer.getPlayerID());
+					s.getIn().setPlayerName(this.currentPlayPlayer.getPlayerName());
+					this.pendingSubs.remove(s);
+				}
+			}
+			if (s.getOut().getPlayerID() == -1)
+			{
+				if(RosterSQLGenerator.possiblePlayerMatch(s.getOut(), this.currentPlayPlayer))
+				{
+					s.getOut().setPlayerID(this.currentPlayPlayer.getPlayerID());
+					s.getOut().setPlayerName(this.currentPlayPlayer.getPlayerName());
+					this.pendingSubs.remove(s);
+				}
+			}
+		}
 		addPlayerOnFloor(this.currentPlayPlayer);
 		if (shot.getShotEnding().getAssist() != null)
 		{
@@ -175,6 +280,27 @@ public class FinalPlayerVisitor implements Visitor
 	@Override
 	public void visit(Assist assist) 
 	{
+		for (Substitution s : this.pendingSubs)
+		{
+			if (s.getIn().getPlayerID() == -1)
+			{
+				if(RosterSQLGenerator.possiblePlayerMatch(s.getIn(), this.currentPlayPlayer))
+				{
+					s.getIn().setPlayerID(this.currentPlayPlayer.getPlayerID());
+					s.getIn().setPlayerName(this.currentPlayPlayer.getPlayerName());
+					this.pendingSubs.remove(s);
+				}
+			}
+			if (s.getOut().getPlayerID() == -1)
+			{
+				if(RosterSQLGenerator.possiblePlayerMatch(s.getOut(), this.currentPlayPlayer))
+				{
+					s.getOut().setPlayerID(this.currentPlayPlayer.getPlayerID());
+					s.getOut().setPlayerName(this.currentPlayPlayer.getPlayerName());
+					this.pendingSubs.remove(s);
+				}
+			}
+		}
 		if(assist.getPlayer() != null)
 			addPlayerOnFloor(this.currentPlayPlayer);
 	}
@@ -182,15 +308,69 @@ public class FinalPlayerVisitor implements Visitor
 	@Override
 	public void visit(Steal steal) 
 	{
+		for (Substitution s : this.pendingSubs)
+		{
+			if (s.getIn().getPlayerID() == -1)
+			{
+				if(RosterSQLGenerator.possiblePlayerMatch(s.getIn(), this.currentPlayPlayer))
+				{
+					s.getIn().setPlayerID(this.currentPlayPlayer.getPlayerID());
+					s.getIn().setPlayerName(this.currentPlayPlayer.getPlayerName());
+					this.pendingSubs.remove(s);
+				}
+			}
+			if (s.getOut().getPlayerID() == -1)
+			{
+				if(RosterSQLGenerator.possiblePlayerMatch(s.getOut(), this.currentPlayPlayer))
+				{
+					s.getOut().setPlayerID(this.currentPlayPlayer.getPlayerID());
+					s.getOut().setPlayerName(this.currentPlayPlayer.getPlayerName());
+					this.pendingSubs.remove(s);
+				}
+			}
+		}
 		addPlayerOnFloor(this.currentPlayPlayer);
 	}
 
 	@Override
 	public void visit(Substitution sub) 
 	{
-		//TODO removal of pending subs once related sub is visited
+		for (Substitution s : this.pendingSubs)
+		{
+			//TODO may be able to use this logic to deduce who is on court
+			//e.g. unknown sub in, known sub out without any other subs between
+			if (RosterSQLGenerator.possiblePlayerMatch(s.getIn(), sub.getIn()) ||
+					RosterSQLGenerator.possiblePlayerMatch(s.getIn(), sub.getOut()) ||
+					RosterSQLGenerator.possiblePlayerMatch(s.getOut(), sub.getIn()) ||
+					RosterSQLGenerator.possiblePlayerMatch(s.getOut(), sub.getOut()) ||
+					RosterSQLGenerator.possiblePlayerMatch(sub.getIn(), s.getIn()) ||
+					RosterSQLGenerator.possiblePlayerMatch(sub.getOut(), s.getIn()) ||
+					RosterSQLGenerator.possiblePlayerMatch(sub.getIn(), s.getOut()) ||
+					RosterSQLGenerator.possiblePlayerMatch(sub.getOut(), s.getOut()))
+			{
+				this.pendingSubs.remove(s);
+			}
+		}
+		
 		if (sub.getOut().getPlayerID() == -1 || sub.getIn().getPlayerID() == -1)
 			pendingSubs.add(sub);
+		
+		if(!this.reversed)
+		{
+			if (sub.getOut().getPlayerID() != -1)
+				playersOnFloor.remove(sub.getOut());
+			
+			if (sub.getIn().getPlayerID() != -1)
+				addPlayerOnFloor(sub.getIn());
+		}
+		else
+		{
+			if (sub.getIn().getPlayerID() != -1)
+				playersOnFloor.remove(sub.getIn());
+			
+			if (sub.getOut().getPlayerID() != -1)
+				addPlayerOnFloor(sub.getOut());
+		}
 	}
 
 	@Override
@@ -208,12 +388,54 @@ public class FinalPlayerVisitor implements Visitor
 	@Override
 	public void visit(Turnover turnover) 
 	{
+		for (Substitution s : this.pendingSubs)
+		{
+			if (s.getIn().getPlayerID() == -1)
+			{
+				if(RosterSQLGenerator.possiblePlayerMatch(s.getIn(), this.currentPlayPlayer))
+				{
+					s.getIn().setPlayerID(this.currentPlayPlayer.getPlayerID());
+					s.getIn().setPlayerName(this.currentPlayPlayer.getPlayerName());
+					this.pendingSubs.remove(s);
+				}
+			}
+			if (s.getOut().getPlayerID() == -1)
+			{
+				if(RosterSQLGenerator.possiblePlayerMatch(s.getOut(), this.currentPlayPlayer))
+				{
+					s.getOut().setPlayerID(this.currentPlayPlayer.getPlayerID());
+					s.getOut().setPlayerName(this.currentPlayPlayer.getPlayerName());
+					this.pendingSubs.remove(s);
+				}
+			}
+		}
 		addPlayerOnFloor(this.currentPlayPlayer);
 	}
 
 	@Override
 	public void visit(Violation violation) 
 	{
+		for (Substitution s : this.pendingSubs)
+		{
+			if (s.getIn().getPlayerID() == -1)
+			{
+				if(RosterSQLGenerator.possiblePlayerMatch(s.getIn(), this.currentPlayPlayer))
+				{
+					s.getIn().setPlayerID(this.currentPlayPlayer.getPlayerID());
+					s.getIn().setPlayerName(this.currentPlayPlayer.getPlayerName());
+					this.pendingSubs.remove(s);
+				}
+			}
+			if (s.getOut().getPlayerID() == -1)
+			{
+				if(RosterSQLGenerator.possiblePlayerMatch(s.getOut(), this.currentPlayPlayer))
+				{
+					s.getOut().setPlayerID(this.currentPlayPlayer.getPlayerID());
+					s.getOut().setPlayerName(this.currentPlayPlayer.getPlayerName());
+					this.pendingSubs.remove(s);
+				}
+			}
+		}
 		addPlayerOnFloor(this.currentPlayPlayer);
 	}
 
