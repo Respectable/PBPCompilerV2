@@ -26,7 +26,7 @@ public class FailurePlayerVisitor extends SubstitutionPlayerVisitor
 		this.pbp = new ArrayList<PBPJson>(pbp);
 		this.homeID = homeID;
 		this.awayID = awayID;
-		Collections.sort(pbp, PBPJson.COMPARE_BY_PLAY_ID);
+		Collections.sort(this.pbp, PBPJson.COMPARE_BY_PLAY_ID);
 	}
 	
 	@Override
