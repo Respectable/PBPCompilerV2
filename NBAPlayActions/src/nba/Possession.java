@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import visitor.Visitable;
 import visitor.Visitor;
 
-import nba.play.Play;
+import nba.play.*;
 
 public class Possession implements Visitable
 {
