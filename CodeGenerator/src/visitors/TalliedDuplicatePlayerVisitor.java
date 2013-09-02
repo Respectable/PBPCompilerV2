@@ -48,7 +48,7 @@ public class TalliedDuplicatePlayerVisitor extends PlayerVisitor
 		this.homeID = homeID;
 		this.awayID = awayID;
 		this.pbp = new ArrayList<PBPJson>(pbp);
-		Collections.sort(pbp, PBPJson.COMPARE_BY_PLAY_ID);
+		Collections.sort(this.pbp, PBPJson.COMPARE_BY_PLAY_ID);
 	}
 	
 	@Override
