@@ -479,7 +479,7 @@ public class SQLVisitor implements Visitor {
 	{
 		int reboundID = -1;
 		boolean isDefensive = true;
-		
+	
 		if (this.currentContext.getPlayRole().equals(PlayRole.HOME))
 		{
 			isDefensive = (this.homeID == this.currentPossession.getDefenseID());
