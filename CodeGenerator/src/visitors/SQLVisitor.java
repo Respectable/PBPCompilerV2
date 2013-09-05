@@ -1096,17 +1096,7 @@ public class SQLVisitor implements Visitor {
 		}
 	}
 	
-	private int convertStringTime(String time)
-	{
-		String[] timeParts = time.split(":");
-		String min = timeParts[0];
-		String tens = timeParts[1].substring(0,1);
-		String singles = timeParts[1].substring(1, 2);
-		return ((Integer.parseInt(min) * 60) + (Integer.parseInt(tens) * 10) +
-				Integer.parseInt(singles)) * 10;
-	}
-	
-	private String getPlayTime(int playID)
+	private PBPJson getPlayTime(int playID)
 	{
 		PBPJson relevantPlay = new PBPJson();
 		relevantPlay.setEventNum(playID);
@@ -1124,12 +1114,13 @@ public class SQLVisitor implements Visitor {
 			relevantPlay = this.pbp.get(index);
 		}
 		
-		return relevantPlay.getActualTime();
+		return relevantPlay;
 	}
 	
 	private int getConvertedPlayTime(int playID)
 	{
-		return convertStringTime(getPlayTime(playID));
+		PBPJson currentPlay = getPlayTime(playID);
+		return PBPJson.convertStringTime(currentPlay.getGameTime(), currentPlay);
 	}
 
 }
