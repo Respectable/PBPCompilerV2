@@ -52,7 +52,7 @@ public class SQLVisitor implements Visitor {
 	public SQLVisitor(String path, String userName, String password, ArrayList<PBPJson> pbp,
 			int homeID, int awayID, int gameID)
 	{
-		this.pbp = pbp;
+		this.pbp = new ArrayList<PBPJson>(pbp);
 		this.homeID = homeID;
 		this.awayID = awayID;
 		this.gameID = gameID;
@@ -163,7 +163,6 @@ public class SQLVisitor implements Visitor {
 	@Override
 	public void visit(Block block) 
 	{
-		
 		try 
 		{
 			stmt = conn.prepareStatement("INSERT INTO `nba2`.`block` VALUES (DEFAULT);");
