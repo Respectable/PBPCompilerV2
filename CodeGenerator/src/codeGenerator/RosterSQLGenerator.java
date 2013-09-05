@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+
 import jsonObjects.boxScoreObjects.InactiveJson;
 import jsonObjects.boxScoreObjects.PlayerStatsJson;
 
@@ -436,20 +438,38 @@ public class RosterSQLGenerator
 			
 			for (Player player : homeBench)
 			{
-				stmt.setInt(1, this.gameID);
-				stmt.setInt(2, this.homeID);
-				stmt.setInt(3, player.getPlayerID());
-				stmt.setBoolean(4, true);
-				stmt.executeUpdate();
+				try
+				{
+					stmt.setInt(1, this.gameID);
+					stmt.setInt(2, this.homeID);
+					stmt.setInt(3, player.getPlayerID());
+					stmt.setBoolean(4, true);
+					stmt.executeUpdate();
+				}
+				catch (MySQLIntegrityConstraintViolationException e)
+				{
+					System.out.println(e.getMessage());
+					System.out.println(player.getPlayerName());
+					continue;
+				}
 			}
 			
 			for (Player player : homeInactive)
 			{
-				stmt.setInt(1, this.gameID);
-				stmt.setInt(2, this.homeID);
-				stmt.setInt(3, player.getPlayerID());
-				stmt.setBoolean(4, false);
-				stmt.executeUpdate();
+				try
+				{
+					stmt.setInt(1, this.gameID);
+					stmt.setInt(2, this.homeID);
+					stmt.setInt(3, player.getPlayerID());
+					stmt.setBoolean(4, false);
+					stmt.executeUpdate();
+				}
+				catch (MySQLIntegrityConstraintViolationException e)
+				{
+					System.out.println(e.getMessage());
+					System.out.println(player.getPlayerName());
+					continue;
+				}
 			}
 			
 			for (Player player : awayStarters)
@@ -463,20 +483,38 @@ public class RosterSQLGenerator
 			
 			for (Player player : awayBench)
 			{
-				stmt.setInt(1, this.gameID);
-				stmt.setInt(2, this.awayID);
-				stmt.setInt(3, player.getPlayerID());
-				stmt.setBoolean(4, true);
-				stmt.executeUpdate();
+				try
+				{
+					stmt.setInt(1, this.gameID);
+					stmt.setInt(2, this.awayID);
+					stmt.setInt(3, player.getPlayerID());
+					stmt.setBoolean(4, true);
+					stmt.executeUpdate();
+				}
+				catch (MySQLIntegrityConstraintViolationException e)
+				{
+					System.out.println(e.getMessage());
+					System.out.println(player.getPlayerName());
+					continue;
+				}
 			}
 			
 			for (Player player : awayInactive)
 			{
-				stmt.setInt(1, this.gameID);
-				stmt.setInt(2, this.awayID);
-				stmt.setInt(3, player.getPlayerID());
-				stmt.setBoolean(4, false);
-				stmt.executeUpdate();
+				try
+				{
+					stmt.setInt(1, this.gameID);
+					stmt.setInt(2, this.awayID);
+					stmt.setInt(3, player.getPlayerID());
+					stmt.setBoolean(4, false);
+					stmt.executeUpdate();
+				}
+				catch (MySQLIntegrityConstraintViolationException e)
+				{
+					System.out.println(e.getMessage());
+					System.out.println(player.getPlayerName());
+					continue;
+				}
 			}
 			
 			stmt.close();
