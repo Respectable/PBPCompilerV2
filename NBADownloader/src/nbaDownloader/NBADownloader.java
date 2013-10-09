@@ -55,6 +55,7 @@ public class NBADownloader
 		
 		try 
 		{
+			Thread.sleep(3000);
 			url = new URL(urlString);
 			is = url.openStream();  // throws an IOException
 			br = new BufferedReader(new InputStreamReader(is));
@@ -75,6 +76,10 @@ public class NBADownloader
 				e.printStackTrace();
 			}
 			br = download(urlString);
+		} 
+		catch (InterruptedException e) 
+		{
+			e.printStackTrace();
 		}
 		
 		return br;
@@ -199,4 +204,5 @@ public class NBADownloader
 		return download(urlStart + customBoxStart + gameID + customBoxMid + startTime +
 							customBoxEnd + endTime);
 	}
+	
 }

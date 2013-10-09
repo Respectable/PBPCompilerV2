@@ -63,6 +63,11 @@ public class BoxJson extends NBAJsonObject
 		return parseBoxJson(json);
 	}
 	
+	public static ArrayList<PlayerStatsJson> getDownloadedBoxScorePlayers(BufferedReader reader)
+	{
+		return getBoxScore(reader).getPlayerStats();
+	}
+	
 	protected static JsonArray preProcessJson(String json)
 	{
 		JsonParser parser = new JsonParser();
@@ -79,6 +84,8 @@ public class BoxJson extends NBAJsonObject
 		int year = Integer.parseInt(season.substring(2, 4));
 		return season + "-" + (year + 1);
 	}
+	
+	
 	
 	
 }

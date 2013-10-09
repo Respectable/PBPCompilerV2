@@ -1,119 +1,42 @@
 package visitors;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
-import jsonObjects.PBPJson;
 import codeGenerator.RosterSQLGenerator;
-import nba.*;
+import nba.ContextInfo;
+import nba.Game;
+import nba.Period;
+import nba.PlayRole;
+import nba.Player;
+import nba.Possession;
 import nba.play.*;
-import nba.playType.*;
-import nba.playType.block.*;
-import nba.playType.ejection.*;
+import nba.playType.PlayType;
+import nba.playType.block.Block;
+import nba.playType.ejection.Ejection;
 import nba.playType.foul.*;
-import nba.playType.freeThrow.*;
-import nba.playType.jumpBall.*;
-import nba.playType.rebound.*;
-import nba.playType.review.*;
+import nba.playType.freeThrow.FreeThrow;
+import nba.playType.jumpBall.JumpBall;
+import nba.playType.rebound.Rebound;
+import nba.playType.review.Review;
 import nba.playType.shot.*;
-import nba.playType.steal.*;
-import nba.playType.substitution.*;
+import nba.playType.steal.Steal;
+import nba.playType.substitution.Substitution;
 import nba.playType.technical.*;
-import nba.playType.timeout.*;
-import nba.playType.turnover.*;
-import nba.playType.violation.*;
+import nba.playType.timeout.Timeout;
+import nba.playType.turnover.Turnover;
+import nba.playType.violation.Violation;
 import visitor.Visitor;
 
-public class PlayerVisitor implements Visitor
+public abstract class PlayerVisitor implements Visitor
 {
 
-	private RosterSQLGenerator rosters;
-	private PlayerVisitorState state;
-	private PlayRole currentTeam;
-	private Play currentPlay;
-	private PBPJson nextActivePlay, previousActivePlay;
-	private ArrayList<PBPJson> timeSortedPBP, idSortedPBP;
-	private boolean isAssist;
+	protected RosterSQLGenerator rosters;
+	protected Player currentPlayer;
+	protected ContextInfo currentContext;
 	
-	public PlayerVisitor(RosterSQLGenerator rosters, ArrayList<PBPJson> pbp)
+	public PlayerVisitor(RosterSQLGenerator rosters)
 	{
 		this.rosters = rosters;
-		this.timeSortedPBP = new ArrayList<PBPJson>(pbp);
-		this.idSortedPBP = new ArrayList<PBPJson>(pbp);
-		this.nextActivePlay = new PBPJson();
-		this.previousActivePlay = new PBPJson();
-		Collections.sort(this.timeSortedPBP, PBPJson.COMPARE_BY_GAME_TIME);
-		Collections.sort(this.idSortedPBP, PBPJson.COMPARE_BY_PLAY_ID);
-	}
-	
-	private void changeState(Play play)
-	{
-		if (play.getPlayType() instanceof JumpBall)
-		{
-			this.state = PlayerVisitorState.JUMPBALL;
-		}
-		else if (play.getPlayType() instanceof Rebound)
-		{
-			if (((Rebound)play.getPlayType()).isPlayerRebound())
-				this.state = PlayerVisitorState.PLAYERREBOUND;
-			else
-				this.state = PlayerVisitorState.TEAMREBOUND;
-		}
-		else if (play.getPlayType() instanceof Turnover)
-		{
-			//TODO
-			this.state = PlayerVisitorState.PLAYERTURNOVER;
-		}
-		else if (play.getPlayType() instanceof Violation)
-		{
-			//TODO
-			this.state = PlayerVisitorState.PLAYERVIOLATION;
-		}
-		else if (play.getPlayType() instanceof Shot)
-		{
-			this.state = PlayerVisitorState.SHOT;
-		}
-		else if (play.getPlayType() instanceof Timeout)
-		{
-			this.state = PlayerVisitorState.TIMEOUT;
-		}
-		else if (play.getPlayType() instanceof Substitution)
-		{
-			this.state = PlayerVisitorState.SUB;
-		}
-		else if (play.getPlayType() instanceof Foul)
-		{
-			//TODO
-			if (play.getPlayType() instanceof DoublePersonalFoul)
-				this.state = PlayerVisitorState.DOUBLEFOUL;
-			else
-				this.state = PlayerVisitorState.PLAYERFOUL;
-				
-		}
-		else if (play.getPlayType() instanceof FreeThrow)
-		{
-			this.state = PlayerVisitorState.FREETHROW;
-		}
-		else if (play.getPlayType() instanceof Technical)
-		{
-			//TODO
-			if (play.getPlayType() instanceof DoubleTechnical)
-				this.state = PlayerVisitorState.DOUBLETECH;
-			else
-				this.state = PlayerVisitorState.PLAYERTECH;
-		}
-		else if (play.getPlayType() instanceof Ejection)
-		{
-			this.state = PlayerVisitorState.EJECTION;
-		}
-		else if (play.getPlayType() instanceof Block)
-		{
-			this.state = PlayerVisitorState.BLOCK;
-		}
-		else if (play.getPlayType() instanceof Steal)
-		{
-			this.state = PlayerVisitorState.STEAL;
-		}
 	}
 	
 	@Override
@@ -133,10 +56,6 @@ public class PlayerVisitor implements Visitor
 	{
 		for(Play p : period.getPlays())
 		{
-			changeState(p);
-			currentPlay = p;
-			this.isAssist = false;
-			this.currentTeam = p.getContextInfo().getPlayRole();
 			p.accept(this);
 		}
 	}
@@ -144,49 +63,30 @@ public class PlayerVisitor implements Visitor
 	@Override
 	public void visit(Player player) 
 	{
-		if (currentPlay.getPlayID() == nextActivePlay.getEventNum())
-			rosters.resetSubbedPlayers();
-		switch (state)
-		{
-		case JUMPBALL: case DOUBLEFOUL: case DOUBLETECH: 
-			rosters.setPlayer(player, currentPlay, PlayRole.NEUTRAL, false);
-			break;
-		case PLAYERREBOUND: case PLAYERTURNOVER: case PLAYERVIOLATION:
-		case SHOT: case PLAYERFOUL: case FREETHROW: case PLAYERTECH:
-		case EJECTION: case BLOCK: case STEAL:
-			rosters.setPlayer(player, currentPlay, currentTeam, isAssist);
-			break;
-		case SUB:
-			nextActivePlay = getNextPlay(currentPlay.getPlayID());
-			previousActivePlay = getPreviousPlay(currentPlay.getPlayID());
-			rosters.setPlayer(player, currentPlay, currentTeam, nextActivePlay,
-					previousActivePlay);
-			break;
-		case TEAMREBOUND: case TEAMTURNOVER: case TEAMVIOLATION:
-		case TIMEOUT: case TEAMFOUL: case TEAMTECH:
-			player.setPlayerID(-1);
-			player.setPlayerName("#TEAM");
-			break;
-		}
+		//TODO
 	}
 
 	@Override
 	public void visit(Play play) 
 	{
+		currentContext = play.getContextInfo();
+		currentPlayer = new Player("", -1);
 		play.getPlayType().accept(this);
 	}
 
 	@Override
 	public void visit(PlayerPlay play) 
 	{
-		play.getPlayer().accept(this);
+		currentContext = play.getContextInfo();
+		currentPlayer = play.getPlayer();
 		play.getPlayType().accept(this);
 	}
 
 	@Override
 	public void visit(MissedPlay play) 
 	{
-		play.getPlayer().accept(this);
+		currentContext = play.getContextInfo();
+		currentPlayer = play.getPlayer();
 		play.getPlayType().accept(this);
 	}
 
@@ -194,35 +94,94 @@ public class PlayerVisitor implements Visitor
 	public void visit(PlayType playType) {}
 
 	@Override
-	public void visit(Block block) {}
-
-	@Override
-	public void visit(Ejection ejection) {}
-
-	@Override
-	public void visit(Foul foul) {}
-	
-	@Override
-	public void visit(DoublePersonalFoul foul) 
+	public void visit(Block block) 
 	{
-		foul.getPlayer1().accept(this);
-		foul.getPlayer2().accept(this);
+		if (currentContext.getPlayRole() == PlayRole.HOME)
+			setPlayer(currentPlayer, rosters.getHomeActive());
+		else if (currentContext.getPlayRole() == PlayRole.AWAY)
+			setPlayer(currentPlayer, rosters.getAwayActive());
+		else
+		{
+			//TODO error, no neutral blocks
+		}
 	}
 
 	@Override
-	public void visit(FreeThrow freeThrow) {}
+	public void visit(Ejection ejection) 
+	{
+		if (currentContext.getPlayRole() == PlayRole.HOME)
+			setPlayer(currentPlayer, rosters.getHomeActive());
+		else if (currentContext.getPlayRole() == PlayRole.AWAY)
+			setPlayer(currentPlayer, rosters.getAwayActive());
+		else
+		{
+			//TODO error, no neutral ejection
+		}
+	}
+
+	@Override
+	public void visit(Foul foul) 
+	{
+		
+		if (currentContext.getPlayRole() == PlayRole.HOME)
+			setPlayer(currentPlayer, rosters.getHomeActive());
+		else if (currentContext.getPlayRole() == PlayRole.AWAY)
+			setPlayer(currentPlayer, rosters.getAwayActive());
+		else
+		{
+			//TODO error, no neutral foul
+		}
+	}
+
+	@Override
+	public void visit(DoublePersonalFoul foul) 
+	{
+		setPlayer(foul.getPlayer1(), rosters.getActive());
+		setPlayer(foul.getPlayer2(), rosters.getActive());
+	}
+
+	@Override
+	public void visit(FreeThrow freeThrow) 
+	{
+		if (currentContext.getPlayRole() == PlayRole.HOME)
+			setPlayer(currentPlayer, rosters.getHomeActive());
+		else if (currentContext.getPlayRole() == PlayRole.AWAY)
+			setPlayer(currentPlayer, rosters.getAwayActive());
+		else
+		{
+			//TODO error, no neutral freeThrow
+		}
+	}
 
 	@Override
 	public void visit(JumpBall jumpBall) 
 	{
-		jumpBall.getPlayer1().accept(this);
-		jumpBall.getPlayer2().accept(this);
+		setPlayer(jumpBall.getPlayer1(), rosters.getActive());
+		setPlayer(jumpBall.getPlayer2(), rosters.getActive());
 		if (jumpBall.getEnding().getTippedTo() != null)
-			jumpBall.getEnding().getTippedTo().accept(this);
+			setPlayer(jumpBall.getEnding().getTippedTo(), rosters.getActive());
 	}
 
 	@Override
-	public void visit(Rebound rebound) {}
+	public void visit(Rebound rebound) 
+	{
+		if(rebound.isPlayerRebound())
+		{
+			if (currentContext.getPlayRole() == PlayRole.HOME)
+				setPlayer(currentPlayer, rosters.getHomeActive());
+			else if (currentContext.getPlayRole() == PlayRole.AWAY)
+				setPlayer(currentPlayer, rosters.getAwayActive());
+			else
+			{
+				//TODO error, no neutral Rebound
+			}
+		}
+		else
+		{
+				currentPlayer.setPlayerID(-1);
+				currentPlayer.setPlayerName("#TEAM");
+		}
+	}
 
 	@Override
 	public void visit(Review review) {}
@@ -230,9 +189,16 @@ public class PlayerVisitor implements Visitor
 	@Override
 	public void visit(Shot shot) 
 	{
+		if (currentContext.getPlayRole() == PlayRole.HOME)
+			setPlayer(currentPlayer, rosters.getHomeActive());
+		else if (currentContext.getPlayRole() == PlayRole.AWAY)
+			setPlayer(currentPlayer, rosters.getAwayActive());
+		else
+		{
+			//TODO error, no neutral shot
+		}
 		if (shot.getShotEnding().getAssist() != null)
 		{
-			this.isAssist = true;
 			shot.getShotEnding().getAssist().accept(this);
 		}
 	}
@@ -240,22 +206,46 @@ public class PlayerVisitor implements Visitor
 	@Override
 	public void visit(Assist assist) 
 	{
-		if (assist.getPlayer() != null)
-			assist.getPlayer().accept(this);
+		if (currentContext.getPlayRole() == PlayRole.HOME && assist.getPlayer() != null)
+			setPlayer(assist.getPlayer(), rosters.getHomeActive());
+		else if (currentContext.getPlayRole() == PlayRole.AWAY && assist.getPlayer() != null)
+			setPlayer(assist.getPlayer(), rosters.getAwayActive());
+		else
+		{
+			//TODO error, no neutral assist
+		}
 	}
 
 	@Override
-	public void visit(Steal steal) {}
+	public void visit(Steal steal) 
+	{
+		if (currentContext.getPlayRole() == PlayRole.HOME)
+			setPlayer(currentPlayer, rosters.getHomeActive());
+		else if (currentContext.getPlayRole() == PlayRole.AWAY)
+			setPlayer(currentPlayer, rosters.getAwayActive());
+		else
+		{
+			//TODO error, no neutral steal
+		}
+	}
 
 	@Override
 	public void visit(Substitution sub) 
 	{
-		if (this.currentPlay.getPlayID() == 313)
+		if (currentContext.getPlayRole() == PlayRole.HOME)
 		{
-			int x = 1;
+			setPlayer(sub.getIn(), rosters.getHomeActive());
+			setPlayer(sub.getOut(), rosters.getHomeActive());
 		}
-		sub.getIn().accept(this);
-		sub.getOut().accept(this);
+		else if (currentContext.getPlayRole() == PlayRole.AWAY)
+		{
+			setPlayer(sub.getIn(), rosters.getAwayActive());
+			setPlayer(sub.getOut(), rosters.getAwayActive());
+		}
+		else
+		{
+			//TODO error, no neutral sub
+		}
 	}
 
 	@Override
@@ -269,100 +259,84 @@ public class PlayerVisitor implements Visitor
 				if (technical.getPredicate().getTechType() instanceof ThreeSecTechnical)
 				{
 					threeSecTec = (ThreeSecTechnical)technical.getPredicate().getTechType();
-					threeSecTec.getPlayer().accept(this);
+					if (currentContext.getPlayRole() == PlayRole.HOME)
+						setPlayer(threeSecTec.getPlayer(), rosters.getHomeActive());
+					else if (currentContext.getPlayRole() == PlayRole.AWAY)
+						setPlayer(threeSecTec.getPlayer(), rosters.getAwayActive());
+					else
+					{
+						//TODO error, no neutral technical
+					}
+					return;
 				}
 			}
+		}
+		if (currentContext.getPlayRole() == PlayRole.HOME)
+			setPlayer(currentPlayer, rosters.getHomeActive());
+		else if (currentContext.getPlayRole() == PlayRole.AWAY)
+			setPlayer(currentPlayer, rosters.getAwayActive());
+		else
+		{
+			//TODO error, no neutral technical
 		}
 	}
 
 	@Override
 	public void visit(DoubleTechnical technical) 
 	{
-		technical.getPlayer1().accept(this);
-		technical.getPlayer2().accept(this);
+		setPlayer(technical.getPlayer1(), rosters.getActive());
+		setPlayer(technical.getPlayer2(), rosters.getActive());
 	}
 
 	@Override
-	public void visit(TauntingTechnical technical) {}
+	public void visit(TauntingTechnical technical) 
+	{
+		if (currentContext.getPlayRole() == PlayRole.HOME)
+			setPlayer(currentPlayer, rosters.getHomeActive());
+		else if (currentContext.getPlayRole() == PlayRole.AWAY)
+			setPlayer(currentPlayer, rosters.getAwayActive());
+		else
+		{
+			//TODO error, no neutral technical
+		}
+	}
 
 	@Override
-	public void visit(Timeout timeout) {}
+	public void visit(Timeout timeout) 
+	{
+		currentPlayer.setPlayerID(-1);
+		currentPlayer.setPlayerName("#TEAM");
+	}
 
 	@Override
-	public void visit(Turnover turnover) {}
+	public void visit(Turnover turnover) 
+	{
+		if (currentContext.getPlayRole() == PlayRole.HOME)
+			setPlayer(currentPlayer, rosters.getHomeActive());
+		else if (currentContext.getPlayRole() == PlayRole.AWAY)
+			setPlayer(currentPlayer, rosters.getAwayActive());
+		else
+		{
+			//TODO error, no neutral turnover
+		}
+	}
 
 	@Override
-	public void visit(Violation violation) {}
+	public void visit(Violation violation) 
+	{
+		if (currentContext.getPlayRole() == PlayRole.HOME)
+			setPlayer(currentPlayer, rosters.getHomeActive());
+		else if (currentContext.getPlayRole() == PlayRole.AWAY)
+			setPlayer(currentPlayer, rosters.getAwayActive());
+		else
+		{
+			//TODO error, no neutral violation
+		}
+	}
 
 	@Override
 	public void visit(Possession possession) {}
 	
-	private PBPJson getNextPlay(int playID)
-	{
-		PBPJson currentPlay = new PBPJson();
-		PBPJson notFoundPlay = new PBPJson();
-		currentPlay.setEventNum(playID);
-		
-		int index = Collections.binarySearch(this.idSortedPBP, currentPlay, 
-				PBPJson.COMPARE_BY_PLAY_ID); //this does in fact, need to be a play_id comparator
-		
-		if (index < 0)
-		{
-			System.out.println("Play: " + playID + 
-					" Play not found.");
-			System.exit(-1);
-		}
-		else
-		{
-			currentPlay = this.idSortedPBP.get(index);
-		}
-		
-		for (PBPJson play : this.timeSortedPBP)
-		{
-			if ((play.getConvertedStringTime() > currentPlay.getConvertedStringTime() + 20) &&
-					!play.getGameTime().equals("0:00"))
-			{
-				return play;
-			}
-		}
-		
-		return notFoundPlay;
-	}
+	protected abstract void setPlayer(Player player, ArrayList<Player> possiblePlayers);
 	
-	private PBPJson getPreviousPlay(int playID)
-	{
-		PBPJson currentPlay = new PBPJson();
-		ArrayList<PBPJson> tempPlays = new ArrayList<PBPJson>();
-		currentPlay.setEventNum(playID);
-		
-		int index = Collections.binarySearch(this.idSortedPBP, currentPlay, 
-				PBPJson.COMPARE_BY_PLAY_ID); //this does in fact, need to be a play_id comparator
-		
-		if (index < 0)
-		{
-			System.out.println("Play: " + playID + 
-					" Play not found.");
-			System.exit(-1);
-		}
-		else
-		{
-			currentPlay = this.idSortedPBP.get(index);
-		}
-		
-		for (PBPJson play : this.timeSortedPBP)
-		{
-			if ((play.getConvertedStringTime() < currentPlay.getConvertedStringTime() - 20) &&
-					!play.getGameTime().equals("0:00"))
-			{
-				tempPlays.add(play);
-			}
-		}
-		
-		Collections.sort(tempPlays, PBPJson.COMPARE_BY_GAME_TIME);
-		
-		return tempPlays.get(tempPlays.size() - 1);
-	}
-
-	
-
 }

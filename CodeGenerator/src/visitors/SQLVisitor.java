@@ -52,7 +52,7 @@ public class SQLVisitor implements Visitor {
 	public SQLVisitor(String path, String userName, String password, ArrayList<PBPJson> pbp,
 			int homeID, int awayID, int gameID)
 	{
-		this.pbp = pbp;
+		this.pbp = new ArrayList<PBPJson>(pbp);
 		this.homeID = homeID;
 		this.awayID = awayID;
 		this.gameID = gameID;
@@ -163,7 +163,6 @@ public class SQLVisitor implements Visitor {
 	@Override
 	public void visit(Block block) 
 	{
-		
 		try 
 		{
 			stmt = conn.prepareStatement("INSERT INTO `nba2`.`block` VALUES (DEFAULT);");
@@ -479,7 +478,7 @@ public class SQLVisitor implements Visitor {
 	{
 		int reboundID = -1;
 		boolean isDefensive = true;
-		
+	
 		if (this.currentContext.getPlayRole().equals(PlayRole.HOME))
 		{
 			isDefensive = (this.homeID == this.currentPossession.getDefenseID());
@@ -1097,17 +1096,7 @@ public class SQLVisitor implements Visitor {
 		}
 	}
 	
-	private int convertStringTime(String time)
-	{
-		String[] timeParts = time.split(":");
-		String min = timeParts[0];
-		String tens = timeParts[1].substring(0,1);
-		String singles = timeParts[1].substring(1, 2);
-		return ((Integer.parseInt(min) * 60) + (Integer.parseInt(tens) * 10) +
-				Integer.parseInt(singles)) * 10;
-	}
-	
-	private String getPlayTime(int playID)
+	private PBPJson getPlayTime(int playID)
 	{
 		PBPJson relevantPlay = new PBPJson();
 		relevantPlay.setEventNum(playID);
@@ -1125,12 +1114,13 @@ public class SQLVisitor implements Visitor {
 			relevantPlay = this.pbp.get(index);
 		}
 		
-		return relevantPlay.getActualTime();
+		return relevantPlay;
 	}
 	
 	private int getConvertedPlayTime(int playID)
 	{
-		return convertStringTime(getPlayTime(playID));
+		PBPJson currentPlay = getPlayTime(playID);
+		return PBPJson.convertStringTime(currentPlay.getGameTime(), currentPlay);
 	}
 
 }

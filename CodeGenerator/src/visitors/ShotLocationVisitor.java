@@ -33,7 +33,7 @@ public class ShotLocationVisitor implements Visitor {
 	public ShotLocationVisitor(ArrayList<ShotJson> shots, ArrayList<PBPJson> pbp)
 	{
 		this.shots = shots;
-		this.pbp = pbp;
+		this.pbp = new ArrayList<PBPJson>(pbp);
 	}
 	
 	@Override
