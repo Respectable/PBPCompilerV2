@@ -36,7 +36,7 @@ public class DebugVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(Game game) 
+	public void visit(Game game) throws Exception 
 	{
 		this.possessionCounter = 0;
 		
@@ -47,7 +47,7 @@ public class DebugVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(Period period) 
+	public void visit(Period period) throws Exception 
 	{
 		System.out.println();
 		System.out.println("+++++++++++++++++++++++");
@@ -67,7 +67,7 @@ public class DebugVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(Play play) 
+	public void visit(Play play) throws Exception 
 	{
 		System.out.println();
 		play.getPlayType().accept(this);
@@ -75,7 +75,7 @@ public class DebugVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(PlayerPlay play) 
+	public void visit(PlayerPlay play) throws Exception 
 	{
 		System.out.println();
 		play.getPlayer().accept(this);
@@ -84,7 +84,7 @@ public class DebugVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(MissedPlay play) 
+	public void visit(MissedPlay play) throws Exception 
 	{
 		System.out.println();
 		System.out.print("Missed ");
@@ -115,7 +115,7 @@ public class DebugVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(DoublePersonalFoul foul) 
+	public void visit(DoublePersonalFoul foul) throws Exception 
 	{
 		System.out.print("Foul ");
 		foul.getPlayer1().accept(this);
@@ -133,7 +133,7 @@ public class DebugVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(JumpBall jumpBall) 
+	public void visit(JumpBall jumpBall) throws Exception 
 	{
 		System.out.print("Jump Ball ");
 		jumpBall.getPlayer1().accept(this);
@@ -154,7 +154,7 @@ public class DebugVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(Shot shot) 
+	public void visit(Shot shot) throws Exception 
 	{
 		System.out.print("Shot ");
 		if (shot.getShotEnding().getAssist() != null)
@@ -163,7 +163,7 @@ public class DebugVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(Assist assist) 
+	public void visit(Assist assist) throws Exception 
 	{
 		System.out.print("Assist - ");
 		assist.getPlayer().accept(this);
@@ -176,7 +176,7 @@ public class DebugVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(Substitution sub) 
+	public void visit(Substitution sub) throws Exception 
 	{
 		System.out.print("Sub - In: ");
 		sub.getIn().accept(this);
@@ -191,7 +191,7 @@ public class DebugVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(DoubleTechnical technical) 
+	public void visit(DoubleTechnical technical) throws Exception 
 	{
 		System.out.print("Technical ");
 		technical.getPlayer1().accept(this);
@@ -224,7 +224,7 @@ public class DebugVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(Possession possession) 
+	public void visit(Possession possession) throws Exception 
 	{
 		this.possessionCounter++;
 		

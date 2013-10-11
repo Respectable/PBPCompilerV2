@@ -40,7 +40,7 @@ public class ShotLocationVisitor implements Visitor {
 	public void visit(ContextInfo contextInfo) {}
 
 	@Override
-	public void visit(Game game) 
+	public void visit(Game game) throws Exception 
 	{
 		for(Period p : game.getPeriods())
 		{
@@ -49,7 +49,7 @@ public class ShotLocationVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(Period period) 
+	public void visit(Period period) throws Exception 
 	{
 		for(Play p : period.getPlays())
 		{
@@ -65,13 +65,13 @@ public class ShotLocationVisitor implements Visitor {
 	public void visit(Play play) {}
 
 	@Override
-	public void visit(PlayerPlay play) 
+	public void visit(PlayerPlay play) throws Exception 
 	{
 		play.getPlayType().accept(this);
 	}
 
 	@Override
-	public void visit(MissedPlay play) 
+	public void visit(MissedPlay play) throws Exception 
 	{
 		play.getPlayType().accept(this);
 	}

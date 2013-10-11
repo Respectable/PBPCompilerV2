@@ -114,7 +114,7 @@ public class PossessionVisitor implements Visitor {
 	public void visit(ContextInfo contextInfo) {}
 
 	@Override
-	public void visit(Game game) 
+	public void visit(Game game) throws Exception 
 	{
 		for (Period p : game.getPeriods())
 		{
