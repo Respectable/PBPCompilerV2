@@ -11,14 +11,11 @@ import jsonObjects.boxScoreObjects.PlayerStatsJson;
 
 public class CompileVerifier 
 {
-	public static boolean verify(ArrayList<PlayerStatsJson> stats, String path,
-			String userName, String password)
+	public static boolean verify(ArrayList<PlayerStatsJson> stats, Connection conn)
 	{
 		PlayerStatsJson currentPlayer;
 		try 
 		{
-			Class.forName("com.mysql.jdbc.Driver");
-			Connection conn = DriverManager.getConnection(path,userName,password);
 			CallableStatement cStmt = conn.prepareCall("{call box_score(?)}");
 			cStmt.setString(1, stats.get(0).getGameID());
 			ResultSet rs;
@@ -105,29 +102,18 @@ public class CompileVerifier
 		catch (SQLException e) 
 		{
 			e.printStackTrace();
-		} 
-		catch (ClassNotFoundException e) 
-		{
-			e.printStackTrace();
 		}
 		
 		return true;
 	}
 	
-	public static void delete(String gameID, String path,
-			String userName, String password)
+	public static void delete(String gameID, Connection conn)
 	{
 		try 
 		{
-			Class.forName("com.mysql.jdbc.Driver");
-			Connection conn = DriverManager.getConnection(path,userName,password);
 			CallableStatement cStmt = conn.prepareCall("{call delete_game(?)}");
 			cStmt.setString(1, gameID);
 			cStmt.executeUpdate();
-		} 
-		catch (ClassNotFoundException e) 
-		{
-			e.printStackTrace();
 		} 
 		catch (SQLException e) 
 		{

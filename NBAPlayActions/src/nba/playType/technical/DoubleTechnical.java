@@ -19,7 +19,7 @@ public class DoubleTechnical extends Technical
 	public Player getPlayer2() {return player2;}
 	
 	@Override
-	public void accept(Visitor visitor)
+	public void accept(Visitor visitor) throws Exception
 	{
 		visitor.visit(this);
 	}

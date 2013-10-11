@@ -1,7 +1,6 @@
 package codeGenerator;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -414,16 +413,12 @@ public class RosterSQLGenerator
 		return parseInactivePlayers(teamID, players, new CheckInactive());
 	}
 	
-	public void compile(String path,
-			String userName, String password)
+	public void compile(Connection conn)
 	{
-		Connection conn;
 		PreparedStatement stmt;
 		
 		try 
 		{
-			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection(path,userName,password);
 			stmt = conn.prepareStatement("INSERT INTO `nba2`.`game_players` (`game_id`,`team_id`,`player_id`," +
 					"`active`) VALUES (?,?,?,?);");
 			
@@ -520,10 +515,6 @@ public class RosterSQLGenerator
 			stmt.close();
 			conn.close();
 			
-		} 
-		catch (ClassNotFoundException e) 
-		{
-			e.printStackTrace();
 		}
 		catch (SQLException e)
 		{

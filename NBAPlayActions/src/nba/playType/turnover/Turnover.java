@@ -18,7 +18,7 @@ public class Turnover extends PlayType
 	public TurnoverEnding getEnding() {return ending;}
 
 	@Override
-	public void accept(Visitor visitor) 
+	public void accept(Visitor visitor) throws Exception 
 	{
 		visitor.visit(this);
 	}

@@ -43,7 +43,7 @@ public abstract class PlayerVisitor implements Visitor
 	public void visit(ContextInfo contextInfo) {}
 
 	@Override
-	public void visit(Game game) 
+	public void visit(Game game) throws Exception 
 	{
 		for(Period p : game.getPeriods())
 		{
@@ -52,7 +52,7 @@ public abstract class PlayerVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(Period period) 
+	public void visit(Period period) throws Exception 
 	{
 		for(Play p : period.getPlays())
 		{
@@ -67,7 +67,7 @@ public abstract class PlayerVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(Play play) 
+	public void visit(Play play) throws Exception 
 	{
 		currentContext = play.getContextInfo();
 		currentPlayer = new Player("", -1);
@@ -75,7 +75,7 @@ public abstract class PlayerVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(PlayerPlay play) 
+	public void visit(PlayerPlay play) throws Exception 
 	{
 		currentContext = play.getContextInfo();
 		currentPlayer = play.getPlayer();
@@ -83,7 +83,7 @@ public abstract class PlayerVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(MissedPlay play) 
+	public void visit(MissedPlay play) throws Exception 
 	{
 		currentContext = play.getContextInfo();
 		currentPlayer = play.getPlayer();
@@ -94,7 +94,7 @@ public abstract class PlayerVisitor implements Visitor
 	public void visit(PlayType playType) {}
 
 	@Override
-	public void visit(Block block) 
+	public void visit(Block block) throws Exception 
 	{
 		if (currentContext.getPlayRole() == PlayRole.HOME)
 			setPlayer(currentPlayer, rosters.getHomeActive());
@@ -107,7 +107,7 @@ public abstract class PlayerVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(Ejection ejection) 
+	public void visit(Ejection ejection) throws Exception 
 	{
 		if (currentContext.getPlayRole() == PlayRole.HOME)
 			setPlayer(currentPlayer, rosters.getHomeActive());
@@ -120,7 +120,7 @@ public abstract class PlayerVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(Foul foul) 
+	public void visit(Foul foul) throws Exception 
 	{
 		
 		if (currentContext.getPlayRole() == PlayRole.HOME)
@@ -134,14 +134,14 @@ public abstract class PlayerVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(DoublePersonalFoul foul) 
+	public void visit(DoublePersonalFoul foul) throws Exception 
 	{
 		setPlayer(foul.getPlayer1(), rosters.getActive());
 		setPlayer(foul.getPlayer2(), rosters.getActive());
 	}
 
 	@Override
-	public void visit(FreeThrow freeThrow) 
+	public void visit(FreeThrow freeThrow) throws Exception 
 	{
 		if (currentContext.getPlayRole() == PlayRole.HOME)
 			setPlayer(currentPlayer, rosters.getHomeActive());
@@ -154,7 +154,7 @@ public abstract class PlayerVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(JumpBall jumpBall) 
+	public void visit(JumpBall jumpBall) throws Exception 
 	{
 		setPlayer(jumpBall.getPlayer1(), rosters.getActive());
 		setPlayer(jumpBall.getPlayer2(), rosters.getActive());
@@ -163,7 +163,7 @@ public abstract class PlayerVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(Rebound rebound) 
+	public void visit(Rebound rebound) throws Exception 
 	{
 		if(rebound.isPlayerRebound())
 		{
@@ -187,7 +187,7 @@ public abstract class PlayerVisitor implements Visitor
 	public void visit(Review review) {}
 
 	@Override
-	public void visit(Shot shot) 
+	public void visit(Shot shot) throws Exception 
 	{
 		if (currentContext.getPlayRole() == PlayRole.HOME)
 			setPlayer(currentPlayer, rosters.getHomeActive());
@@ -204,7 +204,7 @@ public abstract class PlayerVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(Assist assist) 
+	public void visit(Assist assist) throws Exception 
 	{
 		if (currentContext.getPlayRole() == PlayRole.HOME && assist.getPlayer() != null)
 			setPlayer(assist.getPlayer(), rosters.getHomeActive());
@@ -217,7 +217,7 @@ public abstract class PlayerVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(Steal steal) 
+	public void visit(Steal steal) throws Exception 
 	{
 		if (currentContext.getPlayRole() == PlayRole.HOME)
 			setPlayer(currentPlayer, rosters.getHomeActive());
@@ -230,7 +230,7 @@ public abstract class PlayerVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(Substitution sub) 
+	public void visit(Substitution sub) throws Exception 
 	{
 		if (currentContext.getPlayRole() == PlayRole.HOME)
 		{
@@ -249,7 +249,7 @@ public abstract class PlayerVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(Technical technical) 
+	public void visit(Technical technical) throws Exception 
 	{
 		ThreeSecTechnical threeSecTec;
 		if (technical.getPredicate() != null)
@@ -282,14 +282,14 @@ public abstract class PlayerVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(DoubleTechnical technical) 
+	public void visit(DoubleTechnical technical) throws Exception 
 	{
 		setPlayer(technical.getPlayer1(), rosters.getActive());
 		setPlayer(technical.getPlayer2(), rosters.getActive());
 	}
 
 	@Override
-	public void visit(TauntingTechnical technical) 
+	public void visit(TauntingTechnical technical) throws Exception 
 	{
 		if (currentContext.getPlayRole() == PlayRole.HOME)
 			setPlayer(currentPlayer, rosters.getHomeActive());
@@ -309,7 +309,7 @@ public abstract class PlayerVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(Turnover turnover) 
+	public void visit(Turnover turnover) throws Exception 
 	{
 		if (currentContext.getPlayRole() == PlayRole.HOME)
 			setPlayer(currentPlayer, rosters.getHomeActive());
@@ -322,7 +322,7 @@ public abstract class PlayerVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(Violation violation) 
+	public void visit(Violation violation) throws Exception 
 	{
 		if (currentContext.getPlayRole() == PlayRole.HOME)
 			setPlayer(currentPlayer, rosters.getHomeActive());
@@ -337,6 +337,6 @@ public abstract class PlayerVisitor implements Visitor
 	@Override
 	public void visit(Possession possession) {}
 	
-	protected abstract void setPlayer(Player player, ArrayList<Player> possiblePlayers);
+	protected abstract void setPlayer(Player player, ArrayList<Player> possiblePlayers) throws Exception;
 	
 }

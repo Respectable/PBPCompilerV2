@@ -20,7 +20,7 @@ public class Foul extends PlayType
 	public FoulType getFoulType() { return foulType; }
 
 	@Override
-	public void accept(Visitor visitor) 
+	public void accept(Visitor visitor) throws Exception 
 	{
 		visitor.visit(this);
 	}

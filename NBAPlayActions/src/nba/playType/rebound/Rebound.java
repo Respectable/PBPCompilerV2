@@ -15,7 +15,7 @@ public class Rebound extends PlayType
 	public boolean isPlayerRebound() { return playerRebound; }
 
 	@Override
-	public void accept(Visitor visitor) 
+	public void accept(Visitor visitor) throws Exception 
 	{
 		visitor.visit(this);
 	}

@@ -1,7 +1,6 @@
 package codeGenerator;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -40,10 +39,8 @@ public class GameSQLGenerator
 	public String getSeason() { return season; }
 	public String getBroadcaster() { return broadcaster; }
 	
-	public void compile(String path,
-			String userName, String password)
+	public void compile(Connection conn)
 	{
-		Connection conn;
 		PreparedStatement stmt;
 		ResultSet rs;
 		Date convertedDate = new Date();
@@ -59,8 +56,6 @@ public class GameSQLGenerator
 		
 		try 
 		{
-			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection(path,userName,password);
 			stmt = conn.prepareStatement("INSERT INTO `nba2`.`game` (`date_played`,`game_time`," +
 					"`attendance`, `broadcaster`,`nba_game_id`) VALUES (?,?,?,?,?);");
 			
@@ -95,7 +90,7 @@ public class GameSQLGenerator
 					"VALUES (?,?);");
 			
 			stmt.setInt(1, this.gameID);
-			stmt.setInt(2, getSeasonID(this.season, path, userName, password));
+			stmt.setInt(2, getSeasonID(this.season, conn));
 			stmt.executeUpdate();
 			
 			
@@ -103,10 +98,6 @@ public class GameSQLGenerator
 			conn.close();
 			
 		} 
-		catch (ClassNotFoundException e) 
-		{
-			e.printStackTrace();
-		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
@@ -127,9 +118,8 @@ public class GameSQLGenerator
 		return total;
 	}
 	
-	private int getSeasonID(String season, String path, String userName, String password)
+	private int getSeasonID(String season, Connection conn)
 	{
-		Connection conn;
 		PreparedStatement stmt;
 		ResultSet rs;
 		int seasonID = -1;
@@ -140,8 +130,6 @@ public class GameSQLGenerator
 		{
 			int startYear = Integer.parseInt(season.substring(0,4));
 			startDate = sdf.parse(startYear + "-12-31");
-			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection(path,userName,password);
 			stmt = conn.prepareStatement("SELECT * FROM `nba2`.`season`");
 			rs = stmt.executeQuery();
 			
@@ -162,10 +150,6 @@ public class GameSQLGenerator
 			conn.close();
 			return seasonID;
 		} 
-		catch (ClassNotFoundException e) 
-		{
-			e.printStackTrace();
-		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();

@@ -15,7 +15,7 @@ public class Ejection extends PlayType
 	public EjectionEnding getEnding() { return ending; }
 
 	@Override
-	public void accept(Visitor visitor) 
+	public void accept(Visitor visitor) throws Exception 
 	{
 		visitor.visit(this);
 	}

@@ -52,56 +52,56 @@ public class TalliedDuplicatePlayerVisitor extends PlayerVisitor
 	}
 	
 	@Override
-	public void visit(Rebound rebound)
+	public void visit(Rebound rebound) throws Exception
 	{
 		this.currentFilter = new CheckReb();
 		super.visit(rebound);
 	}
 	
 	@Override
-	public void visit(Turnover turnover)
+	public void visit(Turnover turnover) throws Exception
 	{
 		this.currentFilter = new CheckTO();
 		super.visit(turnover);
 	}
 	
 	@Override
-	public void visit(Shot shot)
+	public void visit(Shot shot) throws Exception
 	{
 		this.currentFilter = new CheckShot();
 		super.visit(shot);
 	}
 	
 	@Override
-	public void visit(Assist assist)
+	public void visit(Assist assist) throws Exception
 	{
 		this.currentFilter = new CheckAst();
 		super.visit(assist);
 	}
 	
 	@Override
-	public void visit(Foul foul)
+	public void visit(Foul foul) throws Exception
 	{
 		this.currentFilter = new CheckPF();
 		super.visit(foul);
 	}
 	
 	@Override
-	public void visit(FreeThrow ft)
+	public void visit(FreeThrow ft) throws Exception
 	{
 		this.currentFilter = new CheckFT();
 		super.visit(ft);
 	}
 	
 	@Override
-	public void visit(Steal steal)
+	public void visit(Steal steal) throws Exception
 	{
 		this.currentFilter = new CheckStl();
 		super.visit(steal);
 	}
 	
 	@Override
-	public void visit(Block block)
+	public void visit(Block block) throws Exception
 	{
 		this.currentFilter = new CheckBlk();
 		super.visit(block);
@@ -156,7 +156,7 @@ public class TalliedDuplicatePlayerVisitor extends PlayerVisitor
 	}
 
 	@Override
-	protected void setPlayer(Player player, ArrayList<Player> possiblePlayers) 
+	protected void setPlayer(Player player, ArrayList<Player> possiblePlayers) throws Exception 
 	{
 		if (player.getPlayerID() > 0)
 		{
@@ -187,7 +187,7 @@ public class TalliedDuplicatePlayerVisitor extends PlayerVisitor
 		{
 			System.out.println("Play: " + currentContext.getPlayID() + 
 					" Play not found.");
-			System.exit(-1);
+			throw new Exception();
 		}
 		else
 		{

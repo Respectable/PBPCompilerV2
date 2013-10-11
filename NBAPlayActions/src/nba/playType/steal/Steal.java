@@ -11,7 +11,7 @@ public class Steal extends PlayType
 	}
 
 	@Override
-	public void accept(Visitor visitor) 
+	public void accept(Visitor visitor) throws Exception 
 	{
 		visitor.visit(this);
 	}

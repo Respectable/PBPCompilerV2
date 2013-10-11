@@ -23,7 +23,7 @@ public class PlayerPlay extends Play
 	}
 	
 	@Override
-	public void accept(Visitor visitor) 
+	public void accept(Visitor visitor) throws Exception 
 	{
 		visitor.visit(this);
 	}

@@ -17,7 +17,7 @@ public class FreeThrow extends PlayType
 	public FreeThrowPredicate getPredicate() { return predicate; }
 
 	@Override
-	public void accept(Visitor visitor) 
+	public void accept(Visitor visitor) throws Exception 
 	{
 		visitor.visit(this);
 	}

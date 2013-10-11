@@ -20,7 +20,7 @@ public class Technical extends PlayType
 	public TechnicalPredicate getPredicate() { return predicate; }
 
 	@Override
-	public void accept(Visitor visitor) 
+	public void accept(Visitor visitor) throws Exception 
 	{
 		visitor.visit(this);
 	}

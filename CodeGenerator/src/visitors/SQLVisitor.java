@@ -1,7 +1,6 @@
 package visitors;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -49,7 +48,7 @@ public class SQLVisitor implements Visitor {
 	private ContextInfo currentContext;
 	private Possession currentPossession;
 	
-	public SQLVisitor(String path, String userName, String password, ArrayList<PBPJson> pbp,
+	public SQLVisitor(Connection conn, ArrayList<PBPJson> pbp,
 			int homeID, int awayID, int gameID)
 	{
 		this.pbp = new ArrayList<PBPJson>(pbp);
@@ -57,26 +56,14 @@ public class SQLVisitor implements Visitor {
 		this.awayID = awayID;
 		this.gameID = gameID;
 		Collections.sort(this.pbp, PBPJson.COMPARE_BY_PLAY_ID);
-		try 
-		{
-			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection(path,userName,password);
-		}
-		catch (ClassNotFoundException e) 
-		{
-			e.printStackTrace();
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
+		this.conn = conn;
 	}
 	
 	@Override
 	public void visit(ContextInfo contextInfo) {}
 
 	@Override
-	public void visit(Game game) 
+	public void visit(Game game) throws Exception 
 	{
 		for (Period p : game.getPeriods())
 		{
@@ -85,7 +72,7 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(Period period) 
+	public void visit(Period period) throws Exception 
 	{
 		try 
 		{
@@ -134,14 +121,14 @@ public class SQLVisitor implements Visitor {
 	public void visit(Player player) {}
 
 	@Override
-	public void visit(Play play) 
+	public void visit(Play play) throws Exception 
 	{
 		currentContext = play.getContextInfo();
 		play.getPlayType().accept(this);
 	}
 
 	@Override
-	public void visit(PlayerPlay play) 
+	public void visit(PlayerPlay play) throws Exception 
 	{
 		currentContext = play.getContextInfo();
 		this.currentPlayerID = play.getPlayer().getPlayerID();
@@ -149,7 +136,7 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(MissedPlay play) 
+	public void visit(MissedPlay play) throws Exception 
 	{
 		currentContext = play.getContextInfo();
 		this.missed = true;
@@ -201,7 +188,7 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(Ejection ejection) 
+	public void visit(Ejection ejection) throws Exception 
 	{
 		int ejectionID = -1;
 		
@@ -241,7 +228,7 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(Foul foul) 
+	public void visit(Foul foul) throws Exception 
 	{
 		try 
 		{
@@ -283,7 +270,7 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(DoublePersonalFoul foul) 
+	public void visit(DoublePersonalFoul foul) throws Exception 
 	{
 		try 
 		{
@@ -332,7 +319,7 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(FreeThrow freeThrow) 
+	public void visit(FreeThrow freeThrow) throws Exception 
 	{
 		try
 		{
@@ -420,7 +407,7 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(JumpBall jumpBall) 
+	public void visit(JumpBall jumpBall) throws Exception 
 	{
 		int jumpBallID = -1;
 		
@@ -572,7 +559,7 @@ public class SQLVisitor implements Visitor {
 	public void visit(Review review) {}
 
 	@Override
-	public void visit(Shot shot) 
+	public void visit(Shot shot) throws Exception 
 	{
 		boolean threePointShot = shot.getShotType() instanceof ThreePointShot;
 		try 
@@ -676,7 +663,7 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(Steal steal) 
+	public void visit(Steal steal) throws Exception 
 	{
 		try 
 		{
@@ -725,7 +712,7 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(Substitution sub) 
+	public void visit(Substitution sub) throws Exception 
 	{
 		int subID = -1;
 		
@@ -767,7 +754,7 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(Technical technical) 
+	public void visit(Technical technical) throws Exception 
 	{
 		int technicalID = -1;
 		
@@ -808,7 +795,7 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(DoubleTechnical technical) 
+	public void visit(DoubleTechnical technical) throws Exception 
 	{
 		int technicalID = -1;
 		
@@ -856,7 +843,7 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(TauntingTechnical technical) 
+	public void visit(TauntingTechnical technical) throws Exception 
 	{
 		int technicalID = -1;
 		
@@ -897,7 +884,7 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(Timeout timeout) 
+	public void visit(Timeout timeout) throws Exception 
 	{
 		int timeoutID = -1;
 		
@@ -950,7 +937,7 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(Turnover turnover) 
+	public void visit(Turnover turnover) throws Exception 
 	{
 		if (turnover.getTurnoverType().toString().equals("No Turnover"))
 		{
@@ -1005,48 +992,41 @@ public class SQLVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(Violation violation) 
+	public void visit(Violation violation) throws Exception 
 	{
 		int violationID = -1;
 		
-		try 
-		{
-			stmt = conn.prepareStatement("INSERT INTO `nba2`.`violation` (violation_type) VALUES (?);");
-			stmt.setString(1, violation.getViolationType().toString());
-			stmt.executeUpdate();
-			
-			rs = stmt.executeQuery("SELECT LAST_INSERT_ID()");
+		stmt = conn.prepareStatement("INSERT INTO `nba2`.`violation` (violation_type) VALUES (?);");
+		stmt.setString(1, violation.getViolationType().toString());
+		stmt.executeUpdate();
+		
+		rs = stmt.executeQuery("SELECT LAST_INSERT_ID()");
 
-		    if (rs.next()) 
-		    {
-		    	violationID = rs.getInt(1);
-		    }
-		    else 
-		    {
-		    	//TODO throw an exception from here
-		    }
-			
-		    stmt = conn.prepareStatement("INSERT INTO `nba2`.`violation_player` (`violation_id`,`player_id`)" +
-					"VALUES (?,?);");
-			stmt.setInt(1, violationID);
-			stmt.setInt(2, this.currentPlayerID);
-			stmt.executeUpdate();
-			
-			stmt = conn.prepareStatement("INSERT INTO `nba2`.`violation_possession` (`violation_id`,`possession_id`," +
-					"`time_of_violation`) VALUES (?,?,?);");
-			stmt.setInt(1, violationID);
-			stmt.setInt(2, this.currentPossessionID);
-			stmt.setInt(3, getConvertedPlayTime(currentContext.getPlayID()));
-			stmt.executeUpdate();
-		} 
-		catch (SQLException e) 
-		{
-			e.printStackTrace();
-		}
+	    if (rs.next()) 
+	    {
+	    	violationID = rs.getInt(1);
+	    }
+	    else 
+	    {
+	    	//TODO throw an exception from here
+	    }
+		
+	    stmt = conn.prepareStatement("INSERT INTO `nba2`.`violation_player` (`violation_id`,`player_id`)" +
+				"VALUES (?,?);");
+		stmt.setInt(1, violationID);
+		stmt.setInt(2, this.currentPlayerID);
+		stmt.executeUpdate();
+		
+		stmt = conn.prepareStatement("INSERT INTO `nba2`.`violation_possession` (`violation_id`,`possession_id`," +
+				"`time_of_violation`) VALUES (?,?,?);");
+		stmt.setInt(1, violationID);
+		stmt.setInt(2, this.currentPossessionID);
+		stmt.setInt(3, getConvertedPlayTime(currentContext.getPlayID()));
+		stmt.executeUpdate();
 	}
 
 	@Override
-	public void visit(Possession possession) 
+	public void visit(Possession possession) throws Exception 
 	{
 		ArrayList<Player> players = possession.getAwayPlayers();
 		players.addAll(possession.getHomePlayers());
@@ -1096,7 +1076,7 @@ public class SQLVisitor implements Visitor {
 		}
 	}
 	
-	private PBPJson getPlayTime(int playID)
+	private PBPJson getPlayTime(int playID) throws Exception
 	{
 		PBPJson relevantPlay = new PBPJson();
 		relevantPlay.setEventNum(playID);
@@ -1107,7 +1087,7 @@ public class SQLVisitor implements Visitor {
 		{
 			System.out.println("Game: " + this.gameID + " " +
 					"Play: " + playID + " Play not found.");
-			System.exit(-1);
+			throw new Exception();
 		}
 		else
 		{
@@ -1117,7 +1097,7 @@ public class SQLVisitor implements Visitor {
 		return relevantPlay;
 	}
 	
-	private int getConvertedPlayTime(int playID)
+	private int getConvertedPlayTime(int playID) throws Exception
 	{
 		PBPJson currentPlay = getPlayTime(playID);
 		return PBPJson.convertStringTime(currentPlay.getGameTime(), currentPlay);

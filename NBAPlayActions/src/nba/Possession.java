@@ -32,7 +32,7 @@ public class Possession implements Visitable
 		possessionPlays.add(play);
 	}
 	
-	public void addHomePlayer(Player player)
+	public void addHomePlayer(Player player) throws Exception
 	{
 		if (homePlayers.size() < 5)
 		{
@@ -47,11 +47,11 @@ public class Possession implements Visitable
 			{
 				System.out.println(p.getPlayerName());
 			}
-			System.exit(-1);
+			throw new Exception();
 		}
 	}
 	
-	public void addAwayPlayer(Player player)
+	public void addAwayPlayer(Player player) throws Exception
 	{
 		if (awayPlayers.size() < 5)
 		{
@@ -66,7 +66,7 @@ public class Possession implements Visitable
 			{
 				System.out.println(p.getPlayerName());
 			}
-			System.exit(-1);
+			throw new Exception();
 		}
 	}
 	
@@ -112,7 +112,7 @@ public class Possession implements Visitable
 	}
 	
 	@Override
-	public void accept(Visitor visitor) 
+	public void accept(Visitor visitor) throws Exception 
 	{
 		visitor.visit(this);
 	}

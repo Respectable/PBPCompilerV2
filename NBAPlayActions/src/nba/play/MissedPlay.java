@@ -17,7 +17,7 @@ public class MissedPlay extends PlayerPlay
 	public boolean missed() { return true; }
 
 	@Override
-	public void accept(Visitor visitor) 
+	public void accept(Visitor visitor) throws Exception 
 	{
 		visitor.visit(this);
 	}

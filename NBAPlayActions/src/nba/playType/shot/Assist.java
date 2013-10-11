@@ -21,7 +21,7 @@ public class Assist implements Visitable
 	public Player getPlayer() { return player; }
 
 	@Override
-	public void accept(Visitor visitor) 
+	public void accept(Visitor visitor) throws Exception 
 	{
 		visitor.visit(this);
 	}

@@ -15,7 +15,7 @@ public class Timeout extends PlayType
 	public String getTimeoutType() { return timeoutType; }
 
 	@Override
-	public void accept(Visitor visitor) 
+	public void accept(Visitor visitor) throws Exception 
 	{
 		visitor.visit(this);
 	}

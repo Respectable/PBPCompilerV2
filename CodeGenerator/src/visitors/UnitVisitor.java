@@ -46,7 +46,7 @@ public class UnitVisitor implements Visitor
 	public void visit(ContextInfo contextInfo) {}
 
 	@Override
-	public void visit(Game game) 
+	public void visit(Game game) throws Exception 
 	{
 		for (Period p : game.getPeriods())
 		{
@@ -55,7 +55,7 @@ public class UnitVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(Period period) 
+	public void visit(Period period) throws Exception 
 	{
 		for (Player player : rosters.getHomeActive())
 		{
@@ -121,7 +121,7 @@ public class UnitVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(Play play) 
+	public void visit(Play play) throws Exception 
 	{
 		if (!(play.getPlayType() instanceof Technical) &&
 				!(play.getPlayType() instanceof Ejection))
@@ -131,7 +131,7 @@ public class UnitVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(PlayerPlay play) 
+	public void visit(PlayerPlay play) throws Exception 
 	{
 		if (!(play.getPlayType() instanceof Technical) &&
 				!(play.getPlayType() instanceof Ejection))
@@ -142,7 +142,7 @@ public class UnitVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(MissedPlay play) 
+	public void visit(MissedPlay play) throws Exception 
 	{
 		play.getPlayer().accept(this);
 		play.getPlayType().accept(this);
@@ -161,7 +161,7 @@ public class UnitVisitor implements Visitor
 	public void visit(Foul foul) {}
 	
 	@Override
-	public void visit(DoublePersonalFoul foul) 
+	public void visit(DoublePersonalFoul foul) throws Exception 
 	{
 		foul.getPlayer1().accept(this);
 		foul.getPlayer2().accept(this);
@@ -171,7 +171,7 @@ public class UnitVisitor implements Visitor
 	public void visit(FreeThrow freeThrow) {}
 
 	@Override
-	public void visit(JumpBall jumpBall) 
+	public void visit(JumpBall jumpBall) throws Exception 
 	{
 		jumpBall.getPlayer1().accept(this);
 		jumpBall.getPlayer2().accept(this);
@@ -186,14 +186,14 @@ public class UnitVisitor implements Visitor
 	public void visit(Review review) {}
 
 	@Override
-	public void visit(Shot shot) 
+	public void visit(Shot shot) throws Exception 
 	{
 		if (shot.getShotEnding().getAssist() != null)
 			shot.getShotEnding().getAssist().accept(this);
 	}
 
 	@Override
-	public void visit(Assist assist) 
+	public void visit(Assist assist) throws Exception 
 	{
 		if (assist.getPlayer() != null)
 			assist.getPlayer().accept(this);
@@ -203,7 +203,7 @@ public class UnitVisitor implements Visitor
 	public void visit(Steal steal) {}
 
 	@Override
-	public void visit(Substitution sub) 
+	public void visit(Substitution sub) throws Exception 
 	{
 		//TODO need logic for a sub that takes place after score in possession
 		
@@ -235,7 +235,7 @@ public class UnitVisitor implements Visitor
 		{
 			System.out.println("A player already on court has subbed in: " +
 							currentPlayer.getPlayerName());
-			System.exit(-1);
+			throw new Exception();
 		}
 		else if (currentPlayerOnCourt & sub.getOut().equals(currentPlayer))
 		{
@@ -245,7 +245,7 @@ public class UnitVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(Technical technical) 
+	public void visit(Technical technical) throws Exception 
 	{
 		ThreeSecTechnical threeSecTec;
 		if (technical.getPredicate() != null)
@@ -262,7 +262,7 @@ public class UnitVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(DoubleTechnical technical) 
+	public void visit(DoubleTechnical technical) throws Exception 
 	{
 		technical.getPlayer1().accept(this);
 		technical.getPlayer2().accept(this);
@@ -281,7 +281,7 @@ public class UnitVisitor implements Visitor
 	public void visit(Violation violation) {}
 
 	@Override
-	public void visit(Possession possession) 
+	public void visit(Possession possession) throws Exception 
 	{
 		for(Play p : possession.getPossessionPlays())
 		{

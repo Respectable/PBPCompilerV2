@@ -10,7 +10,7 @@ public class TauntingTechnical extends Technical
 	}
 	
 	@Override
-	public void accept(Visitor visitor)
+	public void accept(Visitor visitor) throws Exception
 	{
 		visitor.visit(this);
 	}

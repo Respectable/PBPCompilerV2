@@ -1,7 +1,6 @@
 package codeGenerator;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,10 +12,8 @@ import jsonObjects.TeamJson;
 public class TeamSQLGenerator 
 {
 
-	public static void updateTeams(ArrayList<TeamJson> teams, String path,
-			String userName, String password)
+	public static void updateTeams(ArrayList<TeamJson> teams, Connection conn)
 	{
-		Connection conn;
 		PreparedStatement stmt;
 		ResultSet rs;
 		
@@ -25,9 +22,6 @@ public class TeamSQLGenerator
 		
 		try 
 		{
-			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection(path,userName,password);
-			
 			stmt = conn.prepareStatement("SELECT * FROM `nba2`.`team`");
 			rs = stmt.executeQuery();
 			
@@ -53,10 +47,6 @@ public class TeamSQLGenerator
 			stmt.close();
 			conn.close();
 			
-		} 
-		catch (ClassNotFoundException e) 
-		{
-			e.printStackTrace();
 		}
 		catch (SQLException e)
 		{

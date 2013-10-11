@@ -21,16 +21,12 @@ public class OfficialSQLGenerator
 		this.officials = officials;
 	}
 
-	public void compile(String path,
-			String userName, String password)
+	public void compile(Connection conn)
 	{
-		Connection conn;
 		PreparedStatement stmt;
 		
 		try 
 		{
-			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection(path,userName,password);
 			stmt = conn.prepareStatement("INSERT INTO `nba2`.`game_officials` (`game_id`,`official_id`)" +
 					"VALUES (?,?);");
 			
@@ -46,10 +42,6 @@ public class OfficialSQLGenerator
 			conn.close();
 			
 		} 
-		catch (ClassNotFoundException e) 
-		{
-			e.printStackTrace();
-		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();

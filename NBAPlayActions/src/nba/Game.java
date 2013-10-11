@@ -16,7 +16,7 @@ public class Game implements Visitable
 	public ArrayList<Period> getPeriods() { return periods; }
 
 	@Override
-	public void accept(Visitor visitor) 
+	public void accept(Visitor visitor) throws Exception 
 	{
 		visitor.visit(this);
 	}

@@ -56,7 +56,7 @@ public class SubstitutionPlayerVisitor implements Visitor
 	public void visit(ContextInfo contextInfo) {}
 
 	@Override
-	public void visit(Game game) 
+	public void visit(Game game) throws Exception 
 	{
 		currentRole = PlayRole.HOME;
 		VisitEach(game.getPeriods());
@@ -74,7 +74,7 @@ public class SubstitutionPlayerVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(Period period) 
+	public void visit(Period period) throws Exception 
 	{
 		this.playersOnFloor = new ArrayList<Player>();
 		if (!this.reversed)
@@ -87,7 +87,7 @@ public class SubstitutionPlayerVisitor implements Visitor
 	public void visit(Player player) {}
 
 	@Override
-	public void visit(Play play) 
+	public void visit(Play play) throws Exception 
 	{
 		if (play.getContextInfo().getPlayRole() == PlayRole.NEUTRAL ||
 				play.getContextInfo().getPlayRole() == this.currentRole)
@@ -97,7 +97,7 @@ public class SubstitutionPlayerVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(PlayerPlay play) 
+	public void visit(PlayerPlay play) throws Exception 
 	{
 		if (play.getContextInfo().getPlayRole() == PlayRole.NEUTRAL ||
 				play.getContextInfo().getPlayRole() == this.currentRole)
@@ -110,7 +110,7 @@ public class SubstitutionPlayerVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(MissedPlay play) 
+	public void visit(MissedPlay play) throws Exception 
 	{
 		if (play.getContextInfo().getPlayRole() == PlayRole.NEUTRAL ||
 				play.getContextInfo().getPlayRole() == this.currentRole)
@@ -126,7 +126,7 @@ public class SubstitutionPlayerVisitor implements Visitor
 	public void visit(PlayType playType) {}
 
 	@Override
-	public void visit(Block block) 
+	public void visit(Block block) throws Exception 
 	{
 		addPlayerOnFloor(this.currentPlayPlayer);
 	}
@@ -135,7 +135,7 @@ public class SubstitutionPlayerVisitor implements Visitor
 	public void visit(Ejection ejection) {}
 
 	@Override
-	public void visit(Foul foul) 
+	public void visit(Foul foul) throws Exception 
 	{
 		addPlayerOnFloor(this.currentPlayPlayer);
 	}
@@ -144,7 +144,7 @@ public class SubstitutionPlayerVisitor implements Visitor
 	public void visit(DoublePersonalFoul foul){}
 
 	@Override
-	public void visit(FreeThrow freeThrow) 
+	public void visit(FreeThrow freeThrow) throws Exception 
 	{
 		addPlayerOnFloor(this.currentPlayPlayer);
 	}
@@ -153,7 +153,7 @@ public class SubstitutionPlayerVisitor implements Visitor
 	public void visit(JumpBall jumpBall) {}
 
 	@Override
-	public void visit(Rebound rebound) 
+	public void visit(Rebound rebound) throws Exception 
 	{
 		addPlayerOnFloor(this.currentPlayPlayer);
 	}
@@ -162,7 +162,7 @@ public class SubstitutionPlayerVisitor implements Visitor
 	public void visit(Review review) {}
 
 	@Override
-	public void visit(Shot shot) 
+	public void visit(Shot shot) throws Exception 
 	{
 		addPlayerOnFloor(this.currentPlayPlayer);
 		if (shot.getShotEnding().getAssist() != null)
@@ -172,20 +172,20 @@ public class SubstitutionPlayerVisitor implements Visitor
 	}
 
 	@Override
-	public void visit(Assist assist) 
+	public void visit(Assist assist) throws Exception 
 	{
 		if(assist.getPlayer() != null)
 			addPlayerOnFloor(this.currentPlayPlayer);
 	}
 
 	@Override
-	public void visit(Steal steal) 
+	public void visit(Steal steal) throws Exception 
 	{
 		addPlayerOnFloor(this.currentPlayPlayer);
 	}
 
 	@Override
-	public void visit(Substitution sub) 
+	public void visit(Substitution sub) throws Exception 
 	{
 		if(!this.reversed)
 		{
@@ -247,13 +247,13 @@ public class SubstitutionPlayerVisitor implements Visitor
 	public void visit(Timeout timeout) {}
 
 	@Override
-	public void visit(Turnover turnover) 
+	public void visit(Turnover turnover) throws Exception 
 	{
 		addPlayerOnFloor(this.currentPlayPlayer);
 	}
 
 	@Override
-	public void visit(Violation violation) 
+	public void visit(Violation violation) throws Exception 
 	{
 		addPlayerOnFloor(this.currentPlayPlayer);
 	}
@@ -261,7 +261,7 @@ public class SubstitutionPlayerVisitor implements Visitor
 	@Override
 	public void visit(Possession possession) {}
 	
-	protected void addPlayerOnFloor(Player player)
+	protected void addPlayerOnFloor(Player player) throws Exception
 	{
 		if (player.getPlayerID() != -1 && !this.playersOnFloor.contains(player))
 		{
@@ -270,12 +270,12 @@ public class SubstitutionPlayerVisitor implements Visitor
 			else
 			{
 				System.out.println("More than 5 players on court");
-				System.exit(-1);
+				throw new Exception();
 			}
 		}
 	}
 	
-	protected void setIncomingPlayer(Player player)
+	protected void setIncomingPlayer(Player player) throws Exception
 	{
 		ArrayList<Player> playersOnBench;
 		ArrayList<Player> matchingPlayers;
@@ -332,7 +332,7 @@ public class SubstitutionPlayerVisitor implements Visitor
 		}
 	}
 	
-	protected void VisitEach(ArrayList<? extends Visitable> list)
+	protected void VisitEach(ArrayList<? extends Visitable> list) throws Exception
 	{
 		ListIterator<? extends Visitable> listIterator = list.listIterator();
 		while(listIterator.hasNext())
@@ -341,7 +341,7 @@ public class SubstitutionPlayerVisitor implements Visitor
 		}
 	}
 	
-	protected void VisitEachInReverse(ArrayList<? extends Visitable> list)
+	protected void VisitEachInReverse(ArrayList<? extends Visitable> list) throws Exception
 	{
 		ListIterator<? extends Visitable> reverseIterator = 
 				list.listIterator(list.size());
