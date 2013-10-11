@@ -513,7 +513,6 @@ public class RosterSQLGenerator
 			}
 			
 			stmt.close();
-			conn.close();
 			
 		}
 		catch (SQLException e)

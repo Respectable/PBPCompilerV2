@@ -2,7 +2,6 @@ package compileVerification;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -96,7 +95,6 @@ public class CompileVerifier
 				hadResults = cStmt.getMoreResults();
 			}
 			cStmt.close();
-			conn.close();
 			
 		} 
 		catch (SQLException e) 

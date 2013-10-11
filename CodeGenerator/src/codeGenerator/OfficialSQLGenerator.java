@@ -39,7 +39,6 @@ public class OfficialSQLGenerator
 			
 			
 			stmt.close();
-			conn.close();
 			
 		} 
 		catch (SQLException e)
@@ -89,7 +88,6 @@ public class OfficialSQLGenerator
 			
 			rs.close();
 			stmt.close();
-			conn.close();
 			
 		} 
 		catch (ClassNotFoundException e) 

@@ -52,7 +52,6 @@ public class PlayerSQLGenerator
 			
 			rs.close();
 			stmt.close();
-			conn.close();
 			
 		}
 		catch (SQLException e)

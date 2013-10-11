@@ -45,7 +45,6 @@ public class TeamSQLGenerator
 			
 			rs.close();
 			stmt.close();
-			conn.close();
 			
 		}
 		catch (SQLException e)

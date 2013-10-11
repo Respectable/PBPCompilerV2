@@ -95,7 +95,6 @@ public class GameSQLGenerator
 			
 			
 			stmt.close();
-			conn.close();
 			
 		} 
 		catch (SQLException e)
@@ -147,7 +146,6 @@ public class GameSQLGenerator
 		    }
 			
 			stmt.close();
-			conn.close();
 			return seasonID;
 		} 
 		catch (SQLException e)
