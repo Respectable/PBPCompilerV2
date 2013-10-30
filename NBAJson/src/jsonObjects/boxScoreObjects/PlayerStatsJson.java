@@ -13,7 +13,7 @@ public class PlayerStatsJson
 {
 	private int teamID, playerID, reb, ast, stl, blk, to, pf, pts, fga, fta,
 					fgm, ftm, oReb, dReb;
-	private String teamAbbr, playerName, startPosition, comment, gameID;
+	private String teamAbbr, playerName, startPosition, comment, minutes, gameID;
 	
 	public PlayerStatsJson()
 	{
@@ -21,7 +21,7 @@ public class PlayerStatsJson
 	}
 
 	public PlayerStatsJson(int teamID, int playerID, String teamAbbr,
-			String playerName, String startPosition, String comment,
+			String playerName, String startPosition,  String comment, String minutes,
 			int reb, int ast, int stl, int blk, int to, int pf, int pts,
 			int fga, int fta, int fgm, int ftm, int oReb, int dReb, 
 			String gameID) 
@@ -32,6 +32,7 @@ public class PlayerStatsJson
 		this.playerName = playerName;
 		this.startPosition = startPosition;
 		this.comment = comment;
+		this.minutes = minutes;
 		this.reb = reb;
 		this.ast = ast;
 		this.stl = stl;
@@ -74,7 +75,7 @@ public class PlayerStatsJson
 		Gson gson = new Gson();
 		int teamID, playerID, reb, ast, stl, blk, to, pf, pts, fga, fta, fgm, ftm,
 				oReb, dReb;
-		String teamAbbr, playerName, startPosition, comment, gameID;
+		String teamAbbr, playerName, startPosition, comment, minutes, gameID;
 		JsonArray array, tempArray;
 		ArrayList<PlayerStatsJson> players = new ArrayList<PlayerStatsJson>();
 		
@@ -88,8 +89,9 @@ public class PlayerStatsJson
 			playerID = gson.fromJson(tempArray.get(4), int.class);
 			teamAbbr =  gson.fromJson(tempArray.get(2), String.class);
 			playerName =  gson.fromJson(tempArray.get(5), String.class);
-			startPosition =  gson.fromJson(tempArray.get(6), String.class);
+			startPosition =  gson.fromJson(tempArray.get(6), String.class); 
 			comment =  gson.fromJson(tempArray.get(7), String.class);
+			minutes = gson.fromJson(tempArray.get(8), String.class);
 			if (tempArray.get(10) != JsonNull.INSTANCE)
 			{
 				fgm = gson.fromJson(tempArray.get(9), int.class);
@@ -124,7 +126,7 @@ public class PlayerStatsJson
 				pts = 0;
 			}
 			players.add(new PlayerStatsJson(teamID, playerID, teamAbbr, 
-					playerName, startPosition, comment, reb, ast, stl,
+					playerName, startPosition, comment, minutes, reb, ast, stl,
 					blk, to, pf, pts, fga, fta, fgm, ftm, oReb, dReb, gameID));
 		}
 		
@@ -142,6 +144,17 @@ public class PlayerStatsJson
 		array = jsonObject.get("rowSet").getAsJsonArray();
 		
 		return array;
+	}
+	
+	public int getMinutes()
+	{
+		String[] timeParts = this.minutes.split(":");
+		String min = timeParts[0];
+		String tens = timeParts[1].substring(0,1);
+		String singles = timeParts[1].substring(1, 2);
+		
+		return ((Integer.parseInt(min) * 60) + (Integer.parseInt(tens) * 10) +
+				Integer.parseInt(singles)) * 10;
 	}
 	
 	

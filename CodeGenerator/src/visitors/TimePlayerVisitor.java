@@ -2,10 +2,12 @@ package visitors;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 import jsonObjects.BoxJson;
 import jsonObjects.PBPJson;
 import jsonObjects.boxScoreObjects.PlayerStatsJson;
+import codeGenerator.PlayerParser;
 import codeGenerator.RosterSQLGenerator;
 import nba.ContextInfo;
 import nba.Game;
@@ -36,6 +38,7 @@ import nba.playType.turnover.Turnover;
 import nba.playType.violation.Violation;
 import nbaDownloader.NBADownloader;
 import visitor.Visitor;
+import visitors.TalliedDuplicatePlayerVisitor.CheckTeam;
 
 public class TimePlayerVisitor implements Visitor
 {
@@ -44,6 +47,7 @@ public class TimePlayerVisitor implements Visitor
 	private int homeID, awayID;
 	private Period currentPeriod;
 	private ContextInfo currentContext;
+	private HashMap<Player, Integer> playingTimes;
 	
 	
 	public TimePlayerVisitor(RosterSQLGenerator rosters, ArrayList<PBPJson> pbp,
@@ -54,6 +58,7 @@ public class TimePlayerVisitor implements Visitor
 		this.homeID = homeID;
 		this.awayID = awayID;
 		Collections.sort(this.pbp, PBPJson.COMPARE_BY_PLAY_ID);
+		playingTimes = new HashMap<Player, Integer>();
 	}
 
 	@Override
@@ -186,6 +191,7 @@ public class TimePlayerVisitor implements Visitor
 		int index, time;
 		PBPJson relevantPlay = new PBPJson();
 		ArrayList<PlayerStatsJson> pbpData;
+		HashMap<Player, Integer> map;
 		relevantPlay.setEventNum(currentContext.getPlayID());
 		
 		if (sub.getIn().getPlayerID() >= 0 && sub.getOut().getPlayerID() >= 0)
@@ -222,12 +228,16 @@ public class TimePlayerVisitor implements Visitor
 			pbpData = BoxJson.getDownloadedBoxScorePlayers(
 					NBADownloader.downloadCustomBox(pbp.get(0).getGameID(),
 							time, periodEndTime(currentPeriod)));
+			
+			map = setPlayingTimes(homeID, pbpData, new CheckTeam());
 		}
 		else if (sub.getOut().getPlayerID() == -1)
 		{
 			pbpData = BoxJson.getDownloadedBoxScorePlayers(
 					NBADownloader.downloadCustomBox(pbp.get(0).getGameID(),
 							periodStartTime(currentPeriod), time));
+			
+			map = setPlayingTimes(homeID, pbpData, new CheckTeam());
 		}
 	}
 
@@ -299,6 +309,30 @@ public class TimePlayerVisitor implements Visitor
 		{
 			return (periodNum * (5 * 60 * 10)) +
 					(4 * (12 * 60 * 10));
+		}
+	}
+	
+	private HashMap<Player, Integer> setPlayingTimes(int teamID, 
+			ArrayList<PlayerStatsJson> pbpData, PlayerParser<PlayerStatsJson> parser)
+	{
+		HashMap<Player, Integer> map = new HashMap<Player, Integer>();
+		
+		for(PlayerStatsJson player : pbpData)
+		{
+			if(parser.check(teamID, player))
+				map.put(new Player(player.getPlayerName(), 
+						player.getPlayerID()), player.getMinutes());
+		}
+		
+		return map;
+	}
+	
+	public class CheckTeam implements PlayerParser<PlayerStatsJson>
+	{
+		@Override
+		public boolean check(int teamID, PlayerStatsJson player) 
+		{
+			return player.getTeamID() == teamID;
 		}
 	}
 
