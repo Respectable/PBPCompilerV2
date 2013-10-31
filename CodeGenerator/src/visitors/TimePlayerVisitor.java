@@ -3,6 +3,8 @@ package visitors;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import jsonObjects.BoxJson;
 import jsonObjects.PBPJson;
@@ -12,6 +14,7 @@ import codeGenerator.RosterSQLGenerator;
 import nba.ContextInfo;
 import nba.Game;
 import nba.Period;
+import nba.PlayRole;
 import nba.Player;
 import nba.Possession;
 import nba.play.MissedPlay;
@@ -188,9 +191,10 @@ public class TimePlayerVisitor implements Visitor
 	@Override
 	public void visit(Substitution sub) throws Exception 
 	{
-		int index, time;
+		int index, time, currentTeamID;
 		PBPJson relevantPlay = new PBPJson();
 		ArrayList<PlayerStatsJson> pbpData;
+		ArrayList<Player> possiblePlayers, matchingPlayers;
 		HashMap<Player, Integer> map;
 		relevantPlay.setEventNum(currentContext.getPlayID());
 		
@@ -199,6 +203,13 @@ public class TimePlayerVisitor implements Visitor
 			return;
 		}
 		
+		currentTeamID = -1;
+		
+		if (currentContext.getPlayRole().equals(PlayRole.HOME))
+			currentTeamID = homeID;
+		else if (currentContext.getPlayRole().equals(PlayRole.AWAY))
+			currentTeamID = awayID;
+			
 		index = -1;
 		try
 		{
@@ -229,7 +240,57 @@ public class TimePlayerVisitor implements Visitor
 					NBADownloader.downloadCustomBox(pbp.get(0).getGameID(),
 							time, periodEndTime(currentPeriod)));
 			
-			map = setPlayingTimes(homeID, pbpData, new CheckTeam());
+			possiblePlayers = TalliedDuplicatePlayerVisitor.parsePlayers(currentTeamID, pbpData, new CheckTeam());
+			matchingPlayers = RosterSQLGenerator.getMatchingPlayers(possiblePlayers, sub.getIn());
+			
+			map = setPlayingTimes(currentTeamID, pbpData, matchingPlayers, new CheckTeam());
+			
+			int numOfPlayers = 0;
+			for (int min : map.values())
+			{
+				if (min > 0)
+					numOfPlayers++;
+			}
+			if (numOfPlayers == 1)
+			{
+				for (Entry<Player,Integer> item : map.entrySet())
+				{
+					if (item.getValue() > 0)
+					{
+						sub.getIn().setPlayerID(item.getKey().getPlayerID());
+						sub.getIn().setPlayerName(item.getKey().getPlayerName());
+					}
+				}
+				return;
+			}
+			
+			pbpData = BoxJson.getDownloadedBoxScorePlayers(
+					NBADownloader.downloadCustomBox(pbp.get(0).getGameID(),
+							periodEndTime(currentPeriod), time));
+			
+			possiblePlayers = TalliedDuplicatePlayerVisitor.parsePlayers(currentTeamID, pbpData, new CheckTeam());
+			matchingPlayers = RosterSQLGenerator.getMatchingPlayers(possiblePlayers, sub.getIn());
+			
+			map = setPlayingTimes(currentTeamID, pbpData, matchingPlayers, new CheckTeam());
+			
+			numOfPlayers = 0;
+			for (int min : map.values())
+			{
+				if (min == 0)
+					numOfPlayers++;
+			}
+			if (numOfPlayers == 1)
+			{
+				for (Entry<Player,Integer> item : map.entrySet())
+				{
+					if (item.getValue() == 0)
+					{
+						sub.getIn().setPlayerID(item.getKey().getPlayerID());
+						sub.getIn().setPlayerName(item.getKey().getPlayerName());
+					}
+				}
+				return;
+			}
 		}
 		else if (sub.getOut().getPlayerID() == -1)
 		{
@@ -237,7 +298,57 @@ public class TimePlayerVisitor implements Visitor
 					NBADownloader.downloadCustomBox(pbp.get(0).getGameID(),
 							periodStartTime(currentPeriod), time));
 			
-			map = setPlayingTimes(homeID, pbpData, new CheckTeam());
+			possiblePlayers = TalliedDuplicatePlayerVisitor.parsePlayers(currentTeamID, pbpData, new CheckTeam());
+			matchingPlayers = RosterSQLGenerator.getMatchingPlayers(possiblePlayers, sub.getOut());
+			
+			map = setPlayingTimes(currentTeamID, pbpData, matchingPlayers, new CheckTeam());
+			
+			int numOfPlayers = 0;
+			for (int min : map.values())
+			{
+				if (min > 0)
+					numOfPlayers++;
+			}
+			if (numOfPlayers == 1)
+			{
+				for (Entry<Player,Integer> item : map.entrySet())
+				{
+					if (item.getValue() > 0)
+					{
+						sub.getIn().setPlayerID(item.getKey().getPlayerID());
+						sub.getIn().setPlayerName(item.getKey().getPlayerName());
+					}
+				}
+				return;
+			}
+			
+			pbpData = BoxJson.getDownloadedBoxScorePlayers(
+					NBADownloader.downloadCustomBox(pbp.get(0).getGameID(),
+							time, periodEndTime(currentPeriod)));
+			
+			possiblePlayers = TalliedDuplicatePlayerVisitor.parsePlayers(currentTeamID, pbpData, new CheckTeam());
+			matchingPlayers = RosterSQLGenerator.getMatchingPlayers(possiblePlayers, sub.getOut());
+			
+			map = setPlayingTimes(currentTeamID, pbpData, matchingPlayers, new CheckTeam());
+			
+			numOfPlayers = 0;
+			for (int min : map.values())
+			{
+				if (min == 0)
+					numOfPlayers++;
+			}
+			if (numOfPlayers == 1)
+			{
+				for (Entry<Player,Integer> item : map.entrySet())
+				{
+					if (item.getValue() == 0)
+					{
+						sub.getIn().setPlayerID(item.getKey().getPlayerID());
+						sub.getIn().setPlayerName(item.getKey().getPlayerName());
+					}
+				}
+				return;
+			}
 		}
 	}
 
@@ -313,15 +424,21 @@ public class TimePlayerVisitor implements Visitor
 	}
 	
 	private HashMap<Player, Integer> setPlayingTimes(int teamID, 
-			ArrayList<PlayerStatsJson> pbpData, PlayerParser<PlayerStatsJson> parser)
+			ArrayList<PlayerStatsJson> pbpData,
+			ArrayList<Player> matchingPlayers,
+			PlayerParser<PlayerStatsJson> parser)
 	{
 		HashMap<Player, Integer> map = new HashMap<Player, Integer>();
 		
 		for(PlayerStatsJson player : pbpData)
 		{
 			if(parser.check(teamID, player))
-				map.put(new Player(player.getPlayerName(), 
-						player.getPlayerID()), player.getMinutes());
+			{
+				Player currentPlayer = new Player(player.getPlayerName(), 
+						player.getPlayerID());
+				if (matchingPlayers.contains(currentPlayer));
+					map.put(currentPlayer, player.getMinutes());
+			}
 		}
 		
 		return map;
