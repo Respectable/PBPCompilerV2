@@ -248,14 +248,14 @@ public class TimePlayerVisitor implements Visitor
 			int numOfPlayers = 0;
 			for (int min : map.values())
 			{
-				if (min > 0)
+				if (min > 240)
 					numOfPlayers++;
 			}
 			if (numOfPlayers == 1)
 			{
 				for (Entry<Player,Integer> item : map.entrySet())
 				{
-					if (item.getValue() > 0)
+					if (item.getValue() > 240)
 					{
 						sub.getIn().setPlayerID(item.getKey().getPlayerID());
 						sub.getIn().setPlayerName(item.getKey().getPlayerName());
@@ -276,14 +276,14 @@ public class TimePlayerVisitor implements Visitor
 			numOfPlayers = 0;
 			for (int min : map.values())
 			{
-				if (min == 0)
+				if (min <= 240)
 					numOfPlayers++;
 			}
 			if (numOfPlayers == 1)
 			{
 				for (Entry<Player,Integer> item : map.entrySet())
 				{
-					if (item.getValue() == 0)
+					if (item.getValue() <= 240)
 					{
 						sub.getIn().setPlayerID(item.getKey().getPlayerID());
 						sub.getIn().setPlayerName(item.getKey().getPlayerName());
@@ -306,14 +306,14 @@ public class TimePlayerVisitor implements Visitor
 			int numOfPlayers = 0;
 			for (int min : map.values())
 			{
-				if (min > 0)
+				if (min > 240)
 					numOfPlayers++;
 			}
 			if (numOfPlayers == 1)
 			{
 				for (Entry<Player,Integer> item : map.entrySet())
 				{
-					if (item.getValue() > 0)
+					if (item.getValue() > 240)
 					{
 						sub.getIn().setPlayerID(item.getKey().getPlayerID());
 						sub.getIn().setPlayerName(item.getKey().getPlayerName());
@@ -334,14 +334,14 @@ public class TimePlayerVisitor implements Visitor
 			numOfPlayers = 0;
 			for (int min : map.values())
 			{
-				if (min == 0)
+				if (min <= 240)
 					numOfPlayers++;
 			}
 			if (numOfPlayers == 1)
 			{
 				for (Entry<Player,Integer> item : map.entrySet())
 				{
-					if (item.getValue() == 0)
+					if (item.getValue() <= 240)
 					{
 						sub.getIn().setPlayerID(item.getKey().getPlayerID());
 						sub.getIn().setPlayerName(item.getKey().getPlayerName());
@@ -436,8 +436,10 @@ public class TimePlayerVisitor implements Visitor
 			{
 				Player currentPlayer = new Player(player.getPlayerName(), 
 						player.getPlayerID());
-				if (matchingPlayers.contains(currentPlayer));
+				if (matchingPlayers.contains(currentPlayer))
+				{
 					map.put(currentPlayer, player.getMinutes());
+				}
 			}
 		}
 		
