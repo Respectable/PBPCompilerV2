@@ -315,8 +315,8 @@ public class TimePlayerVisitor implements Visitor
 				{
 					if (item.getValue() > 240)
 					{
-						sub.getIn().setPlayerID(item.getKey().getPlayerID());
-						sub.getIn().setPlayerName(item.getKey().getPlayerName());
+						sub.getOut().setPlayerID(item.getKey().getPlayerID());
+						sub.getOut().setPlayerName(item.getKey().getPlayerName());
 					}
 				}
 				return;
@@ -343,8 +343,8 @@ public class TimePlayerVisitor implements Visitor
 				{
 					if (item.getValue() <= 240)
 					{
-						sub.getIn().setPlayerID(item.getKey().getPlayerID());
-						sub.getIn().setPlayerName(item.getKey().getPlayerName());
+						sub.getOut().setPlayerID(item.getKey().getPlayerID());
+						sub.getOut().setPlayerName(item.getKey().getPlayerName());
 					}
 				}
 				return;
